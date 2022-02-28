@@ -31,6 +31,22 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 # Style Guide
 
+## Before you push
+
+- Install the ESLint VSCode extension.
+- In your local `settings.json` add the following:
+```
+{
+  // ...
+  "eslint.format.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
+}
+```
+- Now every time you save, the linting will automatically run according `.eslintrc.json`.
+- For more instructions visit [this link.](https://daveceddia.com/vscode-use-eslintrc/)
+
 ## Styling in React
 Good code minimizes navigation within the codebase. Modern webapps explode in complexity when it comes to styling. Follow some simple rules:
 - All text should be a component from Texts.tsx
