@@ -1,5 +1,6 @@
+// @ts-ignore
 import TimeAgo from 'javascript-time-ago';
-// English.
+// @ts-ignore
 import en from 'javascript-time-ago/locale/en.json';
 
 TimeAgo.addDefaultLocale(en);
