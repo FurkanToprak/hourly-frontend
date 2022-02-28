@@ -6,3 +6,7 @@ html {
   flex: 1;
   display: flex;
 }
+
+body {
+  margin: 0;
+}

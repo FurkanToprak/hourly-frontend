@@ -7,7 +7,9 @@ import {
   Routes
 } from 'react-router-dom';
 import { ThemeProvider } from './contexts/Theme';
-import { ThemeBackground } from './styles/Themes';
+import { ThemeBackground } from './styles/Theme';
+import Home from './pages/Home';
+import MenuBar from './components/utils/MenuBar';
 
 export default function App() {
   return (
@@ -16,10 +18,10 @@ export default function App() {
         <ThemeBackground>
           <div
             style={appRatioStyle}>
-            {/* <MenuBar/> */}
+            <MenuBar/>
             <div style={appContentStyle}>
               <Routes>
-                <Route path="/" element={<div>welcome home!</div>}/>
+                <Route path="/" element={<Home/>}/>
               </Routes>
             </div>
           </div>
