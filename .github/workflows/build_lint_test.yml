@@ -5,13 +5,6 @@ name: Run Linting and Testing
 # the CI should be triggered, aka Event
 on: [push, pull_request]
 
-# A job is a set of steps that execute on the same runner.
-# The jobs can be run in parallel or sequentially and can 
-# have many steps.
-# In this case, I created a single job with many steps
-# since the configuration is pretty simple but
-# I could have created a different structure using parallel jobs.
-# Each job uses an own runner.
 jobs:
   # Job name
   suite:
@@ -33,18 +26,17 @@ jobs:
         # This is a GH ready-to-use action
         uses: actions/checkout@v2
         
-      - name: Setup and run Cypress
-        uses: cypress-io/github-action@v2
+      - name: Setup Node
+        uses: actions/setup-node@v1
         with:
-          browser: chrome
-          headless: true
-          start: npm start
-        
+          node-version: '16.14.0'
+      - run: npm install
+      
       - name: Run Build
-        run: npm run build
-
-      - name: Run ESLint
-        run: npm run lint
-
-      - name: Run Tests
-        run: CI=true npm run test:ci
+      - run: npm run build
+      
+      - name: Run Linting
+      - run: npm run lint
+      
+      - name: Run Testing
+      - run: CI=true npm run test:ci
