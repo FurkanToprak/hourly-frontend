@@ -29,7 +29,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:coverage": "npm test -- --coverage",
-    "test:ci": "react-scripts test --env=jsdom CI=true",
+    "test:ci": "react-scripts test --watchAll=false",
     "lint": "eslint src"
   },
   "browserslist": {
