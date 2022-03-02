@@ -1,20 +1,22 @@
 import styled from '@emotion/styled';
 import { Button } from '@mui/material';
 import { useTheme } from '../../contexts/Theme';
-import { darkBackground, lightBackground, purple, raspberry } from '../../styles/Theme';
+import {
+  darkBackground, lightBackground, purple, raspberry,
+} from '../../styles/Theme';
 
-export const PurpleButton = styled(Button)((_theme) => ({
+export const PurpleButton = styled(Button)(() => ({
   color: purple,
   borderColor: purple,
   borderWidth: 2,
   '&:hover': {
     backgroundColor: purple,
     color: '#FFF',
-    borderWidth: 2
+    borderWidth: 2,
   },
 }));
-  
-export const RaspberryButton = styled(Button)((_theme) => ({
+
+export const RaspberryButton = styled(Button)(() => ({
   color: raspberry,
   borderColor: raspberry,
   borderWidth: 2,
@@ -25,8 +27,8 @@ export const RaspberryButton = styled(Button)((_theme) => ({
     borderColor: raspberry,
   },
 }));
-    
-export const StandardButton = styled(Button)((_theme) => {
+
+export const StandardButton = styled(Button)(() => {
   const { theme } = useTheme();
   const colorOne = theme === 'light' ? darkBackground : lightBackground;
   const colorTwo = theme === 'light' ? lightBackground : darkBackground;
@@ -40,4 +42,5 @@ export const StandardButton = styled(Button)((_theme) => {
       borderColor: colorOne,
       borderWidth: 2,
     },
-  });});
+  });
+});

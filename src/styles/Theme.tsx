@@ -13,17 +13,22 @@ export const lightBorder = '2px solid black';
 export const thinDarkBorder = '1px solid white';
 export const thinLightBorder = '1px solid black';
 
+const themeBackgroundStyle: React.CSSProperties = {
+  transition: 'all 0.6s cubic-bezier(.28,.02,.02,1.1)',
+  flex: 1,
+};
+
 export function ThemeBackground(props: {
     children: any
 }) {
   const { theme } = useTheme();
-  return <div style={{
-    backgroundColor: (theme === 'light' ? lightBackground : darkBackground),
-    ...themeBackgroundStyle
-  }}>
-    {props.children}
-  </div>;
+  return (
+    <div style={{
+      backgroundColor: (theme === 'light' ? lightBackground : darkBackground),
+      ...themeBackgroundStyle,
+    }}
+    >
+      {props.children}
+    </div>
+  );
 }
-
-const themeBackgroundStyle: React.CSSProperties = { transition: 'all 0.6s cubic-bezier(.28,.02,.02,1.1)',
-  flex: 1};
