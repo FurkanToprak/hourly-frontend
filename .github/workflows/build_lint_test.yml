@@ -33,6 +33,13 @@ jobs:
         # This is a GH ready-to-use action
         uses: actions/checkout@v2
         
+      - name: Setup and run Cypress
+        uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          headless: true
+          start: npm start
+        
       - name: Run Build
         run: npm run build
 
