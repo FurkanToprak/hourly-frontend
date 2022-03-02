@@ -1,16 +1,18 @@
 import styled from '@emotion/styled';
 import { InputBase, TextField, TextFieldProps } from '@mui/material';
-import { useTheme } from '../../contexts/Theme';
-import { black, darkBackground, darkBorder, lightBackground, lightBorder, purple, raspberry, white } from '../../styles/Theme';
 import React, { useState } from 'react';
+import { useTheme } from '../../contexts/Theme';
+import {
+  black, darkBackground, darkBorder, lightBackground, lightBorder, purple, raspberry, white,
+} from '../../styles/Theme';
 
 export const PurpleInput = styled(TextField)({
   color: purple,
   input: {
-    color: purple
+    color: purple,
   },
   label: {
-    color: purple
+    color: purple,
   },
   '& label.Mui-focused': {
     color: purple,
@@ -34,10 +36,10 @@ export const PurpleInput = styled(TextField)({
 export const RaspberryInput = styled(TextField)({
   color: raspberry,
   input: {
-    color: raspberry
+    color: raspberry,
   },
   label: {
-    color: raspberry
+    color: raspberry,
   },
   '& label.Mui-focused': {
     color: raspberry,
@@ -64,10 +66,10 @@ export const StandardInput = styled(TextField)(() => {
   return {
     color: textColor,
     input: {
-      color: textColor
+      color: textColor,
     },
     label: {
-      color: textColor
+      color: textColor,
     },
     '& label.Mui-focused': {
       color: textColor,
@@ -87,38 +89,45 @@ export const StandardInput = styled(TextField)(() => {
       },
     },
     '& .MuiInputBase-inputMultiline': {
-      color: textColor
-    }
-  };});
+      color: textColor,
+    },
+  };
+});
 
 export function StandardNumericalInput(props: TextFieldProps & {
   onNumberChange: (newNumber: number) => void
 }) {
-  const { onNumberChange, ...inputProps} = props;
+  const { onNumberChange, ...inputProps } = props;
   const [val, setVal] = useState('');
-  return <StandardInput value={val} {...inputProps} onChange={(e) => {
-    const freshInput = e.target.value;
-    let processedOutput = freshInput;
-    if (freshInput.length > 0) {
-      const lastChar = freshInput.slice(-1);
-      const isExtraDecimal = lastChar === '.' && processedOutput.slice(0, -1).includes('.');
-      const isNotNumberOrDecimal = lastChar !== '.' && (lastChar < '0' || '9' < lastChar);
-      if (isExtraDecimal || isNotNumberOrDecimal) {
-        processedOutput = freshInput.slice(0, -1);
-      }
-    }
-    setVal(processedOutput);
-    onNumberChange(processedOutput === '' ? NaN : Number(processedOutput));
-  }}/>;
+  return (
+    <StandardInput
+      value={val}
+      {...inputProps}
+      onChange={(e) => {
+        const freshInput = e.target.value;
+        let processedOutput = freshInput;
+        if (freshInput.length > 0) {
+          const lastChar = freshInput.slice(-1);
+          const isExtraDecimal = lastChar === '.' && processedOutput.slice(0, -1).includes('.');
+          const isNotNumberOrDecimal = lastChar !== '.' && (lastChar < '0' || lastChar > '9');
+          if (isExtraDecimal || isNotNumberOrDecimal) {
+            processedOutput = freshInput.slice(0, -1);
+          }
+        }
+        setVal(processedOutput);
+        onNumberChange(processedOutput === '' ? NaN : Number(processedOutput));
+      }}
+    />
+  );
 }
 
-export const StandardSelect = styled(InputBase)((_theme) => {
+export const StandardSelect = styled(InputBase)(() => {
   const { theme } = useTheme();
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
   return {
     'label + &': {
       marginTop: 5,
-      color: theme === 'light' ? black : white
+      color: theme === 'light' ? black : white,
     },
     '& .MuiInputBase-input': {
       flex: 1,
@@ -133,9 +142,8 @@ export const StandardSelect = styled(InputBase)((_theme) => {
         borderRadius: 4,
         borderColor: themeBorder,
         color: theme === 'light' ? black : white,
-        paddingLeft: 10
+        paddingLeft: 10,
       },
     },
   };
-}
-);
+});

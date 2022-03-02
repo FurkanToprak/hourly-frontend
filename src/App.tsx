@@ -4,32 +4,33 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
-  Routes
+  Routes,
 } from 'react-router-dom';
 import { ThemeProvider } from './contexts/Theme';
 import { ThemeBackground } from './styles/Theme';
 import Home from './pages/Home';
 import MenuBar from './components/utils/MenuBar';
 
+const appRatioStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column' };
+const appContentStyle: React.CSSProperties = { flex: 9 };
+
 export default function App() {
   return (
     <Router>
-    <ThemeProvider>
+      <ThemeProvider>
         <ThemeBackground>
           <div
-            style={appRatioStyle}>
-            <MenuBar/>
+            style={appRatioStyle}
+          >
+            <MenuBar />
             <div style={appContentStyle}>
               <Routes>
-                <Route path="/" element={<Home/>}/>
+                <Route path="/" element={<Home />} />
               </Routes>
             </div>
           </div>
         </ThemeBackground>
-    </ThemeProvider>
-  </Router>
+      </ThemeProvider>
+    </Router>
   );
 }
-
-const appRatioStyle: React.CSSProperties = {display: 'flex', flexDirection: 'column'};
-const appContentStyle: React.CSSProperties = {flex: 9};
