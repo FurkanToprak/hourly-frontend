@@ -32,19 +32,6 @@ jobs:
         # `something-else/` = third party
         # This is a GH ready-to-use action
         uses: actions/checkout@v2
-
-      - name: Setup and run Cypress
-        # This is a cycpress ready-to-use action
-        # that setups the runner installing the 
-        # dependencies using NPM and installing Cypress
-        uses: cypress-io/github-action@v2
-        # The action accepts parameters.
-        # You should read the documentation before using an action
-        # to understand what it does under the hood.
-        with:
-          browser: chrome
-          headless: true
-          start: npm start
         
       - name: Run Build
         run: npm run build
