@@ -6,27 +6,24 @@ name: Run Linting and Testing
 on: [push, pull_request]
 
 jobs:
-  # Job name
   suite:
-    # OS of the runner
     runs-on: ubuntu-latest
-    # A step is an individual task that can run commands in a job
-    # and share the same runner.
-    # Each step can run a ready-to-use action or a bash command
+
     steps:
-      # Runner meaningful name
-      - uses: actions/checkout@v2
-      - name: Setup Node
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js 16.14.0
         uses: actions/setup-node@v1
         with:
           node-version: '16.14.0'
-      - run: npm install
-      
+        run: npm install
+
       - name: Run Build
-      - run: npm run build
-      
+        run: npm run build
+
       - name: Run Linting
-      - run: npm run lint
-      
+        run: npm run lint
+
       - name: Run Testing
-      - run: CI=true npm run test:ci
+        run: CI=true npm run test:ci
