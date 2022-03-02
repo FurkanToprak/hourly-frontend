@@ -1,0 +1,56 @@
+# CI name
+name: Run Linting and Testing
+
+# The on key is used to define when
+# the CI should be triggered, aka Event
+on: [push, pull_request]
+
+# A job is a set of steps that execute on the same runner.
+# The jobs can be run in parallel or sequentially and can 
+# have many steps.
+# In this case, I created a single job with many steps
+# since the configuration is pretty simple but
+# I could have created a different structure using parallel jobs.
+# Each job uses an own runner.
+jobs:
+  # Job name
+  suite:
+    # OS of the runner
+    runs-on: ubuntu-latest
+
+    # A step is an individual task that can run commands in a job
+    # and share the same runner.
+    # Each step can run a ready-to-use action or a bash command
+    steps:
+      # Runner meaningful name
+      - name: Checkout
+        # Ready-to-use action made by GH or third party 
+        # companies
+        # We can recognize the GH actions from the third party 
+        # ones checking the name prefix.
+        # `actions/` = GH
+        # `something-else/` = third party
+        # This is a GH ready-to-use action
+        uses: actions/checkout@v2
+
+      - name: Setup and run Cypress
+        # This is a cycpress ready-to-use action
+        # that setups the runner installing the 
+        # dependencies using NPM and installing Cypress
+        uses: cypress-io/github-action@v2
+        # The action accepts parameters.
+        # You should read the documentation before using an action
+        # to understand what it does under the hood.
+        with:
+          browser: chrome
+          headless: true
+          start: npm start
+        
+      - name: Run Build
+        run: npm run build
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Tests
+        run: CI=true npm run test:ci
