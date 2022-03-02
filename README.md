@@ -37,11 +37,16 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 - In your local `settings.json` add the following:
 ```
 {
-  // ...
-  "eslint.format.enable": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  }
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+    ],
+    "eslint.format.enable": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
 }
 ```
 - Now every time you save, the linting will automatically run according `.eslintrc.json`.
