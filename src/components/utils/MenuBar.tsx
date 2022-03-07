@@ -10,8 +10,31 @@ import { useTheme } from '../../contexts/Theme';
 import {
   darkBackground, darkBorder, lightBackground, lightBorder,
 } from '../../styles/Theme';
-import { Title } from './Texts';
+import { FontColor, Title } from './Texts';
 import ThemeButton from './ThemeButton';
+
+interface TabSchema {
+  title: string;
+  route: string;
+  color?: FontColor;
+}
+
+const menuItems: TabSchema[] = [
+  {
+    title: 'Home',
+    route: '/',
+  },
+  {
+    title: 'Sign Up',
+    route: '/signup',
+    color: 'raspberry',
+  },
+  {
+    title: 'Log In',
+    route: '/login',
+    color: 'purple',
+  },
+];
 
 export default function MenuBar() {
   const navigate = useNavigate();
@@ -44,14 +67,15 @@ export default function MenuBar() {
             >
               <img alt="hourly logo" src={require('./logo512.png')} style={{ maxHeight: 50 }} />
             </IconButton>
-            <MenuItem
-              style={centerMenuItemStyle}
-              onMouseDown={() => {
-                navigate('/');
+
+            { menuItems.map((menuItem: TabSchema) => (
+              <MenuItem onClick={() => {
+                navigate(menuItem.route);
               }}
-            >
-              <Title size="xs">Home</Title>
-            </MenuItem>
+              >
+                <Title size="s" color={menuItem.color}>{menuItem.title}</Title>
+              </MenuItem>
+            ))}
             <div style={rowGroupStyle}>
               <MenuItem><ThemeButton /></MenuItem>
             </div>

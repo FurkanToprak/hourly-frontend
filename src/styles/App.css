@@ -7,10 +7,12 @@ html {
 #root {
   flex: 1;
   display: flex;
+  flex-direction: column;
 }
 
 body {
   flex: 1;
   margin: 0;
   display: flex;
+  flex-direction: column;
 }
