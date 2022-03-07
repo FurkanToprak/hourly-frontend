@@ -29,6 +29,10 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+# Environment Variables
+All environment variables should be relayed over Discord. When developing, confine all environment variables to `.env`.
+* **IMPORTANT**: If you add a new environment variable, add it to the Github Repo by [following this link](https://github.com/FurkanToprak/hourly-frontend/settings/environments)
+
 # Style Guide
 
 ## Before you push
