@@ -3,7 +3,7 @@ import GoogleLogin from 'react-google-login';
 
 const clientId = process.env.REACT_APP_GOOGLE_CLIENT_SECRET || '';
 if (clientId === '') {
-  throw Error('Google Client ID missing!');
+  console.log(Error('Google Client ID missing!'));
 }
 
 const gAuthStyles: React.CSSProperties = {
