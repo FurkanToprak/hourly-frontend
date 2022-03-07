@@ -13,9 +13,7 @@ import SignUp from './pages/SignUp';
 import LogIn from './pages/LogIn';
 import MenuBar from './components/utils/MenuBar';
 
-const appRatioStyle: React.CSSProperties = {
-  backgroundColor: 'blue', flex: 1, display: 'flex', flexDirection: 'column',
-};
+const appRatioStyle: React.CSSProperties = { flex: 1, display: 'flex', flexDirection: 'column' };
 const appContentStyle: React.CSSProperties = { flex: 9, display: 'flex', flexDirection: 'column' };
 
 export default function App() {
