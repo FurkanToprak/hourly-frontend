@@ -6,20 +6,26 @@ if (clientId === '') {
   throw Error('Google Client ID missing!');
 }
 
+const gAuthStyles: React.CSSProperties = {
+  margin: 20,
+};
+
 export default function GoogleOAuth(props: {
     type: 'login' | 'signup'
 }) {
   return (
-    <GoogleLogin
-      clientId={clientId}
-      buttonText={props.type ? 'Log In' : 'Sign Up'}
-      onSuccess={() => {
+    <div style={gAuthStyles}>
+      <GoogleLogin
+        clientId={clientId}
+        buttonText={props.type === 'login' ? 'Log In' : 'Sign Up'}
+        onSuccess={() => {
         // authenticate
-      }}
-      onFailure={() => {
+        }}
+        onFailure={() => {
         // popup message
-      }}
-      cookiePolicy="single_host_origin"
-    />
+        }}
+        cookiePolicy="single_host_origin"
+      />
+    </div>
   );
 }
