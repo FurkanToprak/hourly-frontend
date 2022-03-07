@@ -52,7 +52,9 @@ export default function MenuBar() {
 
   const appBarContainerStyle: React.CSSProperties = { flex: 1, marginTop: 10, marginBottom: 10 };
   const rowGroupStyle: React.CSSProperties = { display: 'flex', flexDirection: 'row' };
-  const centerMenuItemStyle: React.CSSProperties = { width: '100%', display: 'flex', justifyContent: 'center' };
+  const centerMenuItemStyle: React.CSSProperties = {
+    width: '100%', display: 'flex', justifyContent: 'center',
+  };
 
   return (
     <div style={appBarContainerStyle}>
