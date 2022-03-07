@@ -1,4 +1,5 @@
 import React from 'react';
+import GoogleOAuth from '../components/auth/GoogleOAuth';
 import { StandardInput } from '../components/utils/Inputs';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
@@ -9,7 +10,7 @@ export default function SignUp() {
     <Page centerY>
       <Title>Sign Up</Title>
       <Panel centerX centerY>
-        {/* <Body>sign in with Google</Body> */}
+        <GoogleOAuth type="signup" />
       </Panel>
     </Page>
   );

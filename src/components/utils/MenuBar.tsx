@@ -71,9 +71,11 @@ export default function MenuBar() {
             </IconButton>
 
             { menuItems.map((menuItem: TabSchema) => (
-              <MenuItem onClick={() => {
-                navigate(menuItem.route);
-              }}
+              <MenuItem
+                key={`menuitem-${menuItem.title}`}
+                onClick={() => {
+                  navigate(menuItem.route);
+                }}
               >
                 <Title size="s" color={menuItem.color}>{menuItem.title}</Title>
               </MenuItem>
