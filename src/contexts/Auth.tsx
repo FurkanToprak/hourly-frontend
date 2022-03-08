@@ -1,13 +1,13 @@
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup,
+} from 'firebase/auth';
 import React, { createContext, useContext, useState } from 'react';
-import * as Realm from 'realm-web';
-import { authRedirectUri, realmAppId } from '../connections/Config';
+import { provider } from '../connections/Firebase';
 
 export const AuthContext = createContext([{}, () => { /** Satisfy lint */ }] as [any, any]);
 
-const app = Realm.App.getApp(realmAppId);
-
 export function AuthProvider({ children }: any) {
-  const [user, setUser] = useState(app.currentUser);
+  const [user, setUser] = useState(null);
 
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -18,31 +18,38 @@ export function AuthProvider({ children }: any) {
 }
 
 export const useAuth = () => {
-  const [state, setState] = useContext(AuthContext);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [userState, setUserState] = useContext(AuthContext);
 
-  function loginWithGoogle(token: string) {
-    // Login user with Realm backend
-    const credentials = Realm.Credentials.google(authRedirectUri);
-    app.logIn(credentials).then((user) => {
-      console.log('SIGNED IN');
-      console.log(user);
-      setState(user);
-    });
+  function loginWithGoogle() {
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        if (!credential) {
+          return;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const token = credential.accessToken;
+        if (!token) {
+          return;
+        }
+        // The signed-in user info.
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { user } = result;
+      }).catch(() => {
+        // TODO:
+      });
   }
 
   function signOut() {
-    // Log out the current user
-    if (!app.currentUser) {
-      return;
-    }
-    app.currentUser.logOut().then(() => {
-      setState(null);
-    });
+    setUserState(null);
   }
 
   return {
     loginWithGoogle,
     signOut,
-    user: state,
+    user: userState,
   };
 };
