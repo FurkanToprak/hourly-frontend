@@ -26,7 +26,7 @@ export const useAuth = () => {
   function loginWithGoogle() {
     const auth = getAuth();
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
         const credential = GoogleAuthProvider.credentialFromResult(result);
         if (!credential) {
@@ -40,12 +40,17 @@ export const useAuth = () => {
         // The signed-in user info.
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { user } = result;
-        FlaskClient.post('google_auth', {
+        const authResponse = await FlaskClient.post('google_auth', {
           token,
           clientId: googleClientId,
         });
+        if (authResponse === 'Success') {
+          setUserState(user); // TODO: replace with future user response from backend
+        } else {
+          setUserState(null);
+        }
       }).catch(() => {
-        // TODO:
+        setUserState(null);
       });
   }
 
