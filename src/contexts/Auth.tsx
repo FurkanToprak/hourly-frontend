@@ -1,33 +1,40 @@
-import React, { useContext, useState } from 'react'
-import * as Realm from 'realm-web'
+import React, { createContext, useContext, useState } from 'react';
+import * as Realm from 'realm-web';
+import { authRedirectUri, realmAppId } from '../connections/Config';
 
-export const AuthContext = React.createContext([{}, () => {}])
+export const AuthContext = createContext([{}, () => { /** Satisfy lint */ }] as [any, any]);
 
-const app = Realm.App.getApp(REALM_APP_ID)
+const app = Realm.App.getApp(realmAppId);
 
-export const AuthProvider = ({ children }: any) => {
-    var [user, setUser] = useState(app.currentUser)
+export function AuthProvider({ children }: any) {
+  const [user, setUser] = useState(app.currentUser);
 
-    return (
-        <AuthContext.Provider value={[user, setUser]}>
-            {children}
-        </AuthContext.Provider>
-    )
+  return (
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
+    <AuthContext.Provider value={[user, setUser]}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-export default const useAuth = () => {
+export const useAuth = () => {
   const [state, setState] = useContext(AuthContext);
 
-  function loginWithGoogle(token) {
+  function loginWithGoogle(token: string) {
     // Login user with Realm backend
-    const credentials = Realm.Credentials.google(token);
+    const credentials = Realm.Credentials.google(authRedirectUri);
     app.logIn(credentials).then((user) => {
+      console.log('SIGNED IN');
+      console.log(user);
       setState(user);
     });
   }
 
   function signOut() {
     // Log out the current user
+    if (!app.currentUser) {
+      return;
+    }
     app.currentUser.logOut().then(() => {
       setState(null);
     });

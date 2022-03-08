@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import * as Realm from 'realm-web';
-import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
-import useAuth from '../../contexts/Auth';
-import { googleClientId } from '../../connections/Secrets';
+import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
+import { useAuth } from '../../contexts/Auth';
+import { googleClientId } from '../../connections/Config';
 import { Title } from '../utils/Texts';
-
-const app = new Realm.App({ id: googleClientId });
 
 const gAuthStyles: React.CSSProperties = {
   margin: 20,
@@ -38,6 +35,7 @@ export default function GoogleOAuth(props: {
         onFailure={failureGoogle}
         cookiePolicy="single_host_origin"
         style={{ flex: 1 }}
+        responseType="token"
         scope="profile email"
       />
       <Title size="s">{message}</Title>
