@@ -40,7 +40,7 @@ export const useAuth = () => {
         // The signed-in user info.
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { user } = result;
-        FlaskClient.post({
+        FlaskClient.post('google_auth', {
           token,
           clientId: googleClientId,
         });
