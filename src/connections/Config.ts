@@ -42,3 +42,8 @@ export const firebaseMeasurementId = process.env.REACT_APP_FIREBASE_MEASUREMENT_
 if (!firebaseMeasurementId) {
   throw Error('Firebase measurement ID missing!');
 }
+
+export const backendUri = process.env.REACT_APP_BACKEND_URI || '';
+if (!backendUri) {
+  throw Error('Backend URI missing!');
+}

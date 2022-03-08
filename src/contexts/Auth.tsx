@@ -2,7 +2,9 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup,
 } from 'firebase/auth';
 import React, { createContext, useContext, useState } from 'react';
+import { googleClientId } from '../connections/Config';
 import { provider } from '../connections/Firebase';
+import FlaskClient from '../connections/Flask';
 
 export const AuthContext = createContext([{}, () => { /** Satisfy lint */ }] as [any, any]);
 
@@ -38,6 +40,10 @@ export const useAuth = () => {
         // The signed-in user info.
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { user } = result;
+        FlaskClient.post({
+          token,
+          clientId: googleClientId,
+        });
       }).catch(() => {
         // TODO:
       });
