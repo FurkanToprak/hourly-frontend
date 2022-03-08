@@ -10,14 +10,12 @@ class FlaskClientSingleton {
 
   public async get(endpoint: string, params?: any) {
     const getRequest = await axios.get(`${this.backendUri}/${endpoint}`, params);
-    console.log('request');
-    console.log(getRequest);
+    return getRequest.data;
   }
 
   public async post(endpoint: string, params?: any) {
     const postRequest = await axios.post(`${this.backendUri}/${endpoint}`, params);
-    console.log('request');
-    console.log(postRequest);
+    return postRequest.data;
   }
 }
 

@@ -33,7 +33,7 @@ export const useAuth = () => {
           return;
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const token = credential.accessToken;
+        const token = credential.idToken;
         if (!token) {
           return;
         }
