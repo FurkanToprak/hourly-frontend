@@ -118,14 +118,19 @@ export default function MenuBar() {
               sx: { backgroundColor: (theme === 'light' ? lightBackground : darkBackground), border: themeBorder },
             }}
           >
-            <MenuItem
-              style={centerMenuItemStyle}
-              onMouseDown={() => {
-                navigate('/');
-              }}
-            >
-              <Title size="xs">Home</Title>
-            </MenuItem>
+            {
+              menuItems.map((menuItem: TabSchema) => (
+                <MenuItem
+                  key={`menuitem2-${menuItem.title}`}
+                  style={centerMenuItemStyle}
+                  onMouseDown={() => {
+                    navigate(menuItem.route);
+                  }}
+                >
+                  <Title color={menuItem.color} size="xs">{menuItem.title}</Title>
+                </MenuItem>
+              ))
+            }
             <ThemeButton />
           </Menu>
         </Container>
