@@ -9,7 +9,7 @@ export default function LogIn() {
     <Page centerY fullHeight>
       <Title>Log In</Title>
       <Panel centerX centerY>
-        <GoogleOAuth type="login" />
+        <GoogleOAuth type="Log In" />
       </Panel>
     </Page>
   );

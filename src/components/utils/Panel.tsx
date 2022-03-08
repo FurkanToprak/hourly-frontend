@@ -19,6 +19,7 @@ const panelContentStyle: React.CSSProperties = {
 export default function Panel(props: {
     centerX?: true;
     centerY?: true;
+    flex?: 'row' | 'column';
     children: any;
 }) {
   const { theme } = useTheme();
@@ -30,6 +31,8 @@ export default function Panel(props: {
         border: themeBorder,
         alignItems: props.centerY ? 'center' : undefined,
         justifyContent: props.centerX ? 'center' : undefined,
+        display: 'flex',
+        flexDirection: props.flex,
       }}
       >
         {props.children}

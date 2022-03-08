@@ -8,8 +8,8 @@ export default function SignUp() {
   return (
     <Page centerY>
       <Title>Sign Up</Title>
-      <Panel centerX centerY>
-        <GoogleOAuth type="signup" />
+      <Panel centerX centerY flex="row">
+        <GoogleOAuth type="Sign Up" />
       </Panel>
     </Page>
   );
