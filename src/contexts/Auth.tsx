@@ -2,7 +2,7 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup,
 } from 'firebase/auth';
 import React, { createContext, useContext, useState } from 'react';
-import { googleClientId } from '../connections/Config';
+import { useNavigate } from 'react-router-dom';
 import { provider } from '../connections/Firebase';
 import FlaskClient from '../connections/Flask';
 
@@ -21,9 +21,11 @@ export function AuthProvider({ children }: any) {
 
 export const useAuth = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const navigate = useNavigate();
   const [userState, setUserState] = useContext(AuthContext);
 
-  function loginWithGoogle() {
+  function loginWithGoogle(): boolean {
+    let success = false;
     const auth = getAuth();
     signInWithPopup(auth, provider)
       .then(async (result) => {
@@ -42,16 +44,19 @@ export const useAuth = () => {
         const { user } = result;
         const authResponse = await FlaskClient.post('google_auth', {
           token,
-          clientId: googleClientId,
+          name: auth.name,
         });
         if (authResponse === 'Success') {
-          setUserState(user); // TODO: replace with future user response from backend
+          setUserState(user);
+          navigate('/dashboard');
+          success = true;
         } else {
           setUserState(null);
         }
       }).catch(() => {
         setUserState(null);
       });
+    return success;
   }
 
   function signOut() {
