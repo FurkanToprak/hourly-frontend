@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../../contexts/Auth';
-import { Title } from '../utils/Texts';
 import { StandardButton } from '../utils/Buttons';
 
 const gAuthStyles: React.CSSProperties = {
@@ -13,12 +12,7 @@ const gAuthStyles: React.CSSProperties = {
 export default function GoogleOAuth(props: {
   type: 'Log In' | 'Sign Up'
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [message, setMessage] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { loginWithGoogle } = useAuth();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
   return (
     <div style={gAuthStyles}>
       <StandardButton
@@ -29,9 +23,7 @@ export default function GoogleOAuth(props: {
         style={{ width: '30%' }}
       >
         {props.type}
-
       </StandardButton>
-      <Title size="s">{message}</Title>
     </div>
   );
 }

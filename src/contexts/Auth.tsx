@@ -24,7 +24,8 @@ export const useAuth = () => {
   const navigate = useNavigate();
   const [userState, setUserState] = useContext(AuthContext);
 
-  function loginWithGoogle() {
+  function loginWithGoogle(): boolean {
+    let success = false;
     const auth = getAuth();
     signInWithPopup(auth, provider)
       .then(async (result) => {
@@ -48,12 +49,14 @@ export const useAuth = () => {
         if (authResponse === 'Success') {
           setUserState(user);
           navigate('/dashboard');
+          success = true;
         } else {
           setUserState(null);
         }
       }).catch(() => {
         setUserState(null);
       });
+    return success;
   }
 
   function signOut() {
