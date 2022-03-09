@@ -7,7 +7,7 @@ import { Title } from '../components/utils/Texts';
 export default function SignUp() {
   return (
     <Page centerY>
-      <Title>Sign Up</Title>
+      <Title color="raspberry">Sign Up</Title>
       <Panel centerX centerY flex="row">
         <GoogleOAuth type="Sign Up" />
       </Panel>
