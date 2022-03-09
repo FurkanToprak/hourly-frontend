@@ -31,7 +31,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 # Environment Variables
 All environment variables should be relayed over Discord. When developing, confine all environment variables to `.env`.
-* **IMPORTANT**: If you add a new environment variable, add it to the Github Repo by [following this link](https://github.com/FurkanToprak/hourly-frontend/settings/environments). Additionally, you must expose the github testing environment to the environment variables; to accomplish this, modify `.github/workflows/build_lint_test.yml`.
+* **IMPORTANT**: If you add a new environment variable, add it to the Github Repo by [following this link](https://github.com/FurkanToprak/hourly-frontend/settings/environments) and [this link](https://dashboard.heroku.com/apps/h-ourly/settings). Additionally, you must expose the github testing environment to the environment variables; to accomplish this, modify `.github/workflows/build_lint_test.yml`.
 
 # Style Guide
 
