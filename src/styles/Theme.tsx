@@ -10,12 +10,12 @@ export const black = '#000';
 export const white = '#fff';
 export const darkBorder = '2px solid white';
 export const lightBorder = '2px solid black';
-export const thinDarkBorder = '1px solid white';
-export const thinLightBorder = '1px solid black';
 
 const themeBackgroundStyle: React.CSSProperties = {
   transition: 'all 0.6s cubic-bezier(.28,.02,.02,1.1)',
   flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
 };
 
 export function ThemeBackground(props: {

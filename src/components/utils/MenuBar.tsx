@@ -10,8 +10,31 @@ import { useTheme } from '../../contexts/Theme';
 import {
   darkBackground, darkBorder, lightBackground, lightBorder,
 } from '../../styles/Theme';
-import { Title } from './Texts';
+import { FontColor, Title } from './Texts';
 import ThemeButton from './ThemeButton';
+
+interface TabSchema {
+  title: string;
+  route: string;
+  color?: FontColor;
+}
+
+const menuItems: TabSchema[] = [
+  {
+    title: 'Home',
+    route: '/',
+  },
+  {
+    title: 'Sign Up',
+    route: '/signup',
+    color: 'raspberry',
+  },
+  {
+    title: 'Log In',
+    route: '/login',
+    color: 'purple',
+  },
+];
 
 export default function MenuBar() {
   const navigate = useNavigate();
@@ -29,7 +52,9 @@ export default function MenuBar() {
 
   const appBarContainerStyle: React.CSSProperties = { flex: 1, marginTop: 10, marginBottom: 10 };
   const rowGroupStyle: React.CSSProperties = { display: 'flex', flexDirection: 'row' };
-  const centerMenuItemStyle: React.CSSProperties = { width: '100%', display: 'flex', justifyContent: 'center' };
+  const centerMenuItemStyle: React.CSSProperties = {
+    width: '100%', display: 'flex', justifyContent: 'center',
+  };
 
   return (
     <div style={appBarContainerStyle}>
@@ -44,14 +69,17 @@ export default function MenuBar() {
             >
               <img alt="hourly logo" src={require('./logo512.png')} style={{ maxHeight: 50 }} />
             </IconButton>
-            <MenuItem
-              style={centerMenuItemStyle}
-              onMouseDown={() => {
-                navigate('/');
-              }}
-            >
-              <Title size="xs">Home</Title>
-            </MenuItem>
+
+            { menuItems.map((menuItem: TabSchema) => (
+              <MenuItem
+                key={`menuitem-${menuItem.title}`}
+                onClick={() => {
+                  navigate(menuItem.route);
+                }}
+              >
+                <Title size="s" color={menuItem.color}>{menuItem.title}</Title>
+              </MenuItem>
+            ))}
             <div style={rowGroupStyle}>
               <MenuItem><ThemeButton /></MenuItem>
             </div>
@@ -90,14 +118,19 @@ export default function MenuBar() {
               sx: { backgroundColor: (theme === 'light' ? lightBackground : darkBackground), border: themeBorder },
             }}
           >
-            <MenuItem
-              style={centerMenuItemStyle}
-              onMouseDown={() => {
-                navigate('/');
-              }}
-            >
-              <Title size="xs">Home</Title>
-            </MenuItem>
+            {
+              menuItems.map((menuItem: TabSchema) => (
+                <MenuItem
+                  key={`menuitem2-${menuItem.title}`}
+                  style={centerMenuItemStyle}
+                  onMouseDown={() => {
+                    navigate(menuItem.route);
+                  }}
+                >
+                  <Title color={menuItem.color} size="xs">{menuItem.title}</Title>
+                </MenuItem>
+              ))
+            }
             <ThemeButton />
           </Menu>
         </Container>

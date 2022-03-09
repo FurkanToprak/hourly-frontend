@@ -9,10 +9,12 @@ import {
 import { ThemeProvider } from './contexts/Theme';
 import { ThemeBackground } from './styles/Theme';
 import Home from './pages/Home';
+import SignUp from './pages/SignUp';
+import LogIn from './pages/LogIn';
 import MenuBar from './components/utils/MenuBar';
 
-const appRatioStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column' };
-const appContentStyle: React.CSSProperties = { flex: 9 };
+const appRatioStyle: React.CSSProperties = { flex: 1, display: 'flex', flexDirection: 'column' };
+const appContentStyle: React.CSSProperties = { flex: 9, display: 'flex', flexDirection: 'column' };
 
 export default function App() {
   return (
@@ -26,6 +28,8 @@ export default function App() {
             <div style={appContentStyle}>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<LogIn />} />
               </Routes>
             </div>
           </div>
