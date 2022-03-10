@@ -32,7 +32,7 @@ export const useAuth = () => {
   const navigate = useNavigate();
   const [userState, setUserState] = useContext(AuthContext);
 
-  function loginWithGoogle(onFailure: () => void) {
+  function loginWithGoogle(onSuccess: () => void, onFailure: () => void) {
     const auth = getAuth();
     signInWithPopup(auth, provider)
       .then(async (result) => {
@@ -63,6 +63,7 @@ export const useAuth = () => {
             refreshToken: user.refreshToken,
             accessToken: token,
           });
+          onSuccess();
         } else {
           onFailure();
           setUserState(null);
