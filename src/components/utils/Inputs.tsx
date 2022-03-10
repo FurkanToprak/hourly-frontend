@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { InputBase, TextField, TextFieldProps } from '@mui/material';
+import { TextField, TextFieldProps } from '@mui/material';
 import React, { useState } from 'react';
 import { useTheme } from '../../contexts/Theme';
 import {
-  black, darkBackground, darkBorder, lightBackground, lightBorder, purple, raspberry, white,
+  darkBackground, lightBackground, purple, raspberry,
 } from '../../styles/Theme';
 
 export const PurpleInput = styled(TextField)({
@@ -120,30 +120,3 @@ export function StandardNumericalInput(props: TextFieldProps & {
     />
   );
 }
-
-export const StandardSelect = styled(InputBase)(() => {
-  const { theme } = useTheme();
-  const themeBorder = theme === 'light' ? lightBorder : darkBorder;
-  return {
-    'label + &': {
-      marginTop: 5,
-      color: theme === 'light' ? black : white,
-    },
-    '& .MuiInputBase-input': {
-      flex: 1,
-      height: '100%',
-      color: theme === 'light' ? black : white,
-      borderRadius: 4,
-      position: 'relative',
-      border: themeBorder,
-      paddingLeft: 10,
-      fontSize: 16,
-      '&:focus': {
-        borderRadius: 4,
-        borderColor: themeBorder,
-        color: theme === 'light' ? black : white,
-        paddingLeft: 10,
-      },
-    },
-  };
-});
