@@ -7,7 +7,7 @@ import { Title } from '../components/utils/Texts';
 export default function LogIn() {
   return (
     <Page centerY fullHeight>
-      <Title>Log In</Title>
+      <Title color="purple">Log In</Title>
       <Panel centerX centerY>
         <GoogleOAuth type="Log In" />
       </Panel>
