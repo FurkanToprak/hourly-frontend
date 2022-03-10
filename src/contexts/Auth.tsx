@@ -24,6 +24,10 @@ export interface AuthContextSchema {
 
 export const AuthContext = createContext<AuthContextSchema>({} as AuthContextSchema);
 
+export function useAuth() {
+  return useContext(AuthContext);
+}
+
 export function AuthProvider({ children }: any) {
   const [hourlyUser, setHourlyUser] = useState(null as null | HourlyUser);
 
@@ -77,14 +81,9 @@ export function AuthProvider({ children }: any) {
     signOut,
     isLoggedIn: (hourlyUser !== null),
   }), [hourlyUser]);
-
   return (
     <AuthContext.Provider value={auth}>
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  return useContext(AuthContext);
 }

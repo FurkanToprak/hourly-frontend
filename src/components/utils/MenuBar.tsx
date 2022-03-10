@@ -40,8 +40,7 @@ const menuItems: TabSchema[] = [
 export default function MenuBar() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { user } = useAuth();
-
+  const { isLoggedIn } = useAuth();
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
   const iconColor = theme === 'light' ? darkBackground : lightBackground;
   const [anchorElNav, setAnchorElNav] = useState(null);

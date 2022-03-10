@@ -12,6 +12,7 @@ import Home from './pages/Home';
 import SignUp from './pages/SignUp';
 import LogIn from './pages/LogIn';
 import MenuBar from './components/utils/MenuBar';
+import { AuthProvider } from './contexts/Auth';
 
 const appRatioStyle: React.CSSProperties = { flex: 1, display: 'flex', flexDirection: 'column' };
 const appContentStyle: React.CSSProperties = { flex: 9, display: 'flex', flexDirection: 'column' };
@@ -19,22 +20,24 @@ const appContentStyle: React.CSSProperties = { flex: 9, display: 'flex', flexDir
 export default function App() {
   return (
     <Router>
-      <ThemeProvider>
-        <ThemeBackground>
-          <div
-            style={appRatioStyle}
-          >
-            <MenuBar />
-            <div style={appContentStyle}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/login" element={<LogIn />} />
-              </Routes>
+      <AuthProvider>
+        <ThemeProvider>
+          <ThemeBackground>
+            <div
+              style={appRatioStyle}
+            >
+              <MenuBar />
+              <div style={appContentStyle}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/login" element={<LogIn />} />
+                </Routes>
+              </div>
             </div>
-          </div>
-        </ThemeBackground>
-      </ThemeProvider>
+          </ThemeBackground>
+        </ThemeProvider>
+      </AuthProvider>
     </Router>
   );
 }
