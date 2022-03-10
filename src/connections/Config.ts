@@ -1,13 +1,3 @@
-export const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
-if (!googleClientId) {
-  throw Error('Google client ID missing!');
-}
-
-export const googleClientSecret = process.env.REACT_APP_GOOGLE_CLIENT_SECRET || '';
-if (!googleClientSecret) {
-  throw Error('Google client secret missing!');
-}
-
 export const firebaseAPIKey = process.env.REACT_APP_FIREBASE_API_KEY || '';
 if (!firebaseAPIKey) {
   throw Error('Firebase API key missing!');
