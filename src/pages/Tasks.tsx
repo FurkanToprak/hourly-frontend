@@ -17,7 +17,6 @@ export default function Tasks() {
   const [description, setDescription] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [label, setLabel] = useState('');
-  console.log(`label${label}`);
   const readyToSchedule = name.length > 0 && description.length > 0 && label.length > 0;
   return (
     <Page centerY>
@@ -62,10 +61,10 @@ export default function Tasks() {
             variant="outlined"
             fullWidth
             onMouseDown={() => {
-              //
               if (!readyToSchedule) {
                 return;
               }
+              // then do something
               console.log('a');
             }}
           >
