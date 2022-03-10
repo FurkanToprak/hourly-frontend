@@ -20,11 +20,14 @@ interface TabSchema {
   color?: FontColor;
 }
 
-const menuItems: TabSchema[] = [
+const defaultMenuItems: TabSchema[] = [
   {
     title: 'Home',
     route: '/',
   },
+];
+
+const loggedInMenuItems: TabSchema[] = [
   {
     title: 'Sign Up',
     route: '/signup',
@@ -37,6 +40,17 @@ const menuItems: TabSchema[] = [
   },
 ];
 
+const notLoggedInMenuItems: TabSchema[] = [
+  {
+    title: 'Dashboard',
+    route: '/dashboard',
+  },
+  {
+    title: 'Tasks',
+    route: '/tasks',
+  },
+];
+
 export default function MenuBar() {
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -44,7 +58,12 @@ export default function MenuBar() {
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
   const iconColor = theme === 'light' ? darkBackground : lightBackground;
   const [anchorElNav, setAnchorElNav] = useState(null);
-
+  let menuItems = defaultMenuItems;
+  if (isLoggedIn) {
+    menuItems = defaultMenuItems.concat(loggedInMenuItems);
+  } else {
+    menuItems = defaultMenuItems.concat(notLoggedInMenuItems);
+  }
   const handleOpenNavMenu = (event: any) => {
     setAnchorElNav(event.currentTarget);
   };
