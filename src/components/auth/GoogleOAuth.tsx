@@ -21,12 +21,12 @@ export default function GoogleOAuth(props: {
   const onFailure = () => {
     setButtonText('Error. Try again.');
   };
-  const { loginWithGoogle } = useAuth();
+  const { logInWithGoogle } = useAuth();
   return (
     <div style={gAuthStyles}>
       <StandardButton
         onMouseDown={() => {
-          loginWithGoogle(onSuccess, onFailure);
+          logInWithGoogle(onSuccess, onFailure);
         }}
         variant="outlined"
         style={{ width: '30%' }}

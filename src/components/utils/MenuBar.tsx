@@ -12,6 +12,7 @@ import {
 } from '../../styles/Theme';
 import { FontColor, Title } from './Texts';
 import ThemeButton from './ThemeButton';
+import { useAuth } from '../../contexts/Auth';
 
 interface TabSchema {
   title: string;
@@ -39,6 +40,8 @@ const menuItems: TabSchema[] = [
 export default function MenuBar() {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { user } = useAuth();
+
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
   const iconColor = theme === 'light' ? darkBackground : lightBackground;
   const [anchorElNav, setAnchorElNav] = useState(null);

@@ -1,12 +1,11 @@
 import {
   getAuth, GoogleAuthProvider, signInWithPopup,
 } from 'firebase/auth';
-import React, { createContext, useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {
+  createContext, useContext, useMemo, useState,
+} from 'react';
 import { provider } from '../connections/Firebase';
 import FlaskClient from '../connections/Flask';
-
-export const AuthContext = createContext([{}, () => { /** Satisfy lint */ }] as [any, any]);
 
 interface HourlyUser {
   id: string;
@@ -16,23 +15,19 @@ interface HourlyUser {
   refreshToken: string;
 }
 
-export function AuthProvider({ children }: any) {
-  const [user, setUser] = useState(null as null | HourlyUser);
-
-  return (
-    // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <AuthContext.Provider value={[user, setUser]}>
-      {children}
-    </AuthContext.Provider>
-  );
+export interface AuthContextSchema {
+  user: HourlyUser | null;
+  logInWithGoogle: (onSuccess: () => void, onFailure: () => void) => void;
+  signOut: () => void;
+  isLoggedIn: boolean;
 }
 
-export const useAuth = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const navigate = useNavigate();
-  const [userState, setUserState] = useContext(AuthContext);
+export const AuthContext = createContext<AuthContextSchema>({} as AuthContextSchema);
 
-  function loginWithGoogle(onSuccess: () => void, onFailure: () => void) {
+export function AuthProvider({ children }: any) {
+  const [hourlyUser, setHourlyUser] = useState(null as null | HourlyUser);
+
+  function logInWithGoogle(onSuccess: () => void, onFailure: () => void) {
     const auth = getAuth();
     signInWithPopup(auth, provider)
       .then(async (result) => {
@@ -42,22 +37,20 @@ export const useAuth = () => {
           onFailure();
           return;
         }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const token = credential.idToken;
         if (!token) {
           onFailure();
           return;
         }
         // The signed-in user info.
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { user } = result;
         const authResponse = await FlaskClient.post('google_auth', {
           token,
           name: auth.name,
         });
         if (authResponse) {
-          setUserState({
-            email: user.email,
+          setHourlyUser({
+            email: user.email || '',
             name: auth.name,
             id: authResponse.id,
             refreshToken: user.refreshToken,
@@ -66,21 +59,32 @@ export const useAuth = () => {
           onSuccess();
         } else {
           onFailure();
-          setUserState(null);
+          setHourlyUser(null);
         }
       }).catch(() => {
-        setUserState(null);
+        setHourlyUser(null);
         onFailure();
       });
   }
 
   function signOut() {
-    setUserState(null);
+    setHourlyUser(null);
   }
 
-  return {
-    loginWithGoogle,
+  const auth: AuthContextSchema = useMemo(() => ({
+    user: hourlyUser,
+    logInWithGoogle,
     signOut,
-    user: userState,
-  };
-};
+    isLoggedIn: (hourlyUser !== null),
+  }), [hourlyUser]);
+
+  return (
+    <AuthContext.Provider value={auth}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
