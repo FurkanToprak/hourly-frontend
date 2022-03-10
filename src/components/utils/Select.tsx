@@ -41,8 +41,8 @@ export default function StandardSelect(props:
   const { theme } = useTheme();
   const [selected, setSelected] = useState('');
   const handleChange = (event: any) => {
+    props.onSelect(event.target.value);
     setSelected(event.target.value);
-    props.onSelect(selected);
   };
   return (
     <div>
