@@ -53,7 +53,7 @@ export default function Tasks() {
           <StandardDateInput
             fullWidth
             label="Deadline (MM/DD/YYYY)"
-            onDateChange={(newDate) => {
+            onDateComplete={(newDate) => {
               setDeadline(newDate);
             }}
           />

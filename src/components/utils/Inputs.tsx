@@ -5,7 +5,9 @@ import { useTheme } from '../../contexts/Theme';
 import {
   darkBackground, lightBackground, purple, raspberry,
 } from '../../styles/Theme';
-import { daysPerMonth } from '../../utils/Time';
+import {
+  currentDate, currentDay, currentMonth, currentYear, daysPerMonth,
+} from '../../utils/Time';
 
 export const PurpleInput = styled(TextField)({
   color: purple,
@@ -165,9 +167,9 @@ export function StandardTimeInput(props: TextFieldProps & {
 }
 
 export function StandardDateInput(props: TextFieldProps & {
-  onDateChange: (newDate: string) => void
+  onDateComplete: (newDate: string) => void
 }) {
-  const { onDateChange, ...inputProps } = props;
+  const { onDateComplete, ...inputProps } = props;
   const [val, setVal] = useState('');
   return (
     <StandardInput
@@ -179,8 +181,8 @@ export function StandardDateInput(props: TextFieldProps & {
           const lastChar = dateInput.slice(-1);
           const lastIsSlash = lastChar === '/';
           if (!lastIsSlash) {
-            const lastIsNumeric = lastChar < '0' || lastChar > '9';
-            if (lastIsNumeric) {
+            const lastIsNumeric = lastChar >= '0' && lastChar <= '9';
+            if (!lastIsNumeric) {
               return;
             }
           }
@@ -190,33 +192,61 @@ export function StandardDateInput(props: TextFieldProps & {
           }
           // content regulation
           const firstBlock = splitInput[0];
-          if (firstBlock.length > 2) {
+          if (splitInput.length === 1) {
+            if (firstBlock.length > 2) {
+              return;
+            }
+            if (lastIsSlash && firstBlock.length > 0) {
+              setVal(dateInput);
+              return;
+            }
+            if (Number(firstBlock) > 12) {
+              setVal('12');
+            } else {
+              setVal(firstBlock);
+            }
             return;
           }
-          if (Number(firstBlock) > 12) {
-            setVal('12');
-            return;
-          }
-          if (splitInput.length > 1) {
+          if (splitInput.length === 2) {
             const secondBlock = splitInput[1];
+            if (firstBlock.length > 0 && secondBlock.length === 0) {
+              setVal(dateInput);
+              return;
+            }
             if (secondBlock.length > 2) {
+              return;
+            }
+            if (lastIsSlash && secondBlock.length > 0) {
+              setVal(dateInput);
               return;
             }
             const maxPossibleDays = daysPerMonth.get(Number(firstBlock)) || 0;
             if (Number(secondBlock) > maxPossibleDays) {
               setVal(`${firstBlock}/${maxPossibleDays}`);
+              console.log('ffff');
               return;
             }
           }
-          if (splitInput.length > 2) {
+          if (splitInput.length === 3) {
+            const secondBlock = splitInput[1];
             const thirdBlock = splitInput[2];
-            if (thirdBlock.length > 4) {
-
+            if (secondBlock.length > 0 && thirdBlock.length === 0) {
+              setVal(dateInput);
+              return;
             }
+            if (thirdBlock.length > 4) {
+              return;
+            }
+            if (new Date(dateInput) < currentDate) {
+              setVal(`${currentDay}/${currentMonth}/${currentYear}`);
+            } else {
+              setVal(dateInput);
+            }
+            onDateComplete(dateInput);
           }
         } else {
           setVal(dateInput);
-          onDateChange(dateInput);
+          onDateComplete(dateInput);
         }
       }}
     />
