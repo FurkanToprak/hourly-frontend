@@ -27,7 +27,7 @@ const defaultMenuItems: TabSchema[] = [
   },
 ];
 
-const loggedInMenuItems: TabSchema[] = [
+const notLoggedInMenuItems: TabSchema[] = [
   {
     title: 'Sign Up',
     route: '/signup',
@@ -40,7 +40,7 @@ const loggedInMenuItems: TabSchema[] = [
   },
 ];
 
-const notLoggedInMenuItems: TabSchema[] = [
+const loggedInMenuItems: TabSchema[] = [
   {
     title: 'Dashboard',
     route: '/dashboard',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StandardInput } from '../components/utils/Inputs';
+import { StandardInput, StandardNumericalInput, StandardTimeInput } from '../components/utils/Inputs';
 import StandardSelect from '../components/utils/Select';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
@@ -17,7 +17,9 @@ export default function Tasks() {
   const [description, setDescription] = useState('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [label, setLabel] = useState('');
-  const readyToSchedule = name.length > 0 && description.length > 0 && label.length > 0;
+  const [estimatedTime, setEstimatedTime] = useState('');
+  const readyToSchedule = !Number.isNaN(estimatedTime)
+   && name.length > 0 && description.length > 0 && label.length > 0;
   return (
     <Page centerY>
       <Title>Tasks</Title>
@@ -37,6 +39,15 @@ export default function Tasks() {
             fullWidth
             onChange={(event) => {
               setDescription(event.target.value);
+            }}
+          />
+        </div>
+        <div style={rowStyle}>
+          <StandardTimeInput
+            fullWidth
+            label="Estimated Time (HH:MM)"
+            onTimeChange={(newTime) => {
+              setEstimatedTime(newTime);
             }}
           />
         </div>

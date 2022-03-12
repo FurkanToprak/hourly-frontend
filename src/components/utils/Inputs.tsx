@@ -120,3 +120,44 @@ export function StandardNumericalInput(props: TextFieldProps & {
     />
   );
 }
+
+export function StandardTimeInput(props: TextFieldProps & {
+  onTimeChange: (newNumber: string) => void
+}) {
+  const { onTimeChange, ...inputProps } = props;
+  const [val, setVal] = useState('');
+  return (
+    <StandardInput
+      value={val}
+      {...inputProps}
+      onChange={(e) => {
+        const timeInput = e.target.value;
+        if (timeInput.length > 0) {
+          const lastChar = timeInput.slice(-1);
+          const lastIsColon = lastChar === ':';
+          const firstColonPosition = timeInput.indexOf(':');
+          if (timeInput.length - firstColonPosition > 3) {
+            return; // ##:##
+          }
+          const isExtraColon = lastIsColon && (timeInput.length - 1 > firstColonPosition);
+          if (isExtraColon) {
+            return;
+          }
+          const isNotNumberOrColon = !lastIsColon && (lastChar < '0' || lastChar > '9');
+          if (isNotNumberOrColon) {
+            return;
+          }
+          if (!lastIsColon && firstColonPosition >= 0) {
+            const splitTime = timeInput.split(':');
+            const validMins = Number(splitTime[1]);
+            if (validMins > 59) {
+              return;
+            }
+          }
+        }
+        setVal(timeInput);
+        onTimeChange(timeInput);
+      }}
+    />
+  );
+}
