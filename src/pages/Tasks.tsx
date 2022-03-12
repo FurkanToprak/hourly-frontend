@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StandardInput, StandardNumericalInput, StandardTimeInput } from '../components/utils/Inputs';
+import { StandardInput, StandardDateInput, StandardTimeInput } from '../components/utils/Inputs';
 import StandardSelect from '../components/utils/Select';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
@@ -11,15 +11,13 @@ const rowStyle = {
 };
 
 export default function Tasks() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [name, setName] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [description, setDescription] = useState('');
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [label, setLabel] = useState('');
   const [estimatedTime, setEstimatedTime] = useState('');
+  const [deadline, setDeadline] = useState('');
   const readyToSchedule = !Number.isNaN(estimatedTime)
-   && name.length > 0 && description.length > 0 && label.length > 0;
+    && name.length > 0 && description.length > 0 && label.length > 0;
   return (
     <Page centerY>
       <Title>Tasks</Title>
@@ -51,9 +49,16 @@ export default function Tasks() {
             }}
           />
         </div>
-        { /** deadline, time estimated, group */}
         <div style={rowStyle}>
-          { /** group */}
+          <StandardDateInput
+            fullWidth
+            label="Deadline (MM/DD/YYYY)"
+            onDateChange={(newDate) => {
+              setDeadline(newDate);
+            }}
+          />
+        </div>
+        <div style={rowStyle}>
           <StandardSelect
             label="Label"
             values={new Map<string, any>(Object.entries({
@@ -75,8 +80,15 @@ export default function Tasks() {
               if (!readyToSchedule) {
                 return;
               }
-              // then do something
-              console.log('a');
+              const payload = {
+                name,
+                description,
+                label,
+                deadline,
+                estimatedTime,
+              };
+              console.log('payload');
+              console.log(payload);
             }}
           >
             Schedule

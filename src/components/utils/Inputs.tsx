@@ -5,6 +5,7 @@ import { useTheme } from '../../contexts/Theme';
 import {
   darkBackground, lightBackground, purple, raspberry,
 } from '../../styles/Theme';
+import { daysPerMonth } from '../../utils/Time';
 
 export const PurpleInput = styled(TextField)({
   color: purple,
@@ -128,6 +129,7 @@ export function StandardTimeInput(props: TextFieldProps & {
   const [val, setVal] = useState('');
   return (
     <StandardInput
+      label={`${props.label}`}
       value={val}
       {...inputProps}
       onChange={(e) => {
@@ -157,6 +159,65 @@ export function StandardTimeInput(props: TextFieldProps & {
         }
         setVal(timeInput);
         onTimeChange(timeInput);
+      }}
+    />
+  );
+}
+
+export function StandardDateInput(props: TextFieldProps & {
+  onDateChange: (newDate: string) => void
+}) {
+  const { onDateChange, ...inputProps } = props;
+  const [val, setVal] = useState('');
+  return (
+    <StandardInput
+      value={val}
+      {...inputProps}
+      onChange={(e) => {
+        const dateInput = e.target.value;
+        if (dateInput.length) {
+          const lastChar = dateInput.slice(-1);
+          const lastIsSlash = lastChar === '/';
+          if (!lastIsSlash) {
+            const lastIsNumeric = lastChar < '0' || lastChar > '9';
+            if (lastIsNumeric) {
+              return;
+            }
+          }
+          const splitInput = dateInput.split('/');
+          if (lastIsSlash && splitInput.length === 4) {
+            return; // too many slashes
+          }
+          // content regulation
+          const firstBlock = splitInput[0];
+          if (firstBlock.length > 2) {
+            return;
+          }
+          if (Number(firstBlock) > 12) {
+            setVal('12');
+            return;
+          }
+          if (splitInput.length > 1) {
+            const secondBlock = splitInput[1];
+            if (secondBlock.length > 2) {
+              return;
+            }
+            const maxPossibleDays = daysPerMonth.get(Number(firstBlock)) || 0;
+            if (Number(secondBlock) > maxPossibleDays) {
+              setVal(`${firstBlock}/${maxPossibleDays}`);
+              return;
+            }
+          }
+          if (splitInput.length > 2) {
+            const thirdBlock = splitInput[2];
+            if (thirdBlock.length > 4) {
+
+            }
+          }
+        } else {
+          setVal(dateInput);
+          onDateChange(dateInput);
+        }
       }}
     />
   );

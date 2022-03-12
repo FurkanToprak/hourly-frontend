@@ -8,12 +8,12 @@ import { Body } from './Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
   black,
-  darkBackground, darkBorder, lightBackground, lightBorder, white,
+  darkBackground, thinDarkBorder, lightBackground, thinLightBorder, white,
 } from '../../styles/Theme';
 
 const StandardSelectBase = styled(InputBase)(() => {
   const { theme } = useTheme();
-  const themeBorder = theme === 'light' ? lightBorder : darkBorder;
+  const themeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
   return {
     'label + &': {
       marginTop: 5,
