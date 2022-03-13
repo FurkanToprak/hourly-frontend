@@ -5,7 +5,7 @@ import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
 import { Title } from '../components/utils/Texts';
 import { StandardButton } from '../components/utils/Buttons';
-import DatePicker from '../components/utils/DatePicker';
+import DatePicker from '../components/utils/TimeSelect';
 
 const rowStyle = {
   margin: 10, width: '50%',
@@ -51,14 +51,6 @@ export default function Tasks() {
           />
         </div>
         <div style={rowStyle}>
-          <DatePicker
-            label="Deadline (MM/DD/YYYY)"
-            onDateChange={(newDate) => {
-              setDeadline(newDate);
-            }}
-          />
-        </div>
-        <div style={rowStyle}>
           <StandardSelect
             label="Label"
             values={new Map<string, any>(Object.entries({
@@ -68,6 +60,14 @@ export default function Tasks() {
             }))}
             onSelect={(select: string) => {
               setLabel(select);
+            }}
+          />
+        </div>
+        <div style={rowStyle}>
+          <DatePicker
+            label="Deadline (MM/DD/YYYY)"
+            onDateChange={(newDate) => {
+              setDeadline(newDate);
             }}
           />
         </div>

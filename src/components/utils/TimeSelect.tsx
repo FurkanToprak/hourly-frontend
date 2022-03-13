@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { useTheme } from '../../contexts/Theme';
 import { thinDarkBorder, thinLightBorder } from '../../styles/Theme';
-import { Title } from './Texts';
-import 'react-datepicker/dist/react-datepicker.css';
+import { Body } from './Texts';
+import '../../styles/TimeSelect.css';
 
-export default function StandardDateInput(props: {
+export default function TimeSelect(props: {
     label: string;
     onDateChange: (newDate: Date) => void
   }) {
@@ -15,8 +15,11 @@ export default function StandardDateInput(props: {
   const { theme } = useTheme();
   const themeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
   return (
-    <div style={{ borderRadius: 2, border: themeBorder }}>
-      <Title size="m">{props.label}</Title>
+    <div style={{
+      borderRadius: 5, zIndex: 9999, border: themeBorder, display: 'flex', flexDirection: 'column', alignItems: 'center',
+    }}
+    >
+      <Body>{props.label}</Body>
       <DatePicker
         showTimeSelect
         selected={selectedDate}
