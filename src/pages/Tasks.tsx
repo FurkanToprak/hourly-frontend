@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { StandardInput, StandardDateInput, StandardTimeInput } from '../components/utils/Inputs';
+import { StandardInput, StandardTimeInput } from '../components/utils/Inputs';
 import StandardSelect from '../components/utils/Select';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
 import { Title } from '../components/utils/Texts';
 import { StandardButton } from '../components/utils/Buttons';
+import DatePicker from '../components/utils/DatePicker';
 
 const rowStyle = {
   margin: 10, width: '50%',
@@ -15,7 +16,7 @@ export default function Tasks() {
   const [description, setDescription] = useState('');
   const [label, setLabel] = useState('');
   const [estimatedTime, setEstimatedTime] = useState('');
-  const [deadline, setDeadline] = useState('');
+  const [deadline, setDeadline] = useState(new Date());
   const readyToSchedule = !Number.isNaN(estimatedTime)
     && name.length > 0 && description.length > 0 && label.length > 0;
   return (
@@ -50,10 +51,9 @@ export default function Tasks() {
           />
         </div>
         <div style={rowStyle}>
-          <StandardDateInput
-            fullWidth
+          <DatePicker
             label="Deadline (MM/DD/YYYY)"
-            onDateComplete={(newDate) => {
+            onDateChange={(newDate) => {
               setDeadline(newDate);
             }}
           />
