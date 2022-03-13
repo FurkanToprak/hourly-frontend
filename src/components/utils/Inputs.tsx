@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { InputBase, TextField, TextFieldProps } from '@mui/material';
+import { TextField, TextFieldProps } from '@mui/material';
 import React, { useState } from 'react';
 import { useTheme } from '../../contexts/Theme';
 import {
-  black, darkBackground, darkBorder, lightBackground, lightBorder, purple, raspberry, white,
+  darkBackground, lightBackground, purple, raspberry,
 } from '../../styles/Theme';
 
 export const PurpleInput = styled(TextField)({
@@ -121,29 +121,44 @@ export function StandardNumericalInput(props: TextFieldProps & {
   );
 }
 
-export const StandardSelect = styled(InputBase)(() => {
-  const { theme } = useTheme();
-  const themeBorder = theme === 'light' ? lightBorder : darkBorder;
-  return {
-    'label + &': {
-      marginTop: 5,
-      color: theme === 'light' ? black : white,
-    },
-    '& .MuiInputBase-input': {
-      flex: 1,
-      height: '100%',
-      color: theme === 'light' ? black : white,
-      borderRadius: 4,
-      position: 'relative',
-      border: themeBorder,
-      paddingLeft: 10,
-      fontSize: 16,
-      '&:focus': {
-        borderRadius: 4,
-        borderColor: themeBorder,
-        color: theme === 'light' ? black : white,
-        paddingLeft: 10,
-      },
-    },
-  };
-});
+export function StandardTimeInput(props: TextFieldProps & {
+  onTimeChange: (newNumber: string) => void
+}) {
+  const { onTimeChange, ...inputProps } = props;
+  const [val, setVal] = useState('');
+  return (
+    <StandardInput
+      label={`${props.label}`}
+      value={val}
+      {...inputProps}
+      onChange={(e) => {
+        const timeInput = e.target.value;
+        if (timeInput.length > 0) {
+          const lastChar = timeInput.slice(-1);
+          const lastIsColon = lastChar === ':';
+          const firstColonPosition = timeInput.indexOf(':');
+          if (timeInput.length - firstColonPosition > 3) {
+            return; // ##:##
+          }
+          const isExtraColon = lastIsColon && (timeInput.length - 1 > firstColonPosition);
+          if (isExtraColon) {
+            return;
+          }
+          const isNotNumberOrColon = !lastIsColon && (lastChar < '0' || lastChar > '9');
+          if (isNotNumberOrColon) {
+            return;
+          }
+          if (!lastIsColon && firstColonPosition >= 0) {
+            const splitTime = timeInput.split(':');
+            const validMins = Number(splitTime[1]);
+            if (validMins > 59) {
+              return;
+            }
+          }
+        }
+        setVal(timeInput);
+        onTimeChange(timeInput);
+      }}
+    />
+  );
+}
