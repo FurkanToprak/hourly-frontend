@@ -20,6 +20,7 @@ export default function Panel(props: {
     centerX?: true;
     centerY?: true;
     fill?: true;
+    margin?: true;
     flex?: 'row' | 'column';
     children: any;
 }) {
@@ -34,6 +35,7 @@ export default function Panel(props: {
         justifyContent: props.centerX ? 'center' : undefined,
         display: 'flex',
         flexDirection: props.flex,
+        padding: props.margin ? 10 : undefined,
       }}
       >
         {props.children}

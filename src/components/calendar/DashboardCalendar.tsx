@@ -5,13 +5,25 @@ import moment from 'moment';
 import Panel from '../utils/Panel';
 import '../../styles/DashboardCalendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
+import { StandardInput } from '../utils/Inputs';
+import TimeSelect from './TimeSelect';
+import { StandardButton } from '../utils/Buttons';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const DnDCalendar = withDragAndDrop(Calendar);
 
+const inputStyle: React.CSSProperties = {
+  margin: 10,
+};
+
+const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
+
 export default function DashboardCalendar() {
+  const [selectedEvent, setSelectedEvent] = useState(null as null | Event);
+  const [startDate, setStartDate] = useState(null as null | Date);
+  const [endDate, setEndDate] = useState(null as null | Date);
   const [events, setEvents] = useState([
     {
       title: 'example Event',
@@ -46,6 +58,9 @@ export default function DashboardCalendar() {
           });
           setEvents(freshEvents);
         }}
+        onSelectEvent={(event) => {
+          setSelectedEvent(event);
+        }}
         localizer={localizer}
         events={events}
         startAccessor="start"
@@ -53,6 +68,26 @@ export default function DashboardCalendar() {
         resizable
         style={{ margin: 10 }}
       />
+      <Panel centerY flex="column" margin>
+        <StandardInput label="Title" style={inputStyle} fullWidth />
+        <div style={fullRowStyle}>
+          <TimeSelect
+            label="Start Time"
+            onDateChange={(newDate) => {
+              setStartDate(newDate);
+            }}
+          />
+        </div>
+        <div style={fullRowStyle}>
+          <TimeSelect
+            label="End Time"
+            onDateChange={(newDate) => {
+              setEndDate(newDate);
+            }}
+          />
+        </div>
+        <StandardButton fullWidth variant="outlined">{selectedEvent ? 'Change Event' : 'Create Event'}</StandardButton>
+      </Panel>
     </Panel>
   );
 }

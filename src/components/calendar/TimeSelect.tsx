@@ -16,7 +16,7 @@ export default function TimeSelect(props: {
   const themeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
   return (
     <div style={{
-      borderRadius: 5, zIndex: 9999, border: themeBorder, display: 'flex', flexDirection: 'column', alignItems: 'center',
+      flex: 1, borderRadius: 5, zIndex: 9999, border: themeBorder, display: 'flex', flexDirection: 'column', alignItems: 'center',
     }}
     >
       <Body>{props.label}</Body>
