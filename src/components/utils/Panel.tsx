@@ -19,13 +19,14 @@ const panelContentStyle: React.CSSProperties = {
 export default function Panel(props: {
     centerX?: true;
     centerY?: true;
+    fill?: true;
     flex?: 'row' | 'column';
     children: any;
 }) {
   const { theme } = useTheme();
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
   return (
-    <div style={panelStyle}>
+    <div style={{ flex: props.fill ? 1 : undefined, ...panelStyle }}>
       <div style={{
         ...panelContentStyle,
         border: themeBorder,

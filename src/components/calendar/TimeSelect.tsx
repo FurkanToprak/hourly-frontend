@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { useTheme } from '../../contexts/Theme';
 import { thinDarkBorder, thinLightBorder } from '../../styles/Theme';
-import { Body } from './Texts';
+import { Body } from '../utils/Texts';
 import '../../styles/TimeSelect.css';
 
 export default function TimeSelect(props: {
