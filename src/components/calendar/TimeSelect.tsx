@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import DatePicker from 'react-datepicker';
 import { useTheme } from '../../contexts/Theme';
 import { thinDarkBorder, thinLightBorder } from '../../styles/Theme';
@@ -23,6 +21,7 @@ export default function TimeSelect(props: {
       <DatePicker
         showTimeSelect
         selected={selectedDate}
+        value={selectedDate.toString()}
         onChange={(date: Date) => {
           setSelectedDate(date);
           props.onDateChange(date);

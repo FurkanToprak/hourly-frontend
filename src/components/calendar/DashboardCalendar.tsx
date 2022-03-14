@@ -8,6 +8,7 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { StandardInput } from '../utils/Inputs';
 import TimeSelect from './TimeSelect';
 import { StandardButton } from '../utils/Buttons';
+import { Title } from '../utils/Texts';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -60,8 +61,10 @@ export default function DashboardCalendar() {
           });
           setEvents(freshEvents);
         }}
-        onSelectEvent={(event) => {
+        onSelectEvent={(event: Event) => {
           setSelectedEvent(event);
+          setStartDate(event.start as Date);
+          setEndDate(event.end as Date);
         }}
         localizer={localizer}
         events={events}
@@ -71,8 +74,10 @@ export default function DashboardCalendar() {
         style={{ margin: 10 }}
       />
       <Panel centerY flex="column" margin>
+        <Title size="s">{selectedEvent ? 'Edit Event' : 'Create Event'}</Title>
         <StandardInput
           label="Title"
+          value={eventTitle}
           style={inputStyle}
           fullWidth
           onChange={(e) => {
@@ -112,8 +117,21 @@ export default function DashboardCalendar() {
             setEvents(freshEvents);
           }}
         >
-          Create Event
+          {selectedEvent ? 'Edit' : 'Create'}
         </StandardButton>
+        { selectedEvent
+        && (
+        <StandardButton
+          style={{ marginTop: 10 }}
+          variant="outlined"
+          fullWidth
+          onMouseDown={() => {
+            setSelectedEvent(null);
+          }}
+        >
+          Cancel
+        </StandardButton>
+        )}
       </Panel>
     </Panel>
   );
