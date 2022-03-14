@@ -22,6 +22,7 @@ const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
 
 export default function DashboardCalendar() {
   const [selectedEvent, setSelectedEvent] = useState(null as null | Event);
+  const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
   const [endDate, setEndDate] = useState(null as null | Date);
   const [events, setEvents] = useState([
@@ -31,6 +32,7 @@ export default function DashboardCalendar() {
       end: moment().add(1, 'day').toDate(),
     },
   ] as Event[]);
+  const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   return (
     <Panel centerY flex="column" fill>
       {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -69,7 +71,14 @@ export default function DashboardCalendar() {
         style={{ margin: 10 }}
       />
       <Panel centerY flex="column" margin>
-        <StandardInput label="Title" style={inputStyle} fullWidth />
+        <StandardInput
+          label="Title"
+          style={inputStyle}
+          fullWidth
+          onChange={(e) => {
+            setEventTitle(e.target.value);
+          }}
+        />
         <div style={fullRowStyle}>
           <TimeSelect
             label="Start Time"
@@ -86,7 +95,25 @@ export default function DashboardCalendar() {
             }}
           />
         </div>
-        <StandardButton fullWidth variant="outlined">{selectedEvent ? 'Change Event' : 'Create Event'}</StandardButton>
+        <StandardButton
+          fullWidth
+          disabled={!eventReady}
+          variant="outlined"
+          onMouseDown={() => {
+            if (!eventReady) {
+              return;
+            }
+            const freshEvents = events;
+            freshEvents.push({
+              start: startDate as Date,
+              end: endDate as Date,
+              title: eventTitle,
+            });
+            setEvents(freshEvents);
+          }}
+        >
+          Create Event
+        </StandardButton>
       </Panel>
     </Panel>
   );
