@@ -5,7 +5,7 @@ import { Title } from '../components/utils/Texts';
 
 export default function Dashboard() {
   return (
-    <Page fullHeight>
+    <Page fullHeight centerY>
       <Title>Dashboard</Title>
       <DashboardCalendar />
     </Page>
