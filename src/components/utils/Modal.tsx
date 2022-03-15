@@ -6,7 +6,7 @@ import { black, white } from '../../styles/Theme';
 import { useTheme } from '../../contexts/Theme';
 
 export default function Modal(props: {
-    children: JSX.Element[];
+    children: JSX.Element[] | JSX.Element;
     open: boolean;
     onClose: () => void;
 }) {
