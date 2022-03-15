@@ -48,6 +48,7 @@ export function AuthProvider({ children }: any) {
         }
         // The signed-in user info.
         const { user } = result;
+        // broken?
         const authResponse = await FlaskClient.post('google_auth', {
           token,
           name: auth.name,
