@@ -21,7 +21,6 @@ export default function Dashboard() {
           style={{ cursor: 'pointer', color: themeFont }}
           onMouseDown={() => {
             // Google Calendar Import
-            console.log('a');
           }}
         />
       </div>
