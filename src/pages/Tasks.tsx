@@ -5,7 +5,7 @@ import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
 import { Title } from '../components/utils/Texts';
 import { StandardButton } from '../components/utils/Buttons';
-import DatePicker from '../components/utils/TimeSelect';
+import DatePicker from '../components/calendar/TimeSelect';
 
 const rowStyle = {
   margin: 10, width: '50%',
