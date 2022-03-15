@@ -108,7 +108,13 @@ export default function DashboardCalendar() {
             if (!eventReady) {
               return;
             }
-            const freshEvents = events;
+            let freshEvents;
+            if (selectedEvent) {
+              freshEvents = events.filter((event) => event !== selectedEvent);
+            } else {
+              freshEvents = events;
+            }
+
             freshEvents.push({
               start: startDate as Date,
               end: endDate as Date,
