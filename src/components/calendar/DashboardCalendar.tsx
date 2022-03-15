@@ -18,21 +18,16 @@ const DnDCalendar = withDragAndDrop(Calendar);
 const inputStyle: React.CSSProperties = {
   margin: 10,
 };
-
+const cancelButtonStyle = { marginTop: 10 };
 const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
+const calendarStyle = { margin: 10 };
 
 export default function DashboardCalendar() {
   const [selectedEvent, setSelectedEvent] = useState(null as null | Event);
   const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
   const [endDate, setEndDate] = useState(null as null | Date);
-  const [events, setEvents] = useState([
-    {
-      title: 'example Event',
-      start: moment().toDate(),
-      end: moment().add(1, 'day').toDate(),
-    },
-  ] as Event[]);
+  const [events, setEvents] = useState([] as Event[]);
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   return (
     <Panel centerY flex="column" fill>
@@ -71,7 +66,7 @@ export default function DashboardCalendar() {
         startAccessor="start"
         endAccessor="end"
         resizable
-        style={{ margin: 10 }}
+        style={calendarStyle}
       />
       <Panel centerY flex="column" margin>
         <Title size="s">{selectedEvent ? 'Edit Event' : 'Create Event'}</Title>
@@ -128,11 +123,14 @@ export default function DashboardCalendar() {
         { selectedEvent
         && (
         <StandardButton
-          style={{ marginTop: 10 }}
+          style={cancelButtonStyle}
           variant="outlined"
           fullWidth
           onMouseDown={() => {
             setSelectedEvent(null);
+            setEventTitle('');
+            setStartDate(null);
+            setEndDate(null);
           }}
         >
           Cancel
