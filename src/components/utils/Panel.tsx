@@ -25,7 +25,7 @@ export default function Panel(props: {
     fill?: true;
     margin?: true;
     flex?: 'row' | 'column';
-    children: any[];
+    children: JSX.Element | JSX.Element[];
 }) {
   const { theme } = useTheme();
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
