@@ -1,6 +1,8 @@
 import React from 'react';
 import { useTheme } from '../../contexts/Theme';
-import { darkBorder, lightBorder } from '../../styles/Theme';
+import {
+  darkBackground, darkBorder, lightBackground, lightBorder,
+} from '../../styles/Theme';
 
 const panelStyle: React.CSSProperties = {
   width: '100%',
@@ -17,17 +19,20 @@ const panelContentStyle: React.CSSProperties = {
 };
 
 export default function Panel(props: {
+    solid?: true;
     centerX?: true;
     centerY?: true;
     fill?: true;
     margin?: true;
     flex?: 'row' | 'column';
-    children: any;
+    children: any[];
 }) {
   const { theme } = useTheme();
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
+  const themeBackground = theme === 'light' ? lightBackground : darkBackground;
+  const backgroundColor = props.solid ? themeBackground : undefined;
   return (
-    <div style={{ flex: props.fill ? 1 : undefined, ...panelStyle }}>
+    <div style={{ flex: props.fill ? 1 : undefined, backgroundColor, ...panelStyle }}>
       <div style={{
         ...panelContentStyle,
         border: themeBorder,
