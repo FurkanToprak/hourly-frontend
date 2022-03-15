@@ -16,6 +16,7 @@ import { AuthProvider } from './contexts/Auth';
 import NotFound from './pages/NotFound';
 import Tasks from './pages/Tasks';
 import Dashboard from './pages/Dashboard';
+import { AuthBannedRoute, AuthOnlyRoute } from './components/auth/AuthRoute';
 
 const appRatioStyle: React.CSSProperties = { flex: 1, display: 'flex', flexDirection: 'column' };
 const appContentStyle: React.CSSProperties = { flex: 9, display: 'flex', flexDirection: 'column' };
@@ -33,11 +34,16 @@ export default function App() {
               <div style={appContentStyle}>
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/signup" element={<SignUp />} />
-                  <Route path="/login" element={<LogIn />} />
-                  <Route path="/tasks" element={<Tasks />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="*" element={<NotFound />} />
+                  <Route
+                    path="/signup"
+                    element={
+                      <AuthBannedRoute><SignUp /></AuthBannedRoute>
+}
+                  />
+                  <Route path="/login" element={<AuthBannedRoute><LogIn /></AuthBannedRoute>} />
+                  <Route path="/tasks" element={<AuthOnlyRoute><Tasks /></AuthOnlyRoute>} />
+                  <Route path="/dashboard" element={<AuthOnlyRoute><Dashboard /></AuthOnlyRoute>} />
+                  <Route path="*" element={<AuthOnlyRoute><NotFound /></AuthOnlyRoute>} />
                 </Routes>
               </div>
             </div>
