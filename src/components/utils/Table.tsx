@@ -2,6 +2,7 @@ import React from 'react';
 import {
   TableBody, TableContainer, Table as MuiTable, TableHead, TableRow, TableCell,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { Body, Title } from './Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
@@ -14,6 +15,7 @@ export default function Table(props: {
     items: any[];
     emptyMessage: string;
 }) {
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const thickThemeBorder = theme === 'light' ? lightBorder : darkBorder;
   const thinThemeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
@@ -31,7 +33,13 @@ export default function Table(props: {
         </TableHead>
         <TableBody>
           {props.items.map((item) => (
-            <TableRow key={`row-${item.name}`}>
+            <TableRow
+              key={`row-${item.name}`}
+              onMouseDown={() => {
+                navigate(`/task/${item.id}`);
+              }}
+              style={{ cursor: 'pointer' }}
+            >
               {
                             props.keys.map((itemColumn) => {
                               const cell = item[itemColumn];

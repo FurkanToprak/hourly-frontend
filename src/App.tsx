@@ -17,6 +17,7 @@ import NotFound from './pages/NotFound';
 import Tasks from './pages/Tasks';
 import Dashboard from './pages/Dashboard';
 import { AuthBannedRoute, AuthOnlyRoute } from './components/auth/AuthRoute';
+import Task from './pages/Task';
 
 const appRatioStyle: React.CSSProperties = { flex: 1, display: 'flex', flexDirection: 'column' };
 const appContentStyle: React.CSSProperties = { flex: 9, display: 'flex', flexDirection: 'column' };
@@ -42,6 +43,7 @@ export default function App() {
                   />
                   <Route path="/login" element={<AuthBannedRoute><LogIn /></AuthBannedRoute>} />
                   <Route path="/tasks" element={<AuthOnlyRoute><Tasks /></AuthOnlyRoute>} />
+                  <Route path="/task/:taskid" element={<AuthOnlyRoute><Task /></AuthOnlyRoute>} />
                   <Route path="/dashboard" element={<AuthOnlyRoute><Dashboard /></AuthOnlyRoute>} />
                   <Route path="*" element={<AuthOnlyRoute><NotFound /></AuthOnlyRoute>} />
                 </Routes>
