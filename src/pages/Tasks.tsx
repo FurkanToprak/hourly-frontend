@@ -12,7 +12,7 @@ const rowStyle = {
   margin: 10, width: '50%',
 };
 
-interface TaskItem {
+export interface TaskItem {
   name: string;
   description: string;
   label: string;
