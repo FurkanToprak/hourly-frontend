@@ -9,6 +9,7 @@ import {
 } from '../../styles/Theme';
 
 export default function Table(props: {
+    keys: string[]
     columns: string[];
     items: any[];
 }) {
@@ -31,14 +32,17 @@ export default function Table(props: {
           {props.items.map((item) => (
             <TableRow key={`row-${item.name}`}>
               {
-                            Object.entries(item).map((itemColumn) => (
-                              <TableCell align="left" style={{ borderBottom: thinThemeBorder }} key={`row-${item.name}-col-${itemColumn}`}>
-                                <Body>
-                                  {(typeof itemColumn[1]) === 'string'
-                                    ? itemColumn[1] : (itemColumn[1] as any).toString()}
-                                </Body>
-                              </TableCell>
-                            ))
+                            props.keys.map((itemColumn) => {
+                              const cell = item[itemColumn];
+                              const cellText = (cell instanceof Date) ? `${cell.getMonth()}/${cell.getDay()}/${cell.getFullYear()}` : cell;
+                              return (
+                                <TableCell align="left" style={{ borderBottom: thinThemeBorder }} key={`row-${item.name}-col-${itemColumn}`}>
+                                  <Body>
+                                    {cellText}
+                                  </Body>
+                                </TableCell>
+                              );
+                            })
                         }
             </TableRow>
           ))}

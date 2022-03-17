@@ -98,7 +98,6 @@ export default function Tasks() {
                 estimatedTime,
               };
                 // send payload
-              console.log(payload);
               const freshTasks = tasks.slice();
               freshTasks.push(payload);
               setTasks(freshTasks);
@@ -110,7 +109,8 @@ export default function Tasks() {
       </Panel>
       <Panel flex="column" centerY>
         <Table
-          columns={['Title', 'Description', 'Label', 'Est. Time', 'Deadline']}
+          keys={['name', 'description', 'label', 'estimatedTime', 'deadline']}
+          columns={['Name', 'Description', 'Label', 'Est. Time', 'Deadline']}
           items={tasks}
         />
       </Panel>
