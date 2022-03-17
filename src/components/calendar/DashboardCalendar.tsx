@@ -38,7 +38,7 @@ export default function DashboardCalendar() {
         defaultView="month"
         onEventDrop={(droppedEvent) => {
           const oldEvent = droppedEvent.event as Event;
-          const freshEvents = events.filter((value) => value !== oldEvent);
+          const freshEvents = events.slice().filter((value) => value !== oldEvent);
           freshEvents.push({
             start: new Date(droppedEvent.start),
             end: new Date(droppedEvent.end),
@@ -48,7 +48,7 @@ export default function DashboardCalendar() {
         }}
         onEventResize={(resizedEvent) => {
           const oldEvent = resizedEvent.event as Event;
-          const freshEvents = events.filter((value) => value !== oldEvent);
+          const freshEvents = events.slice().filter((value) => value !== oldEvent);
           freshEvents.push({
             start: new Date(resizedEvent.start),
             end: new Date(resizedEvent.end),
