@@ -1,4 +1,5 @@
 import React from 'react';
+import Histogram from '../components/graphs/Histogram';
 import Pie from '../components/graphs/Pie';
 import Label from '../components/utils/Label';
 import Page from '../components/utils/Page';
@@ -9,8 +10,10 @@ import { toShortTimeString } from '../utils/Time';
 import { TaskItem } from './Tasks';
 
 const labelRowStyle: React.CSSProperties = {
-  width: '100%', marginTop: 10, marginBottom: 10,
+  marginTop: 10, marginBottom: 10,
 };
+
+const statRowStyle: React.CSSProperties = { flex: 1, display: 'flex' };
 
 export default function Task() {
   const fetchedTask: TaskItem = {
@@ -22,6 +25,7 @@ export default function Task() {
     scheduled: [new Date()],
     id: 'string',
   };
+
   return (
     <Page fullHeight>
       <Panel flex="column" margin>
@@ -47,9 +51,9 @@ export default function Task() {
           <Body>{toShortTimeString(fetchedTask.deadline)}</Body>
         </div>
       </Panel>
-      <Panel flex="column" fill margin>
+      <Panel flex="column" margin fill>
         <Title>Statistics</Title>
-        <div style={{ height: 200, padding: 10 }}>
+        <div style={statRowStyle}>
           <Pie data={[{
             id: 'Completed',
             label: 'Completed',
@@ -68,6 +72,14 @@ export default function Task() {
           }]}
           />
         </div>
+        <div style={statRowStyle}>
+          <Histogram
+            title="Expected Time"
+            data={[10, 20, 14, 12, 55, 11, 2, 122,
+            ]}
+          />
+        </div>
+
         {/** Distribution of expected time */}
         {/** Distribution of time taken */}
       </Panel>
