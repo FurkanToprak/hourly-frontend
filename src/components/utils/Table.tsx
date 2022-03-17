@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TableBody, TableContainer, Table as MuiTable, TableHead, TableRow, TableCell,
 } from '@mui/material';
@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Body, Title } from './Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
-  darkBorder, lightBorder, thinDarkBorder, thinLightBorder,
+  darkBorder, lightBorder, purple, thinDarkBorder, thinLightBorder,
 } from '../../styles/Theme';
 
 export default function Table(props: {
@@ -15,6 +15,7 @@ export default function Table(props: {
     items: any[];
     emptyMessage: string;
 }) {
+  const [hoverRow, setHoverRow] = useState(-1);
   const navigate = useNavigate();
   const { theme } = useTheme();
   const thickThemeBorder = theme === 'light' ? lightBorder : darkBorder;
@@ -32,13 +33,19 @@ export default function Table(props: {
           </TableRow>
         </TableHead>
         <TableBody>
-          {props.items.map((item) => (
+          {props.items.map((item, rowNumber: number) => (
             <TableRow
+              onMouseOver={() => {
+                setHoverRow(rowNumber);
+              }}
+              onMouseLeave={() => {
+                setHoverRow(-1);
+              }}
               key={`row-${item.name}`}
               onMouseDown={() => {
                 navigate(`/task/${item.id}`);
               }}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', backgroundColor: hoverRow === rowNumber ? purple : undefined }}
             >
               {
                             props.keys.map((itemColumn) => {
