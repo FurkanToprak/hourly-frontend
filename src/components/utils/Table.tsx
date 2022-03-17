@@ -12,6 +12,7 @@ export default function Table(props: {
     keys: string[]
     columns: string[];
     items: any[];
+    emptyMessage: string;
 }) {
   const { theme } = useTheme();
   const thickThemeBorder = theme === 'light' ? lightBorder : darkBorder;
@@ -46,6 +47,11 @@ export default function Table(props: {
                         }
             </TableRow>
           ))}
+          {props.items.length === 0 && (
+          <TableRow style={{ display: 'flex', justifyContent: 'center' }}>
+            <Body>{props.emptyMessage}</Body>
+          </TableRow>
+          )}
         </TableBody>
       </MuiTable>
     </TableContainer>

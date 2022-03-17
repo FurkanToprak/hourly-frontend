@@ -18,6 +18,7 @@ interface TaskItem {
   label: string;
   estimatedTime: string;
   deadline: Date;
+  scheduled: Date[];
 }
 
 export default function Tasks() {
@@ -96,6 +97,7 @@ export default function Tasks() {
                 label,
                 deadline,
                 estimatedTime,
+                scheduled: [],
               };
                 // send payload
               const freshTasks = tasks.slice();
@@ -109,9 +111,10 @@ export default function Tasks() {
       </Panel>
       <Panel flex="column" centerY>
         <Table
-          keys={['name', 'description', 'label', 'estimatedTime', 'deadline']}
-          columns={['Name', 'Description', 'Label', 'Est. Time', 'Deadline']}
+          keys={['name', 'description', 'label', 'deadline']}
+          columns={['Name', 'Description', 'Label', 'Deadline']}
           items={tasks}
+          emptyMessage="No scheduled tasks"
         />
       </Panel>
     </Page>
