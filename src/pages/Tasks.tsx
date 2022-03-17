@@ -6,10 +6,19 @@ import Panel from '../components/utils/Panel';
 import { Title } from '../components/utils/Texts';
 import { StandardButton } from '../components/utils/Buttons';
 import DatePicker from '../components/calendar/TimeSelect';
+import Table from '../components/utils/Table';
 
 const rowStyle = {
   margin: 10, width: '50%',
 };
+
+interface TaskItem {
+  name: string;
+  description: string;
+  label: string;
+  estimatedTime: string;
+  deadline: Date;
+}
 
 export default function Tasks() {
   const [name, setName] = useState('');
@@ -19,6 +28,7 @@ export default function Tasks() {
   const [deadline, setDeadline] = useState(new Date());
   const readyToSchedule = !Number.isNaN(estimatedTime)
     && name.length > 0 && description.length > 0 && label.length > 0;
+  const [tasks, setTasks] = useState([] as TaskItem[]);
   return (
     <Page centerY>
       <Title>Tasks</Title>
@@ -80,20 +90,29 @@ export default function Tasks() {
               if (!readyToSchedule) {
                 return;
               }
-              const payload = {
+              const payload: TaskItem = {
                 name,
                 description,
                 label,
                 deadline,
                 estimatedTime,
               };
-              console.log('payload');
+                // send payload
               console.log(payload);
+              const freshTasks = tasks.slice();
+              freshTasks.push(payload);
+              setTasks(freshTasks);
             }}
           >
             Schedule
           </StandardButton>
         </div>
+      </Panel>
+      <Panel flex="column" centerY>
+        <Table
+          columns={['Title', 'Description', 'Label', 'Est. Time', 'Deadline']}
+          items={tasks}
+        />
       </Panel>
     </Page>
   );
