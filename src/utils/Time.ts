@@ -6,6 +6,9 @@ TimeAgo.addDefaultLocale(en);
 // Create formatter (English).
 const timeAgo = new TimeAgo('en-US');
 
+export function toShortTimeString(time: Date) {
+  return `${time.getMonth()}/${time.getDay()}/${time.getFullYear()}`;
+}
 export default function formatTime(time: string): string {
   const thisTime = new Date(time);
   const formattedTime = timeAgo.format(thisTime, 'round');

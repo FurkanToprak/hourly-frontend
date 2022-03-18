@@ -12,13 +12,14 @@ const rowStyle = {
   margin: 10, width: '50%',
 };
 
-interface TaskItem {
+export interface TaskItem {
   name: string;
   description: string;
   label: string;
   estimatedTime: string;
   deadline: Date;
   scheduled: Date[];
+  id: string;
 }
 
 export default function Tasks() {
@@ -98,6 +99,7 @@ export default function Tasks() {
                 deadline,
                 estimatedTime,
                 scheduled: [],
+                id: '12345',
               };
                 // send payload
               const freshTasks = tasks.slice();
