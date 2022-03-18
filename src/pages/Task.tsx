@@ -54,22 +54,24 @@ export default function Task() {
       <Panel flex="column" margin fill>
         <Title>Statistics</Title>
         <div style={statRowStyle}>
-          <Pie data={[{
-            id: 'Completed',
-            label: 'Completed',
-            value: 65,
-            color: raspberry,
-          }, {
-            id: 'Not Started',
-            label: 'Not Started',
-            value: 22,
-            color: white,
-          }, {
-            id: 'Started',
-            label: 'Started',
-            value: 99,
-            color: purple,
-          }]}
+          <Pie
+            title="Task Completion"
+            data={[{
+              id: 'Completed',
+              label: 'Completed',
+              value: 65,
+              color: raspberry,
+            }, {
+              id: 'Not Started',
+              label: 'Not Started',
+              value: 22,
+              color: white,
+            }, {
+              id: 'Started',
+              label: 'Started',
+              value: 99,
+              color: purple,
+            }]}
           />
         </div>
         <div style={statRowStyle}>
@@ -78,10 +80,12 @@ export default function Task() {
             data={[10, 20, 14, 12, 55, 11, 2, 122,
             ]}
           />
+          <Histogram
+            title="Time Used"
+            data={[10, 20, 14, 12, 55, 11, 2, 122,
+            ]}
+          />
         </div>
-
-        {/** Distribution of expected time */}
-        {/** Distribution of time taken */}
       </Panel>
     </Page>
   );
