@@ -1,16 +1,19 @@
 import React from 'react';
 import { useTheme } from '../../contexts/Theme';
-import { thinDarkBorder, thinLightBorder } from '../../styles/Theme';
-import { Body } from './Texts';
+import {
+  darkBackground, lightBackground,
+} from '../../styles/Theme';
+import { Title } from './Texts';
 
 export default function Label(props: {
     children: any
 }) {
   const { theme } = useTheme();
-  const themeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
+  const themeColor = theme === 'light' ? 'white' : 'black';
+  const themeBackground = theme === 'light' ? darkBackground : lightBackground;
   return (
-    <span style={{ border: themeBorder, borderRadius: 4, padding: 2 }}>
-      <Body>{props.children}</Body>
+    <span style={{ backgroundColor: themeBackground, borderRadius: 4, padding: 2 }}>
+      <Title color={themeColor} size="xs">{props.children}</Title>
     </span>
   );
 }

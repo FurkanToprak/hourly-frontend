@@ -1,44 +1,69 @@
 import React from 'react';
 import { ResponsiveBar } from '@nivo/bar';
-import { purple, white } from '../../styles/Theme';
+import {
+  darkBackground,
+  lightBackground, white,
+} from '../../styles/Theme';
 import { Title } from '../utils/Texts';
+import { useTheme } from '../../contexts/Theme';
+
+function generateStats(values: number[], numBins: number) {
+  let max = values[0];
+  let min = values[0];
+  values.forEach((value) => {
+    if (value > max) {
+      max = value;
+    }
+    if (value < min) {
+      min = value;
+    }
+  });
+  const bins = Array(numBins).fill(0);
+  const range = max - min;
+  const binRange = range / numBins;
+  values.forEach((value) => {
+    const distance = Math.min(numBins - 1, Math.floor((value - min) / binRange));
+    bins[distance] += 1;
+  });
+  const hist = bins.map((freq, index) => ({
+    x: Math.round((min + index * binRange) * 100) / 100,
+    y: Math.round((100 * (freq / values.length)) * 100) / 100,
+  }));
+  return hist;
+}
+const noToolTip = () => <div />;
 
 export default function Histogram(props: {
     title: string;
     data: number[];
+    color: string;
 }) {
-  const sortedData = props.data;
-  sortedData.sort();
-  const population = sortedData.length;
-  const data: {x: number, y: number}[] = [];
-  const currentPercentile = sortedData[0];
-  let percentile = 0;
-  sortedData.forEach((datum: number, index: number) => {
-    if (datum > currentPercentile) {
-      percentile = Math.round(100 * (index / population));
-      data.push({
-        x: datum,
-        y: percentile,
-      });
-    }
-  });
+  const { theme } = useTheme();
+  const borderColor = theme === 'light' ? darkBackground : lightBackground;
+  const numBins = 6;
+  const bins = generateStats(props.data, numBins);
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <Title size="s">{`Distribution of ${props.title}`}</Title>
       <div style={{ position: 'relative', flex: 1 }}>
         <div style={{ position: 'absolute', width: '100%', height: '100%' }}>
           <ResponsiveBar
-            colors={purple}
+            colors={props.color}
             labelTextColor={white}
-            data={data}
+            data={bins}
             indexBy="x"
-            borderColor="red"
+            borderColor={borderColor}
             keys={['y']}
             margin={{
               top: 50,
-              left: 50,
+              left: 30,
               bottom: 30,
             }}
+            borderRadius={4}
+            borderWidth={3}
+            tooltip={noToolTip}
+            animate
+            isInteractive
           />
         </div>
       </div>

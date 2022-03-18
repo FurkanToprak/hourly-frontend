@@ -9,11 +9,9 @@ import { purple, raspberry, white } from '../styles/Theme';
 import { toShortTimeString } from '../utils/Time';
 import { TaskItem } from './Tasks';
 
-const labelRowStyle: React.CSSProperties = {
-  marginTop: 10, marginBottom: 10,
-};
+const rowStyle: React.CSSProperties = { marginBottom: 10 };
 
-const statRowStyle: React.CSSProperties = { flex: 1, display: 'flex' };
+const statRowStyle: React.CSSProperties = { flex: 1, display: 'flex', marginTop: 10 };
 
 export default function Task() {
   const fetchedTask: TaskItem = {
@@ -29,24 +27,24 @@ export default function Task() {
   return (
     <Page fullHeight>
       <Panel flex="column" margin>
-        <Title>Task</Title>
-        <div>
+        <Title>Title</Title>
+        <div style={rowStyle}>
           <Title size="xs">{'Task: '}</Title>
           <Body>{fetchedTask.name}</Body>
         </div>
-        <div style={labelRowStyle}>
+        <div style={rowStyle}>
           <Title size="xs">{'Label: '}</Title>
           <Label>{fetchedTask.label}</Label>
         </div>
-        <div>
+        <div style={rowStyle}>
           <Title size="xs">{'Description: '}</Title>
           <Body>{fetchedTask.description}</Body>
         </div>
-        <div>
+        <div style={rowStyle}>
           <Title size="xs">{'Estimated Time: '}</Title>
           <Body>{fetchedTask.estimatedTime}</Body>
         </div>
-        <div>
+        <div style={rowStyle}>
           <Title size="xs">{'Deadline: '}</Title>
           <Body>{toShortTimeString(fetchedTask.deadline)}</Body>
         </div>
@@ -76,14 +74,14 @@ export default function Task() {
         </div>
         <div style={statRowStyle}>
           <Histogram
+            color={purple}
             title="Expected Time"
-            data={[10, 20, 14, 12, 55, 11, 2, 122,
-            ]}
+            data={[10, 20, 14, 12, 55, 11, 2, 122]}
           />
           <Histogram
+            color={raspberry}
             title="Time Used"
-            data={[10, 20, 14, 12, 55, 11, 2, 122,
-            ]}
+            data={[192, 222, 343, 452, 5522, 241]}
           />
         </div>
       </Panel>
