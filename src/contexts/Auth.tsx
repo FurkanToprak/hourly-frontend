@@ -1,6 +1,7 @@
 import {
   getAuth, GoogleAuthProvider, signInWithPopup,
 } from 'firebase/auth';
+import moment from 'moment';
 import React, {
   createContext, useContext, useMemo, useState,
 } from 'react';
@@ -13,6 +14,8 @@ interface HourlyUser {
   email: string;
   accessToken: string;
   refreshToken: string;
+  startOfDay: Date;
+  endOfDay: Date;
 }
 
 export interface AuthContextSchema {
@@ -48,10 +51,14 @@ export function AuthProvider({ children }: any) {
         }
         // The signed-in user info.
         const { user } = result;
-        // broken?
+        // start of day, end of day
+        const startOfDay = moment('8:00 AM', 'h:mm A').toDate();
+        const endOfDay = moment('10:00 PM', 'h:mm A').toDate();
         const authResponse = await FlaskClient.post('google_auth', {
           token,
           name: auth.name,
+          startOfDay,
+          endOfDay,
         });
         if (authResponse) {
           setHourlyUser({
@@ -60,6 +67,8 @@ export function AuthProvider({ children }: any) {
             id: authResponse.id,
             refreshToken: user.refreshToken,
             accessToken: token,
+            startOfDay: new Date(authResponse.startOfDay),
+            endOfDay: new Date(authResponse.endOfDay),
           });
           onSuccess();
         } else {
