@@ -56,7 +56,7 @@ export function AuthProvider({ children }: any) {
         if (authResponse) {
           setHourlyUser({
             email: user.email || '',
-            name: auth.name,
+            name: user.displayName || user.email || '',
             id: authResponse.id,
             refreshToken: user.refreshToken,
             accessToken: token,
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: any) {
     user: hourlyUser,
     logInWithGoogle,
     signOut,
-    isLoggedIn: true, // (hourlyUser !== null),
+    isLoggedIn: (hourlyUser !== null),
   }), [hourlyUser]);
   return (
     <AuthContext.Provider value={auth}>
