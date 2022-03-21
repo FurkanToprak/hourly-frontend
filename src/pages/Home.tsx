@@ -4,9 +4,11 @@ import { PurpleButton, RaspberryButton } from '../components/utils/Buttons';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
 import { Body, Title } from '../components/utils/Texts';
+import { useAuth } from '../contexts/Auth';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   return (
     <Page>
       <Panel centerY flex="column">
@@ -34,27 +36,45 @@ export default function Home() {
           margin: 10, display: 'flex', width: '50%', flexDirection: 'column',
         }}
         >
-          <RaspberryButton
-            onMouseDown={() => {
-              navigate('/signup');
-            }}
-            fullWidth
-            variant="outlined"
-          >
-            Sign Up
+          {
+            isLoggedIn ? (
+              <PurpleButton
+                onMouseDown={() => {
+                  navigate('/dashboard');
+                }}
+                fullWidth
+                variant="outlined"
+              >
+                Get started
+              </PurpleButton>
+            )
+              : (
+                <>
+                  <RaspberryButton
+                    onMouseDown={() => {
+                      navigate('/signup');
+                    }}
+                    fullWidth
+                    variant="outlined"
+                  >
+                    Sign Up
 
-          </RaspberryButton>
-          <div style={{ height: 10 }} />
-          <PurpleButton
-            onMouseDown={() => {
-              navigate('/login');
-            }}
-            fullWidth
-            variant="outlined"
-          >
-            Log In
+                  </RaspberryButton>
+                  <div style={{ height: 10 }} />
+                  <PurpleButton
+                    onMouseDown={() => {
+                      navigate('/login');
+                    }}
+                    fullWidth
+                    variant="outlined"
+                  >
+                    Log In
 
-          </PurpleButton>
+                  </PurpleButton>
+                </>
+              )
+          }
+
         </div>
       </Panel>
     </Page>
