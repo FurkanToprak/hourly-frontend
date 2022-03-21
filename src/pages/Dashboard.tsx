@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
 import SettingsIcon from '@mui/icons-material/Settings';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
+import { Navigate } from 'react-router-dom';
 import DashboardCalendar from '../components/calendar/DashboardCalendar';
 import Page from '../components/utils/Page';
 import { Title } from '../components/utils/Texts';
@@ -10,15 +11,19 @@ import { black, white } from '../styles/Theme';
 import Modal from '../components/utils/Modal';
 import { StandardButton } from '../components/utils/Buttons';
 import TimeSelect from '../components/calendar/TimeSelect';
+import { useAuth } from '../contexts/Auth';
 
 export default function Dashboard() {
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
   const [openSettingsModal, setOpenSettingsModal] = useState(false);
-
-  const [startTime, setStartTime] = useState(new Date());
-  const [endTime, setEndTime] = useState(new Date());
+  const { user } = useAuth();
+  if (!user) {
+    return <Navigate to="/" />;
+  }
+  const [startTime, setStartTime] = useState(user.startOfDay);
+  const [endTime, setEndTime] = useState(user.endOfDay);
   return (
     <Page fullHeight centerY>
       <Modal open={openCalendarModal} onClose={() => { setOpenCalendarModal(false); }}>
