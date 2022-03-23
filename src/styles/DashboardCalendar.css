@@ -23,8 +23,10 @@ button.rbc-input::-moz-focus-inner {
 
 .rbc-calendar {
   font-family: "Rubik";
+  font-size: 10px;
   box-sizing: border-box;
   flex: 1;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
