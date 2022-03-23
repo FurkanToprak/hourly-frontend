@@ -9,6 +9,8 @@ import { StandardInput } from '../utils/Inputs';
 import TimeSelect from './TimeSelect';
 import { StandardButton } from '../utils/Buttons';
 import { Title } from '../utils/Texts';
+import { useTheme } from '../../contexts/Theme';
+import { black, white } from '../../styles/Theme';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -34,6 +36,8 @@ function createTimeSlot(props: {
 }
 
 export default function DashboardCalendar() {
+  const { theme } = useTheme();
+  const themeFont = theme === 'light' ? black : white;
   const [selectedEvent, setSelectedEvent] = useState(null as null | Event);
   const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
@@ -78,7 +82,7 @@ export default function DashboardCalendar() {
           startAccessor="start"
           endAccessor="end"
           resizable
-          style={calendarStyle}
+          style={{ color: themeFont, ...calendarStyle }}
         />
       </div>
       <Panel centerY flex="column" margin>
