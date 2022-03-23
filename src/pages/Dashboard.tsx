@@ -61,6 +61,7 @@ export default function Dashboard() {
             setOpenSettingsModal(true);
           }}
         />
+        <StandardButton variant="outlined">Tasks</StandardButton>
         <DownloadIcon
           fontSize="large"
           style={{ cursor: 'pointer', color: themeFont }}

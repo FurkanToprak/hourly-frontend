@@ -9,6 +9,8 @@ import { StandardInput } from '../utils/Inputs';
 import TimeSelect from './TimeSelect';
 import { StandardButton } from '../utils/Buttons';
 import { Title } from '../utils/Texts';
+import { useTheme } from '../../contexts/Theme';
+import { black, white } from '../../styles/Theme';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -22,7 +24,20 @@ const cancelButtonStyle = { marginTop: 10 };
 const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
 const calendarStyle = { margin: 10 };
 
+function createTimeSlot(props: {
+  value: Date;
+  resource: null;
+  children: any
+}) {
+  // console.log('props');
+  // console.log(props.value.get);
+  // props.
+  return <div style={{ border: '1px solid red' }} />;
+}
+
 export default function DashboardCalendar() {
+  const { theme } = useTheme();
+  const themeFont = theme === 'light' ? black : white;
   const [selectedEvent, setSelectedEvent] = useState(null as null | Event);
   const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
@@ -31,43 +46,45 @@ export default function DashboardCalendar() {
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   return (
     <Panel centerY flex="column" fill>
-      {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      <div style={{ width: '95%', flex: 1 }}>
+        {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment
        * @ts-ignore */}
-      <DnDCalendar
-        defaultDate={moment().toDate()}
-        defaultView="month"
-        onEventDrop={(droppedEvent) => {
-          const oldEvent = droppedEvent.event as Event;
-          const freshEvents = events.slice().filter((value) => value !== oldEvent);
-          freshEvents.push({
-            start: new Date(droppedEvent.start),
-            end: new Date(droppedEvent.end),
-            title: oldEvent.title,
-          });
-          setEvents(freshEvents);
-        }}
-        onEventResize={(resizedEvent) => {
-          const oldEvent = resizedEvent.event as Event;
-          const freshEvents = events.slice().filter((value) => value !== oldEvent);
-          freshEvents.push({
-            start: new Date(resizedEvent.start),
-            end: new Date(resizedEvent.end),
-            title: oldEvent.title,
-          });
-          setEvents(freshEvents);
-        }}
-        onSelectEvent={(event: Event) => {
-          setSelectedEvent(event);
-          setStartDate(event.start as Date);
-          setEndDate(event.end as Date);
-        }}
-        localizer={localizer}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        resizable
-        style={calendarStyle}
-      />
+        <DnDCalendar
+          defaultDate={moment().toDate()}
+          defaultView="week"
+          onEventDrop={(droppedEvent) => {
+            const oldEvent = droppedEvent.event as Event;
+            const freshEvents = events.slice().filter((value) => value !== oldEvent);
+            freshEvents.push({
+              start: new Date(droppedEvent.start),
+              end: new Date(droppedEvent.end),
+              title: oldEvent.title,
+            });
+            setEvents(freshEvents);
+          }}
+          onEventResize={(resizedEvent) => {
+            const oldEvent = resizedEvent.event as Event;
+            const freshEvents = events.slice().filter((value) => value !== oldEvent);
+            freshEvents.push({
+              start: new Date(resizedEvent.start),
+              end: new Date(resizedEvent.end),
+              title: oldEvent.title,
+            });
+            setEvents(freshEvents);
+          }}
+          onSelectEvent={(event: Event) => {
+            setSelectedEvent(event);
+            setStartDate(event.start as Date);
+            setEndDate(event.end as Date);
+          }}
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          resizable
+          style={{ color: themeFont, ...calendarStyle }}
+        />
+      </div>
       <Panel centerY flex="column" margin>
         <Title size="s">{selectedEvent ? 'Edit Event' : 'Create Event'}</Title>
         <StandardInput

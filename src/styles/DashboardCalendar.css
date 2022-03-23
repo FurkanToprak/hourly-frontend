@@ -23,8 +23,11 @@ button.rbc-input::-moz-focus-inner {
 
 .rbc-calendar {
   font-family: "Rubik";
+  font-size: 10px;
   box-sizing: border-box;
+  flex: 1;
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -142,14 +145,14 @@ button.rbc-input::-moz-focus-inner {
   text-align: center;
 }
 .rbc-toolbar button {
-  color: #373a3c;
+  color: #4B2FDA;
   display: inline-block;
   margin: 0;
   text-align: center;
   vertical-align: middle;
   background: none;
   background-image: none;
-  border: 1px solid #ccc;
+  border: 1px solid #4B2FDA;
   padding: 0.375rem 1rem;
   border-radius: 4px;
   line-height: normal;
@@ -158,23 +161,23 @@ button.rbc-input::-moz-focus-inner {
 .rbc-toolbar button:active, .rbc-toolbar button.rbc-active {
   background-image: none;
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  background-color: #e6e6e6;
-  border-color: #adadad;
+  background-color: #4B2FDA;
+  color: white;
+  border: 1px solid #4B2FDA;
 }
 .rbc-toolbar button:active:hover, .rbc-toolbar button:active:focus, .rbc-toolbar button.rbc-active:hover, .rbc-toolbar button.rbc-active:focus {
-  color: #373a3c;
-  background-color: #d4d4d4;
-  border-color: #8c8c8c;
+  background-color: #4B2FDA;
+  border-color: #4B2FDA;
 }
 .rbc-toolbar button:focus {
-  color: #373a3c;
-  background-color: #e6e6e6;
-  border-color: #adadad;
+  color: white;
+  background-color: #4B2FDA;
+  border-color: #4B2FDA;
 }
 .rbc-toolbar button:hover {
-  color: #373a3c;
-  background-color: #e6e6e6;
-  border-color: #adadad;
+  color: white;
+  background-color: #4B2FDA;
+  border-color: #4B2FDA;
 }
 
 .rbc-btn-group {
@@ -657,8 +660,8 @@ button.rbc-input::-moz-focus-inner {
   z-index: 3;
   left: 0;
   right: 0;
-  height: 1px;
-  background-color: #DB2955;
+  height: 3px;
+  background-color: #4B2FDA;
   pointer-events: none;
 }
 
