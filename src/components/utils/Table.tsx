@@ -14,6 +14,7 @@ export default function Table(props: {
     columns: string[];
     items: any[];
     emptyMessage: string;
+    urlPrefix: string;
 }) {
   const [hoverRow, setHoverRow] = useState(-1);
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ export default function Table(props: {
               }}
               key={`row-${item.name}`}
               onMouseDown={() => {
-                navigate(`/task/${item.id}`);
+                navigate(`/${props.urlPrefix}/${item.id}`);
               }}
               style={{ cursor: 'pointer', backgroundColor: hoverRow === rowNumber ? purple : undefined }}
             >
