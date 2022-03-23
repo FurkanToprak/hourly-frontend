@@ -46,10 +46,6 @@ const loggedInMenuItems: TabSchema[] = [
     route: '/dashboard',
   },
   {
-    title: 'Tasks',
-    route: '/tasks',
-  },
-  {
     title: 'Groups',
     route: '/groups',
   },

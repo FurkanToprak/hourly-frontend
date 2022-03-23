@@ -24,17 +24,6 @@ const cancelButtonStyle = { marginTop: 10 };
 const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
 const calendarStyle = { margin: 10 };
 
-function createTimeSlot(props: {
-  value: Date;
-  resource: null;
-  children: any
-}) {
-  // console.log('props');
-  // console.log(props.value.get);
-  // props.
-  return <div style={{ border: '1px solid red' }} />;
-}
-
 export default function DashboardCalendar() {
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;

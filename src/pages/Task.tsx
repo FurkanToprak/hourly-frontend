@@ -7,7 +7,16 @@ import Panel from '../components/utils/Panel';
 import { Body, Title } from '../components/utils/Texts';
 import { purple, raspberry, white } from '../styles/Theme';
 import { toShortTimeString } from '../utils/Time';
-import { TaskItem } from './Tasks';
+
+export interface TaskItem {
+  name: string;
+  description: string;
+  label: string;
+  estimatedTime: string;
+  deadline: Date;
+  scheduled: Date[];
+  id: string;
+}
 
 const rowStyle: React.CSSProperties = { marginBottom: 10 };
 
