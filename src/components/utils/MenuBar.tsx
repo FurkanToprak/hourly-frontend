@@ -21,13 +21,13 @@ interface TabSchema {
 }
 
 const defaultMenuItems: TabSchema[] = [
+];
+
+const notLoggedInMenuItems: TabSchema[] = [
   {
     title: 'Home',
     route: '/',
   },
-];
-
-const notLoggedInMenuItems: TabSchema[] = [
   {
     title: 'Sign Up',
     route: '/signup',
@@ -44,10 +44,6 @@ const loggedInMenuItems: TabSchema[] = [
   {
     title: 'Dashboard',
     route: '/dashboard',
-  },
-  {
-    title: 'Tasks',
-    route: '/tasks',
   },
   {
     title: 'Groups',

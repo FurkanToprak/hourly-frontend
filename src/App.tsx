@@ -17,7 +17,6 @@ import NotFound from './pages/NotFound';
 import Group from './pages/Group';
 import Groups from './pages/Groups';
 import Task from './pages/Task';
-import Tasks from './pages/Tasks';
 import Dashboard from './pages/Dashboard';
 import { AuthBannedRoute, AuthOnlyRoute } from './components/auth/AuthRoute';
 
@@ -44,7 +43,6 @@ export default function App() {
 }
                   />
                   <Route path="/login" element={<AuthBannedRoute><LogIn /></AuthBannedRoute>} />
-                  <Route path="/tasks" element={<AuthOnlyRoute><Tasks /></AuthOnlyRoute>} />
                   <Route path="/groups" element={<AuthOnlyRoute><Groups /></AuthOnlyRoute>} />
                   <Route path="/group/:groupid" element={<AuthOnlyRoute><Group /></AuthOnlyRoute>} />
                   <Route path="/task/:taskid" element={<AuthOnlyRoute><Task /></AuthOnlyRoute>} />

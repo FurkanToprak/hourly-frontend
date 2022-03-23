@@ -9,19 +9,36 @@ import { Title } from '../components/utils/Texts';
 import { useTheme } from '../contexts/Theme';
 import { black, white } from '../styles/Theme';
 import Modal from '../components/utils/Modal';
-import { StandardButton } from '../components/utils/Buttons';
+import { PurpleButton, StandardButton } from '../components/utils/Buttons';
 import TimeSelect from '../components/calendar/TimeSelect';
 import { useAuth } from '../contexts/Auth';
 import Table from '../components/utils/Table';
-import { TaskItem } from './Tasks';
+import Panel from '../components/utils/Panel';
+import StandardSelect from '../components/utils/Select';
+import { StandardInput, StandardTimeInput } from '../components/utils/Inputs';
+import { TaskItem } from './Task';
+
+const rowStyle = {
+  margin: 10, width: '50%',
+};
 
 export default function Dashboard() {
-  const tasks: TaskItem[] = [];
+  const [tasks, setTasks] = useState([] as TaskItem[]);
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
+  const [openEvents, setOpenEvents] = useState(false);
   const [openTasks, setOpenTasks] = useState(false);
+  const [openAddTask, setOpenAddTask] = useState(false);
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
   const [openSettingsModal, setOpenSettingsModal] = useState(false);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [label, setLabel] = useState('');
+  const [estimatedTime, setEstimatedTime] = useState('');
+  const [deadline, setDeadline] = useState(new Date());
+  const readyToSchedule = !Number.isNaN(estimatedTime)
+    && name.length > 0 && description.length > 0 && label.length > 0;
+
   const { user } = useAuth();
   if (!user) {
     return <Navigate to="/" />;
@@ -53,7 +70,28 @@ export default function Dashboard() {
           </StandardButton>
         </div>
       </Modal>
-      <Modal open={openTasks} onClose={() => { setOpenTasks(false); }}>
+      <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
+        <Title size="l">Events</Title>
+        <Table
+          urlPrefix="task"
+          keys={['name', 'description', 'label', 'deadline']}
+          columns={['Name', 'Description', 'Label', 'Deadline']}
+          items={tasks}
+          emptyMessage="No scheduled events"
+        />
+      </Modal>
+      <Modal
+        open={openTasks}
+        onClose={() => {
+          setOpenTasks(false);
+          setOpenAddTask(false);
+          setName('');
+          setDescription('');
+          setLabel('');
+          setEstimatedTime('');
+          setDeadline(new Date());
+        }}
+      >
         <Title size="l">Tasks</Title>
         <Table
           urlPrefix="task"
@@ -62,6 +100,96 @@ export default function Dashboard() {
           items={tasks}
           emptyMessage="No scheduled tasks"
         />
+        {openAddTask ? (
+          <Panel centerY flex="column">
+            <div style={rowStyle}>
+              <StandardInput
+                label="Name"
+                fullWidth
+                onChange={(event) => {
+                  setName(event.target.value);
+                }}
+              />
+            </div>
+            <div style={rowStyle}>
+              <StandardInput
+                label="Description"
+                fullWidth
+                onChange={(event) => {
+                  setDescription(event.target.value);
+                }}
+              />
+            </div>
+            <div style={rowStyle}>
+              <StandardTimeInput
+                fullWidth
+                label="Estimated Time (HH:MM)"
+                onTimeChange={(newTime) => {
+                  setEstimatedTime(newTime);
+                }}
+              />
+            </div>
+            <div style={rowStyle}>
+              <StandardSelect
+                label="Label"
+                values={new Map<string, any>(Object.entries({
+                  'MATH 222': 'id1',
+                  'CSCE 132': 'id2',
+                  'CSCE 999': 'id3',
+                }))}
+                onSelect={(select: string) => {
+                  setLabel(select);
+                }}
+              />
+            </div>
+            <div style={rowStyle}>
+              <TimeSelect
+                label="Deadline (MM/DD/YYYY)"
+                onDateChange={(newDate) => {
+                  setDeadline(newDate);
+                }}
+              />
+            </div>
+            <div style={rowStyle}>
+              <StandardButton
+                disabled={!readyToSchedule}
+                variant="outlined"
+                fullWidth
+                onMouseDown={() => {
+                  if (!readyToSchedule) {
+                    return;
+                  }
+                  const payload: TaskItem = {
+                    name,
+                    description,
+                    label,
+                    deadline,
+                    estimatedTime,
+                    scheduled: [],
+                    id: '12345',
+                  };
+                  // send payload
+                  const freshTasks = tasks.slice();
+                  freshTasks.push(payload);
+                  setTasks(freshTasks);
+                }}
+              >
+                Schedule
+              </StandardButton>
+            </div>
+          </Panel>
+        )
+          : (
+            <PurpleButton
+              fullWidth
+              onMouseDown={() => {
+                setOpenAddTask(true);
+              }}
+              variant="outlined"
+            >
+              +
+            </PurpleButton>
+          )}
       </Modal>
       <Title>Dashboard</Title>
       <div style={{
@@ -75,6 +203,14 @@ export default function Dashboard() {
             setOpenSettingsModal(true);
           }}
         />
+        <StandardButton
+          variant="outlined"
+          onMouseDown={() => {
+            setOpenEvents(true);
+          }}
+        >
+          Events
+        </StandardButton>
         <StandardButton
           variant="outlined"
           onMouseDown={() => {
