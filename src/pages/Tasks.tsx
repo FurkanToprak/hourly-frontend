@@ -113,6 +113,7 @@ export default function Tasks() {
       </Panel>
       <Panel flex="column" centerY>
         <Table
+          urlPrefix="task"
           keys={['name', 'description', 'label', 'deadline']}
           columns={['Name', 'Description', 'Label', 'Deadline']}
           items={tasks}

@@ -49,6 +49,10 @@ const loggedInMenuItems: TabSchema[] = [
     title: 'Tasks',
     route: '/tasks',
   },
+  {
+    title: 'Groups',
+    route: '/groups',
+  },
 ];
 
 export default function MenuBar() {
