@@ -12,10 +12,14 @@ import Modal from '../components/utils/Modal';
 import { StandardButton } from '../components/utils/Buttons';
 import TimeSelect from '../components/calendar/TimeSelect';
 import { useAuth } from '../contexts/Auth';
+import Table from '../components/utils/Table';
+import { TaskItem } from './Tasks';
 
 export default function Dashboard() {
+  const tasks: TaskItem[] = [];
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
+  const [openTasks, setOpenTasks] = useState(false);
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
   const [openSettingsModal, setOpenSettingsModal] = useState(false);
   const { user } = useAuth();
@@ -49,6 +53,16 @@ export default function Dashboard() {
           </StandardButton>
         </div>
       </Modal>
+      <Modal open={openTasks} onClose={() => { setOpenTasks(false); }}>
+        <Title size="l">Tasks</Title>
+        <Table
+          urlPrefix="task"
+          keys={['name', 'description', 'label', 'deadline']}
+          columns={['Name', 'Description', 'Label', 'Deadline']}
+          items={tasks}
+          emptyMessage="No scheduled tasks"
+        />
+      </Modal>
       <Title>Dashboard</Title>
       <div style={{
         width: '100%', display: 'flex', justifyContent: 'space-between', marginLeft: 40, marginRight: 40,
@@ -61,7 +75,14 @@ export default function Dashboard() {
             setOpenSettingsModal(true);
           }}
         />
-        <StandardButton variant="outlined">Tasks</StandardButton>
+        <StandardButton
+          variant="outlined"
+          onMouseDown={() => {
+            setOpenTasks(true);
+          }}
+        >
+          Tasks
+        </StandardButton>
         <DownloadIcon
           fontSize="large"
           style={{ cursor: 'pointer', color: themeFont }}
