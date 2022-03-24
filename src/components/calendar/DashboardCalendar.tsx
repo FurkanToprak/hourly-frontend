@@ -35,12 +35,15 @@ export default function DashboardCalendar() {
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   return (
     <Panel centerY flex="column" fill>
-      <div style={{ width: '95%', flex: 1 }}>
+      <div style={{ width: '95%', flex: 1, marginBottom: 10 }}>
         {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment
        * @ts-ignore */}
         <DnDCalendar
           defaultDate={moment().toDate()}
           defaultView="week"
+          views={{
+            day: true, week: true, month: true,
+          }}
           onEventDrop={(droppedEvent) => {
             const oldEvent = droppedEvent.event as Event;
             const freshEvents = events.slice().filter((value) => value !== oldEvent);
@@ -111,9 +114,9 @@ export default function DashboardCalendar() {
             }
             let freshEvents;
             if (selectedEvent) {
-              freshEvents = events.filter((event) => event !== selectedEvent);
+              freshEvents = events.slice().filter((event) => event !== selectedEvent);
             } else {
-              freshEvents = events;
+              freshEvents = events.slice();
             }
 
             freshEvents.push({
