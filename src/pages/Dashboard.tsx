@@ -93,13 +93,6 @@ export default function Dashboard() {
         }}
       >
         <Title size="l">Tasks</Title>
-        <Table
-          urlPrefix="task"
-          keys={['name', 'description', 'label', 'deadline']}
-          columns={['Name', 'Description', 'Label', 'Deadline']}
-          items={tasks}
-          emptyMessage="No scheduled tasks"
-        />
         {openAddTask ? (
           <Panel centerY flex="column">
             <div style={rowStyle}>
@@ -190,6 +183,13 @@ export default function Dashboard() {
               +
             </PurpleButton>
           )}
+        <Table
+          urlPrefix="task"
+          keys={['name', 'description', 'label', 'deadline']}
+          columns={['Name', 'Description', 'Label', 'Deadline']}
+          items={tasks}
+          emptyMessage="No scheduled tasks"
+        />
       </Modal>
       <Title>Dashboard</Title>
       <div style={{

@@ -1,5 +1,5 @@
 import {
-  getAuth, GoogleAuthProvider, signInWithPopup,
+  getAuth, GoogleAuthProvider, signInWithPopup, inMemoryPersistence,
 } from 'firebase/auth';
 import moment from 'moment';
 import React, {
@@ -36,49 +36,51 @@ export function AuthProvider({ children }: any) {
 
   function logInWithGoogle(onSuccess: () => void, onFailure: () => void) {
     const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then(async (result) => {
+    auth.setPersistence(inMemoryPersistence).then(() => {
+      signInWithPopup(auth, provider)
+        .then(async (result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        if (!credential) {
-          onFailure();
-          return;
-        }
-        const token = credential.idToken;
-        if (!token) {
-          onFailure();
-          return;
-        }
-        // The signed-in user info.
-        const { user } = result;
-        // start of day, end of day
-        const startOfDay = moment('8:00 AM', 'h:mm A').toDate();
-        const endOfDay = moment('10:00 PM', 'h:mm A').toDate();
-        const authResponse = await FlaskClient.post('google_auth', {
-          token,
-          name: auth.name,
-          startOfDay,
-          endOfDay,
-        });
-        if (authResponse) {
-          setHourlyUser({
-            email: user.email || '',
-            name: user.displayName || user.email || '',
-            id: authResponse.id,
-            refreshToken: user.refreshToken,
-            accessToken: token,
-            startOfDay: new Date(authResponse.startOfDay),
-            endOfDay: new Date(authResponse.endOfDay),
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          if (!credential) {
+            onFailure();
+            return;
+          }
+          const token = credential.idToken;
+          if (!token) {
+            onFailure();
+            return;
+          }
+          // The signed-in user info.
+          const { user } = result;
+          // start of day, end of day
+          const startOfDay = moment('8:00 AM', 'h:mm A').toDate();
+          const endOfDay = moment('10:00 PM', 'h:mm A').toDate();
+          const authResponse = await FlaskClient.post('google_auth', {
+            token,
+            name: auth.name,
+            startOfDay,
+            endOfDay,
           });
-          onSuccess();
-        } else {
-          onFailure();
+          if (authResponse) {
+            setHourlyUser({
+              email: user.email || '',
+              name: user.displayName || user.email || '',
+              id: authResponse.id,
+              refreshToken: user.refreshToken,
+              accessToken: token,
+              startOfDay: new Date(authResponse.startOfDay),
+              endOfDay: new Date(authResponse.endOfDay),
+            });
+            onSuccess();
+          } else {
+            onFailure();
+            setHourlyUser(null);
+          }
+        }).catch(() => {
           setHourlyUser(null);
-        }
-      }).catch(() => {
-        setHourlyUser(null);
-        onFailure();
-      });
+          onFailure();
+        });
+    });
   }
 
   function signOut() {
