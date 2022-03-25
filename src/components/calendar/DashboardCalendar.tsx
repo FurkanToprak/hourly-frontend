@@ -90,6 +90,7 @@ export default function DashboardCalendar() {
         />
         <div style={fullRowStyle}>
           <TimeSelect
+            default={startDate || new Date()}
             label="Start Time"
             onDateChange={(newDate) => {
               setStartDate(newDate);
@@ -98,6 +99,7 @@ export default function DashboardCalendar() {
         </div>
         <div style={fullRowStyle}>
           <TimeSelect
+            default={endDate || new Date()}
             label="End Time"
             onDateChange={(newDate) => {
               setEndDate(newDate);
