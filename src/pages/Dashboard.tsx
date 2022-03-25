@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
 import SettingsIcon from '@mui/icons-material/Settings';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
@@ -17,6 +17,8 @@ import Panel from '../components/utils/Panel';
 import StandardSelect from '../components/utils/Select';
 import { StandardInput, StandardTimeInput } from '../components/utils/Inputs';
 import { TaskItem } from './Task';
+import FlaskClient from '../connections/Flask';
+import { toShortTimeString } from '../utils/Time';
 
 const rowStyle = {
   margin: 10, width: '50%',
@@ -35,14 +37,24 @@ export default function Dashboard() {
   const [description, setDescription] = useState('');
   const [label, setLabel] = useState('');
   const [estimatedTime, setEstimatedTime] = useState('');
-  const [deadline, setDeadline] = useState(new Date());
+  const [dueDate, setDueDate] = useState(new Date());
   const readyToSchedule = !Number.isNaN(estimatedTime)
     && name.length > 0 && description.length > 0 && label.length > 0;
-
   const { user } = useAuth();
   if (!user) {
     return <Navigate to="/" />;
   }
+  const fetchTasks = async (userId: string) => {
+    if (tasks.length > 0) {
+      return;
+    }
+    const fetchedTasks: { tasks: TaskItem[]} = await FlaskClient.post('tasks/getTasks', { id: userId });
+    console.log(fetchedTasks);
+    setTasks(fetchedTasks.tasks);
+  };
+  useEffect(() => {
+    fetchTasks(user.id);
+  }, [tasks]);
   const [startTime, setStartTime] = useState(user.startOfDay);
   const [endTime, setEndTime] = useState(user.endOfDay);
   return (
@@ -74,8 +86,8 @@ export default function Dashboard() {
         <Title size="l">Events</Title>
         <Table
           urlPrefix="task"
-          keys={['name', 'description', 'label', 'deadline']}
-          columns={['Name', 'Description', 'Label', 'Deadline']}
+          keys={['name', 'description', 'label', 'due date']}
+          columns={['Name', 'Description', 'Label', 'Due Date']}
           items={tasks}
           emptyMessage="No scheduled events"
         />
@@ -89,7 +101,7 @@ export default function Dashboard() {
           setDescription('');
           setLabel('');
           setEstimatedTime('');
-          setDeadline(new Date());
+          setDueDate(new Date());
         }}
       >
         <Title size="l">Tasks</Title>
@@ -137,9 +149,9 @@ export default function Dashboard() {
             </div>
             <div style={rowStyle}>
               <TimeSelect
-                label="Deadline (MM/DD/YYYY)"
+                label="Due Date (MM/DD/YYYY)"
                 onDateChange={(newDate) => {
-                  setDeadline(newDate);
+                  setDueDate(newDate);
                 }}
               />
             </div>
@@ -148,7 +160,7 @@ export default function Dashboard() {
                 disabled={!readyToSchedule}
                 variant="outlined"
                 fullWidth
-                onMouseDown={() => {
+                onMouseDown={async () => {
                   if (!readyToSchedule) {
                     return;
                   }
@@ -156,14 +168,17 @@ export default function Dashboard() {
                     name,
                     description,
                     label,
-                    deadline,
-                    estimatedTime,
-                    scheduled: [],
-                    id: '12345',
+                    start_date: toShortTimeString(new Date()),
+                    due_date: toShortTimeString(dueDate),
+                    estimated_time: estimatedTime,
+                    id: '',
+                    user_id: user.id,
+                    completed: 0,
                   };
                   // send payload
+                  const createdTask = await FlaskClient.post('tasks/createTask', payload);
                   const freshTasks = tasks.slice();
-                  freshTasks.push(payload);
+                  freshTasks.push(createdTask);
                   setTasks(freshTasks);
                 }}
               >
@@ -185,8 +200,8 @@ export default function Dashboard() {
           )}
         <Table
           urlPrefix="task"
-          keys={['name', 'description', 'label', 'deadline']}
-          columns={['Name', 'Description', 'Label', 'Deadline']}
+          keys={['name', 'description', 'label', 'due date']}
+          columns={['Name', 'Description', 'Label', 'Due Date']}
           items={tasks}
           emptyMessage="No scheduled tasks"
         />
