@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Histogram from '../components/graphs/Histogram';
 import Pie from '../components/graphs/Pie';
 import Label from '../components/utils/Label';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
 import { Body, Title } from '../components/utils/Texts';
+import FlaskClient from '../connections/Flask';
 import { purple, raspberry, white } from '../styles/Theme';
 import { toShortTimeString } from '../utils/Time';
 
@@ -25,20 +27,32 @@ const rowStyle: React.CSSProperties = { marginBottom: 10 };
 const statRowStyle: React.CSSProperties = { flex: 1, display: 'flex', marginTop: 10 };
 
 export default function Task() {
-  const fetchedTask: TaskItem = {
-    name: 'Remove hard-coded values',
-    description: 'Attach database to frontend',
-    label: 'Frontend',
-    estimated_time: '02:22',
-    due_date: new Date().toDateString(),
-    start_date: '',
-    id: 'string',
-    completed: 0,
-    user_id: '',
+  const [fetchedTask, setFetchedTask] = useState(null as null | TaskItem);
+  const taskParams = useParams();
+  const taskId = taskParams.taskid || '';
+  const fetchTask = async () => {
+    if (taskId.length === 0) {
+      return;
+    }
+    const thisTask = await FlaskClient.post('tasks/getTaskById', { id: taskId });
+    console.log('post');
+    console.log(thisTask);
+    if (!thisTask) {
+      return;
+    }
+    setFetchedTask(thisTask);
   };
+  useEffect(() => {
+    if (fetchedTask) {
+      return;
+    }
+    fetchTask();
+  }, [fetchedTask]);
 
   return (
     <Page fullHeight>
+      { fetchedTask
+      && (
       <Panel flex="column" margin>
         <Title>Title</Title>
         <div style={rowStyle}>
@@ -62,6 +76,7 @@ export default function Task() {
           <Body>{toShortTimeString(new Date(fetchedTask.due_date))}</Body>
         </div>
       </Panel>
+      )}
       <Panel flex="column" margin fill>
         <Title>Statistics</Title>
         <div style={statRowStyle}>

@@ -84,7 +84,6 @@ export default function Dashboard() {
       <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
         <Title size="l">Events</Title>
         <Table
-          urlPrefix="task"
           keys={['name', 'description', 'label', 'due date']}
           columns={['Name', 'Description', 'Label', 'Due Date']}
           items={tasks}
