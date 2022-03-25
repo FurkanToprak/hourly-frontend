@@ -49,7 +49,6 @@ export default function Dashboard() {
       return;
     }
     const fetchedTasks: { tasks: TaskItem[]} = await FlaskClient.post('tasks/getTasks', { id: userId });
-    console.log(fetchedTasks);
     setTasks(fetchedTasks.tasks);
   };
   useEffect(() => {
