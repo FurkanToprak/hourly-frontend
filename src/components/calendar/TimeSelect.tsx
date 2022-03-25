@@ -5,12 +5,12 @@ import { StandardInput } from '../utils/Inputs';
 
 export default function TimeSelect(props: {
     label: string;
-    default?: Date;
+    default: Date;
     onDateChange?: (newDate: Date) => void;
     onTimeChange?: (newTime: Date) => void;
     showTimeSelectOnly?: true;
   }) {
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(props.default);
   const displayValue = props.showTimeSelectOnly ? `${selectedDate.getHours()}:${selectedDate.getMinutes() || '00'}` : selectedDate.toString();
   return (
     <DatePicker
