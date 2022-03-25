@@ -9,13 +9,15 @@ import { purple, raspberry, white } from '../styles/Theme';
 import { toShortTimeString } from '../utils/Time';
 
 export interface TaskItem {
+  completed: 0 | 1;
   name: string;
   description: string;
   label: string;
-  estimatedTime: string;
-  deadline: Date;
-  scheduled: Date[];
+  estimated_time: string;
+  start_date: string;
+  due_date: string;
   id: string;
+  user_id: string;
 }
 
 const rowStyle: React.CSSProperties = { marginBottom: 10 };
@@ -27,10 +29,12 @@ export default function Task() {
     name: 'Remove hard-coded values',
     description: 'Attach database to frontend',
     label: 'Frontend',
-    estimatedTime: '02:22',
-    deadline: new Date(),
-    scheduled: [new Date()],
+    estimated_time: '02:22',
+    due_date: new Date().toDateString(),
+    start_date: '',
     id: 'string',
+    completed: 0,
+    user_id: '',
   };
 
   return (
@@ -51,11 +55,11 @@ export default function Task() {
         </div>
         <div style={rowStyle}>
           <Title size="xs">{'Estimated Time: '}</Title>
-          <Body>{fetchedTask.estimatedTime}</Body>
+          <Body>{fetchedTask.estimated_time}</Body>
         </div>
         <div style={rowStyle}>
-          <Title size="xs">{'Deadline: '}</Title>
-          <Body>{toShortTimeString(fetchedTask.deadline)}</Body>
+          <Title size="xs">{'Due Date: '}</Title>
+          <Body>{toShortTimeString(new Date(fetchedTask.due_date))}</Body>
         </div>
       </Panel>
       <Panel flex="column" margin fill>

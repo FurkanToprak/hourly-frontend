@@ -55,7 +55,7 @@ export function AuthProvider({ children }: any) {
           // start of day, end of day
           const startOfDay = moment('8:00 AM', 'h:mm A').toDate();
           const endOfDay = moment('10:00 PM', 'h:mm A').toDate();
-          const authResponse = await FlaskClient.post('google_auth', {
+          const authResponse: { id: string; startOfDay: string; endOfDay: string} = await FlaskClient.post('google_auth', {
             token,
             name: auth.name,
             startOfDay,
