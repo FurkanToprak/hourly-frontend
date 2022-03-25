@@ -14,7 +14,7 @@ export default function Table(props: {
     columns: string[];
     items: any[];
     emptyMessage: string;
-    urlPrefix: string;
+    urlPrefix?: string;
 }) {
   const [hoverRow, setHoverRow] = useState(-1);
   const navigate = useNavigate();
@@ -42,8 +42,11 @@ export default function Table(props: {
               onMouseLeave={() => {
                 setHoverRow(-1);
               }}
-              key={`row-${item.name}`}
+              key={`row-${item.id || ''}`}
               onMouseDown={() => {
+                if (!props.urlPrefix) {
+                  return;
+                }
                 navigate(`/${props.urlPrefix}/${item.id}`);
               }}
               style={{ cursor: 'pointer', backgroundColor: hoverRow === rowNumber ? purple : undefined }}
