@@ -54,7 +54,6 @@ export default function Task() {
       { fetchedTask
       && (
       <Panel flex="column" margin>
-        <Title>Title</Title>
         <div style={rowStyle}>
           <Title size="xs">{'Task: '}</Title>
           <Body>{fetchedTask.name}</Body>
