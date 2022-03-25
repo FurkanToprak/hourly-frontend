@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, Event, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
@@ -11,6 +11,8 @@ import { StandardButton } from '../utils/Buttons';
 import { Title } from '../utils/Texts';
 import { useTheme } from '../../contexts/Theme';
 import { black, white } from '../../styles/Theme';
+import FlaskClient from '../../connections/Flask';
+import { useAuth } from '../../contexts/Auth';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -32,7 +34,59 @@ export default function DashboardCalendar() {
   const [startDate, setStartDate] = useState(null as null | Date);
   const [endDate, setEndDate] = useState(null as null | Date);
   const [events, setEvents] = useState([] as Event[]);
+  const [fetchedEvents, setFetchedEvents] = useState(false);
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
+  const { user } = useAuth();
+  if (!user) {
+    return <div />;
+  }
+  const fetchEvents = async () => {
+    if (fetchedEvents) {
+      return;
+    }
+    const getEvents = await FlaskClient.post('blocks/getBlocks', {
+      id: user.id,
+    });
+    const fetchedBlocks: {
+      id: string;
+      completed: number;
+      start_time: string;
+      end_time: string;
+      type: string;
+      task_id: string;
+      repeat: string;
+      name: string;
+    }[] = getEvents.blocks;
+    const convertedBlocks = fetchedBlocks.map((fetchedBlock) => ({
+      title: fetchedBlock.name,
+      start: moment(fetchedBlock.start_time).toDate(),
+      end: moment(fetchedBlock.end_time).toDate(),
+    } as Event));
+    console.log(convertedBlocks);
+    setEvents(convertedBlocks);
+    setFetchedEvents(true);
+  };
+  const postEvent = async () => {
+    if (!eventTitle || !startDate || !endDate) {
+      return;
+    }
+    await FlaskClient.post('blocks/createBlock', {
+      id: '',
+      user_id: user.id,
+      task_id: '',
+      type: 'calendar',
+      name: eventTitle,
+      start_time: startDate,
+      end_time: endDate,
+      date: '',
+      completed: 0,
+      repeat: '',
+    });
+    setFetchedEvents(true);
+  };
+  useEffect(() => {
+    fetchEvents();
+  }, [events]);
   return (
     <Panel centerY flex="column" fill>
       <div style={{ width: '95%', flex: 1, marginBottom: 10 }}>
@@ -127,6 +181,7 @@ export default function DashboardCalendar() {
               title: eventTitle,
             });
             setEvents(freshEvents);
+            postEvent();
           }}
         >
           {selectedEvent ? 'Edit' : 'Create'}
