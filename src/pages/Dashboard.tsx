@@ -17,15 +17,22 @@ import StandardSelect from '../components/utils/Select';
 import { StandardInput, StandardTimeInput } from '../components/utils/Inputs';
 import { TaskItem } from './Task';
 import FlaskClient from '../connections/Flask';
-import { toShortTimeString } from '../utils/Time';
 import SettingsModal from '../components/calendar/SettingsModal';
 
 const rowStyle = {
   margin: 10, width: '50%',
 };
-
+const hoursToFloat = (inputHours: string): number => {
+  const splitArr = inputHours.split(':');
+  if (splitArr.length !== 2) {
+    return Number(splitArr);
+  }
+  const hoursWhole = Number(splitArr[0]);
+  const minsWhole = Number(splitArr[1]);
+  return hoursWhole + minsWhole / 60;
+};
 export default function Dashboard() {
-  const [tasks, setTasks] = useState([] as TaskItem[]);
+  const [tasks, setTasks] = useState(null as null | TaskItem[]);
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
   const [openEvents, setOpenEvents] = useState(false);
@@ -45,7 +52,7 @@ export default function Dashboard() {
     return <Navigate to="/" />;
   }
   const fetchTasks = async (userId: string) => {
-    if (tasks.length > 0) {
+    if (tasks !== null) {
       return;
     }
     const fetchedTasks: { tasks: TaskItem[]} = await FlaskClient.post('tasks/getTasks', { id: userId });
@@ -54,9 +61,9 @@ export default function Dashboard() {
   useEffect(() => {
     fetchTasks(user.id);
   }, [tasks]);
-  useEffect(() => {
-    // fetchSnooze(user.id);
-  }, [tasks]);
+  // useEffect(() => {
+  //   // fetchSnooze(user.id);
+  // }, [tasks]);
 
   return (
     <Page fullHeight centerY>
@@ -67,12 +74,15 @@ export default function Dashboard() {
       <SettingsModal open={openSettingsModal} onClose={() => { setOpenSettingsModal(false); }} />
       <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
         <Title size="l">Events</Title>
+        {tasks !== null && (
         <Table
           keys={['name', 'description', 'label', 'due date']}
           columns={['Name', 'Description', 'Label', 'Due Date']}
           items={tasks}
           emptyMessage="No scheduled events"
         />
+        )}
+
       </Modal>
       <Modal
         open={openTasks}
@@ -110,7 +120,7 @@ export default function Dashboard() {
             <div style={rowStyle}>
               <StandardTimeInput
                 fullWidth
-                label="Estimated Time (HH:MM)"
+                label="Estimated Time (HH:MM)" // TODO: change
                 onTimeChange={(newTime) => {
                   setEstimatedTime(newTime);
                 }}
@@ -144,22 +154,34 @@ export default function Dashboard() {
                 variant="outlined"
                 fullWidth
                 onMouseDown={async () => {
-                  if (!readyToSchedule) {
+                  if (!readyToSchedule || tasks === null) {
                     return;
                   }
                   const payload: TaskItem = {
                     name,
                     description,
                     label,
-                    start_date: toShortTimeString(new Date()),
-                    due_date: toShortTimeString(dueDate),
-                    estimated_time: estimatedTime,
+                    start_date: new Date(),
+                    due_date: dueDate,
+                    estimated_time: hoursToFloat(estimatedTime),
                     id: '',
                     user_id: user.id,
                     completed: 0,
                   };
                   // send payload
                   const createdTask = await FlaskClient.post('tasks/createTask', payload);
+                  // const scheduledTask = await FlaskClient.post('schedule', { id: user.id });
+                  // console.log('scheduled task');
+                  // console.log(scheduledTask);
+                  // if (scheduledTask.failed) {
+                  //   // Oops!
+                  //   // You don't have enough time for this task.
+                  //   // We'll save the task for you, but we can't fit it in your schedule.
+                  //   // Cancel Task     OR      Save Anyways (CRAMS)
+                  // }
+                  // // createdTask.
+                  // // TODO: edit the createdtask, to say /tasks/DoNotSchedule /tasks/deleteTask
+                  // // TODO: create event should reschedule
                   const freshTasks = tasks.slice();
                   freshTasks.push(createdTask);
                   setTasks(freshTasks);
@@ -181,6 +203,7 @@ export default function Dashboard() {
               +
             </PurpleButton>
           )}
+        {tasks !== null && (
         <Table
           urlPrefix="task"
           keys={['name', 'description', 'label', 'due date']}
@@ -188,6 +211,7 @@ export default function Dashboard() {
           items={tasks}
           emptyMessage="No scheduled tasks"
         />
+        )}
       </Modal>
       <Title>Dashboard</Title>
       <div style={{

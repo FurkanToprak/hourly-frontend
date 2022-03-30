@@ -10,7 +10,9 @@ import TimeSelect from './TimeSelect';
 import { StandardButton } from '../utils/Buttons';
 import { Title } from '../utils/Texts';
 import { useTheme } from '../../contexts/Theme';
-import { black, white } from '../../styles/Theme';
+import {
+  black, darkBorder, lightBorder, purple, raspberry, thinDarkBorder, thinLightBorder, white,
+} from '../../styles/Theme';
 import FlaskClient from '../../connections/Flask';
 import { useAuth } from '../../contexts/Auth';
 
@@ -37,6 +39,8 @@ export default function DashboardCalendar() {
   const [fetchedEvents, setFetchedEvents] = useState(false);
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   const { user } = useAuth();
+  const thinThemeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
+  const themeBorder = theme === 'light' ? lightBorder : darkBorder;
   if (!user) {
     return <div />;
   }
@@ -57,11 +61,14 @@ export default function DashboardCalendar() {
       repeat: string;
       name: string;
     }[] = getEvents.blocks;
+    // console.log(fetchedBlocks);
     const convertedBlocks = fetchedBlocks.map((fetchedBlock) => ({
       title: fetchedBlock.name,
       start: moment(fetchedBlock.start_time).toDate(),
       end: moment(fetchedBlock.end_time).toDate(),
+      type: fetchedBlock.type,
     } as Event));
+    console.log('convertedBlocks');
     console.log(convertedBlocks);
     setEvents(convertedBlocks);
     setFetchedEvents(true);
@@ -70,18 +77,22 @@ export default function DashboardCalendar() {
     if (!eventTitle || !startDate || !endDate) {
       return;
     }
-    await FlaskClient.post('blocks/createBlock', {
+    await FlaskClient.post('events/createEvent', {
       id: '',
       user_id: user.id,
-      task_id: '',
-      type: 'calendar',
       name: eventTitle,
       start_time: startDate,
       end_time: endDate,
-      date: '',
-      completed: 0,
       repeat: '',
     });
+    // const scheduleResponse = await FlaskClient.post('schedule', { id: user.id });
+    // console.log(scheduleResponse);
+    // if (scheduleResponse.failed) {
+    //   // TODO: delete event
+    //   // alert user
+    //   // The event you have created conflicts with your available work time.
+    //   // Delete Event
+    // }
     setFetchedEvents(true);
   };
   useEffect(() => {
@@ -105,6 +116,9 @@ export default function DashboardCalendar() {
               start: new Date(droppedEvent.start),
               end: new Date(droppedEvent.end),
               title: oldEvent.title,
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              type: 'event',
             });
             setEvents(freshEvents);
           }}
@@ -128,6 +142,18 @@ export default function DashboardCalendar() {
           startAccessor="start"
           endAccessor="end"
           resizable
+          eventPropGetter={(event, start, end, isSelected) => {
+            console.log(event);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const isEvent = event.type === 'EVENT';
+            return {
+              style: {
+                backgroundColor: isEvent ? purple : raspberry,
+                border: isSelected ? themeBorder : thinThemeBorder,
+              },
+            };
+          }}
           style={{ color: themeFont, ...calendarStyle }}
         />
       </div>

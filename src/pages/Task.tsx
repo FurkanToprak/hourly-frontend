@@ -15,9 +15,9 @@ export interface TaskItem {
   name: string;
   description: string;
   label: string;
-  estimated_time: string;
-  start_date: string;
-  due_date: string;
+  estimated_time: number;
+  start_date: Date;
+  due_date: Date;
   id: string;
   user_id: string;
 }
@@ -35,8 +35,6 @@ export default function Task() {
       return;
     }
     const thisTask = await FlaskClient.post('tasks/getTaskById', { id: taskId });
-    console.log('post');
-    console.log(thisTask);
     if (!thisTask) {
       return;
     }
@@ -68,7 +66,7 @@ export default function Task() {
         </div>
         <div style={rowStyle}>
           <Title size="xs">{'Estimated Time: '}</Title>
-          <Body>{fetchedTask.estimated_time}</Body>
+          <Body>{`${fetchedTask.estimated_time} hours`}</Body>
         </div>
         <div style={rowStyle}>
           <Title size="xs">{'Due Date: '}</Title>

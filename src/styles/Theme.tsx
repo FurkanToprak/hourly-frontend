@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '../contexts/Theme';
 
 export const lightBackground = '#FFF';
-export const darkBackground = '#080517';
+export const darkBackground = '#282e38';
 export const raspberry = '#DB2955';
 export const purple = '#4B2FDA';
 export const grey = '#7A7A7A';
