@@ -19,6 +19,10 @@ import { TaskItem } from './Task';
 import FlaskClient from '../connections/Flask';
 import SettingsModal from '../components/calendar/SettingsModal';
 
+export interface SnoozeSchema {
+  startOfDay: string;
+  endOfDay: string;
+}
 const rowStyle = {
   margin: 10, width: '50%',
 };
@@ -40,6 +44,7 @@ export default function Dashboard() {
   const [openAddTask, setOpenAddTask] = useState(false);
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
   const [openSettingsModal, setOpenSettingsModal] = useState(false);
+  const [snooze, setSnooze] = useState(null as null | SnoozeSchema);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [label, setLabel] = useState('');
@@ -58,12 +63,19 @@ export default function Dashboard() {
     const fetchedTasks: { tasks: TaskItem[]} = await FlaskClient.post('tasks/getTasks', { id: userId });
     setTasks(fetchedTasks.tasks);
   };
+  const fetchSnooze = async (userId: string) => {
+    if (snooze !== null) {
+      return;
+    }
+    const fetchedSnooze: SnoozeSchema = await FlaskClient.post('users/getSleep', { id: userId });
+    setSnooze(fetchedSnooze);
+  };
   useEffect(() => {
     fetchTasks(user.id);
   }, [tasks]);
-  // useEffect(() => {
-  //   // fetchSnooze(user.id);
-  // }, [tasks]);
+  useEffect(() => {
+    fetchSnooze(user.id);
+  }, [tasks]);
 
   return (
     <Page fullHeight centerY>
@@ -250,7 +262,7 @@ export default function Dashboard() {
           }}
         />
       </div>
-      <DashboardCalendar />
+      <DashboardCalendar snooze={snooze} />
     </Page>
   );
 }

@@ -15,6 +15,7 @@ import {
 } from '../../styles/Theme';
 import FlaskClient from '../../connections/Flask';
 import { useAuth } from '../../contexts/Auth';
+import { SnoozeSchema } from '../../pages/Dashboard';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -28,7 +29,9 @@ const cancelButtonStyle = { marginTop: 10 };
 const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
 const calendarStyle = { margin: 10 };
 
-export default function DashboardCalendar() {
+export default function DashboardCalendar(props: {
+  snooze: null | SnoozeSchema;
+}) {
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
   const [selectedEvent, setSelectedEvent] = useState(null as null | Event);
@@ -98,12 +101,16 @@ export default function DashboardCalendar() {
   useEffect(() => {
     fetchEvents();
   }, [events]);
+  console.log('props.snooze');
+  console.log(props.snooze);
   return (
     <Panel centerY flex="column" fill>
       <div style={{ width: '95%', flex: 1, marginBottom: 10 }}>
         {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment
        * @ts-ignore */}
         <DnDCalendar
+          min={props.snooze ? new Date(props.snooze.startOfDay) : undefined}
+          max={props.snooze ? new Date(props.snooze.endOfDay) : undefined}
           defaultDate={moment().toDate()}
           defaultView="week"
           views={{
