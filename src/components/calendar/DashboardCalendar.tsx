@@ -64,6 +64,7 @@ export default function DashboardCalendar(props: {
       repeat: string;
       name: string;
     }[] = getEvents.blocks;
+    console.log(fetchedBlocks);
     const convertedBlocks = fetchedBlocks.map((fetchedBlock) => ({
       id: fetchedBlock.id,
       title: fetchedBlock.name,
