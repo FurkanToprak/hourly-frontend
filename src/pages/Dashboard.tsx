@@ -4,11 +4,11 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Navigate } from 'react-router-dom';
 import DashboardCalendar from '../components/calendar/DashboardCalendar';
 import Page from '../components/utils/Page';
-import { Title } from '../components/utils/Texts';
+import { Body, Title } from '../components/utils/Texts';
 import { useTheme } from '../contexts/Theme';
 import { black, white } from '../styles/Theme';
 import Modal from '../components/utils/Modal';
-import { PurpleButton, StandardButton } from '../components/utils/Buttons';
+import { PurpleButton, RaspberryButton, StandardButton } from '../components/utils/Buttons';
 import TimeSelect from '../components/calendar/TimeSelect';
 import { useAuth } from '../contexts/Auth';
 import Table from '../components/utils/Table';
@@ -17,15 +17,26 @@ import StandardSelect from '../components/utils/Select';
 import { StandardInput, StandardTimeInput } from '../components/utils/Inputs';
 import { TaskItem } from './Task';
 import FlaskClient from '../connections/Flask';
-import { toShortTimeString } from '../utils/Time';
 import SettingsModal from '../components/calendar/SettingsModal';
 
+export interface SnoozeSchema {
+  startOfDay: string;
+  endOfDay: string;
+}
 const rowStyle = {
   margin: 10, width: '50%',
 };
-
+const hoursToFloat = (inputHours: string): number => {
+  const splitArr = inputHours.split(':');
+  if (splitArr.length !== 2) {
+    return Number(splitArr);
+  }
+  const hoursWhole = Number(splitArr[0]);
+  const minsWhole = Number(splitArr[1]);
+  return hoursWhole + minsWhole / 60;
+};
 export default function Dashboard() {
-  const [tasks, setTasks] = useState([] as TaskItem[]);
+  const [tasks, setTasks] = useState(null as null | TaskItem[]);
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
   const [openEvents, setOpenEvents] = useState(false);
@@ -33,6 +44,8 @@ export default function Dashboard() {
   const [openAddTask, setOpenAddTask] = useState(false);
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
   const [openSettingsModal, setOpenSettingsModal] = useState(false);
+  const [taskScheduleError, setTaskScheduleError] = useState(null as null | TaskItem);
+  const [snooze, setSnooze] = useState(null as null | SnoozeSchema);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [label, setLabel] = useState('');
@@ -45,17 +58,29 @@ export default function Dashboard() {
     return <Navigate to="/" />;
   }
   const fetchTasks = async (userId: string) => {
-    if (tasks.length > 0) {
+    if (tasks !== null) {
       return;
     }
     const fetchedTasks: { tasks: TaskItem[]} = await FlaskClient.post('tasks/getTasks', { id: userId });
     setTasks(fetchedTasks.tasks);
   };
+  const deleteTask = async (taskId: string) => {
+    await FlaskClient.post('tasks/deleteTask', {
+      id: taskId,
+    });
+  };
+  const fetchSnooze = async (userId: string) => {
+    if (snooze !== null) {
+      return;
+    }
+    const fetchedSnooze: SnoozeSchema = await FlaskClient.post('users/getSleep', { id: userId });
+    setSnooze(fetchedSnooze);
+  };
   useEffect(() => {
     fetchTasks(user.id);
   }, [tasks]);
   useEffect(() => {
-    // fetchSnooze(user.id);
+    fetchSnooze(user.id);
   }, [tasks]);
 
   return (
@@ -64,15 +89,56 @@ export default function Dashboard() {
         <Title size="l">Import Calendar</Title>
         <StandardButton variant="outlined">Connect Google Calendar</StandardButton>
       </Modal>
+      <Modal
+        open={taskScheduleError !== null}
+        onClose={() => {
+          setTaskScheduleError(null);
+          // TODO: /tasks/DoNotSchedule
+        }}
+      >
+        <Title size="l">Oops!</Title>
+        <Body>
+          {"You don't have enough time for this task. \
+          We'll save the task for you, but we can't fit it in your schedule."}
+        </Body>
+        <RaspberryButton
+          style={{ marginTop: 10, marginBottom: 10 }}
+          fullWidth
+          variant="outlined"
+          onMouseDown={() => {
+            if (taskScheduleError === null) {
+              return;
+            }
+            deleteTask(taskScheduleError.id);
+          }}
+        >
+          Cancel Task
+        </RaspberryButton>
+        <PurpleButton
+          fullWidth
+          variant="outlined"
+          onMouseDown={() => {
+            if (taskScheduleError === null) {
+              return;
+            }
+            FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.id });
+          }}
+        >
+          Cram Task
+        </PurpleButton>
+      </Modal>
       <SettingsModal open={openSettingsModal} onClose={() => { setOpenSettingsModal(false); }} />
       <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
         <Title size="l">Events</Title>
+        {tasks !== null && (
         <Table
           keys={['name', 'description', 'label', 'due date']}
           columns={['Name', 'Description', 'Label', 'Due Date']}
           items={tasks}
           emptyMessage="No scheduled events"
         />
+        )}
+
       </Modal>
       <Modal
         open={openTasks}
@@ -110,7 +176,7 @@ export default function Dashboard() {
             <div style={rowStyle}>
               <StandardTimeInput
                 fullWidth
-                label="Estimated Time (HH:MM)"
+                label="Estimated Time (HH:MM)" // TODO: change to half-hour intervals
                 onTimeChange={(newTime) => {
                   setEstimatedTime(newTime);
                 }}
@@ -144,24 +210,31 @@ export default function Dashboard() {
                 variant="outlined"
                 fullWidth
                 onMouseDown={async () => {
-                  if (!readyToSchedule) {
+                  if (!readyToSchedule || tasks === null) {
                     return;
                   }
                   const payload: TaskItem = {
                     name,
                     description,
                     label,
-                    start_date: toShortTimeString(new Date()),
-                    due_date: toShortTimeString(dueDate),
-                    estimated_time: estimatedTime,
+                    start_date: new Date(),
+                    due_date: dueDate,
+                    estimated_time: hoursToFloat(estimatedTime),
                     id: '',
                     user_id: user.id,
                     completed: 0,
                   };
                   // send payload
-                  const createdTask = await FlaskClient.post('tasks/createTask', payload);
+                  const createdTask: TaskItem = await FlaskClient.post('tasks/createTask', payload);
+                  const scheduledTask = await FlaskClient.post('schedule', { id: user.id });
+                  if (scheduledTask.failed) {
+                    setTaskScheduleError(createdTask);
+                  }
+                  console.log('a');
                   const freshTasks = tasks.slice();
+                  console.log('b');
                   freshTasks.push(createdTask);
+                  console.log('c');
                   setTasks(freshTasks);
                 }}
               >
@@ -181,6 +254,7 @@ export default function Dashboard() {
               +
             </PurpleButton>
           )}
+        {tasks !== null && (
         <Table
           urlPrefix="task"
           keys={['name', 'description', 'label', 'due date']}
@@ -188,6 +262,7 @@ export default function Dashboard() {
           items={tasks}
           emptyMessage="No scheduled tasks"
         />
+        )}
       </Modal>
       <Title>Dashboard</Title>
       <div style={{
@@ -226,7 +301,7 @@ export default function Dashboard() {
           }}
         />
       </div>
-      <DashboardCalendar />
+      <DashboardCalendar snooze={snooze} />
     </Page>
   );
 }
