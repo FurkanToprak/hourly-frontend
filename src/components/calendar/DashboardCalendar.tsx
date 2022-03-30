@@ -38,8 +38,7 @@ export default function DashboardCalendar(props: {
   const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
   const [endDate, setEndDate] = useState(null as null | Date);
-  const [events, setEvents] = useState([] as Event[]);
-  const [fetchedEvents, setFetchedEvents] = useState(false);
+  const [events, setEvents] = useState(null as null | Event[]);
   const [scheduleError, setScheduleError] = useState(false);
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   const { user } = useAuth();
@@ -49,7 +48,7 @@ export default function DashboardCalendar(props: {
     return <div />;
   }
   const fetchEvents = async () => {
-    if (fetchedEvents) {
+    if (events !== null) {
       return;
     }
     const getEvents = await FlaskClient.post('blocks/getBlocks', {
@@ -65,16 +64,16 @@ export default function DashboardCalendar(props: {
       repeat: string;
       name: string;
     }[] = getEvents.blocks;
-    // console.log(fetchedBlocks);
     const convertedBlocks = fetchedBlocks.map((fetchedBlock) => ({
+      id: fetchedBlock.id,
       title: fetchedBlock.name,
       start: moment(fetchedBlock.start_time).toDate(),
       end: moment(fetchedBlock.end_time).toDate(),
       type: fetchedBlock.type,
     } as Event));
     setEvents(convertedBlocks);
-    setFetchedEvents(true);
   };
+
   const postEvent = async () => {
     if (!eventTitle || !startDate || !endDate) {
       return;
@@ -88,19 +87,22 @@ export default function DashboardCalendar(props: {
       repeat: '',
     });
     const scheduleResponse = await FlaskClient.post('schedule', { id: user.id });
-    console.log(scheduleResponse);
     if (scheduleResponse.failed) {
       setScheduleError(true);
-      // TODO: delete event
-      // The event you have created conflicts with your available work time.
-      // Delete Event
+      // TODO: Delete Event
     }
-    setFetchedEvents(true);
+    setEvents(null);
   };
   const deleteEvent = async () => {
-    // TODO: delete event
-    const freshEvents = events.slice().filter((value) => value !== selectedEvent);
-    setEvents(freshEvents);
+    if (selectedEvent === null) {
+      return;
+    }
+    await FlaskClient.post('events/deleteEvent', {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      id: selectedEvent.id,
+    });
+    setEvents(null);
   };
   useEffect(() => {
     fetchEvents();
@@ -126,36 +128,40 @@ export default function DashboardCalendar(props: {
           views={{
             day: true, week: true, month: true,
           }}
-          onEventDrop={(droppedEvent) => {
-            const oldEvent = droppedEvent.event as Event;
-            const freshEvents = events.slice().filter((value) => value !== oldEvent);
-            freshEvents.push({
-              start: new Date(droppedEvent.start),
-              end: new Date(droppedEvent.end),
-              title: oldEvent.title,
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              type: 'event',
-            });
-            setEvents(freshEvents);
-          }}
-          onEventResize={(resizedEvent) => {
-            const oldEvent = resizedEvent.event as Event;
-            const freshEvents = events.slice().filter((value) => value !== oldEvent);
-            freshEvents.push({
-              start: new Date(resizedEvent.start),
-              end: new Date(resizedEvent.end),
-              title: oldEvent.title,
-            });
-            setEvents(freshEvents);
-          }}
+          // onEventDrop={(droppedEvent) => {
+            // const oldEvent = droppedEvent.event as Event;
+            // const freshEvents = events.slice().filter((value) => value !== oldEvent);
+            // freshEvents.push({
+            //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //   // @ts-ignore
+            //   id: oldEvent.id,
+            //   start: new Date(droppedEvent.start),
+            //   end: new Date(droppedEvent.end),
+            //   title: oldEvent.title,
+            //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //   // @ts-ignore
+            //   type: 'EVENT',
+            // });
+            // setEvents(freshEvents);
+          // }}
+          // onEventResize={(resizedEvent) => {
+          //   const oldEvent = resizedEvent.event as Event;
+          //   const freshEvents = events.slice().filter((value) => value !== oldEvent);
+          //   freshEvents.push({
+          //     start: new Date(resizedEvent.start),
+          //     end: new Date(resizedEvent.end),
+          //     title: oldEvent.title,
+          //   });
+          //   setEvents(freshEvents);
+          //   setSelectedEvent(null);
+          // }}
           onSelectEvent={(event: Event) => {
             setSelectedEvent(event);
             setStartDate(event.start as Date);
             setEndDate(event.end as Date);
           }}
           localizer={localizer}
-          events={events}
+          events={events || []}
           startAccessor="start"
           endAccessor="end"
           resizable
@@ -210,19 +216,6 @@ export default function DashboardCalendar(props: {
             if (!eventReady) {
               return;
             }
-            let freshEvents;
-            if (selectedEvent) {
-              freshEvents = events.slice().filter((event) => event !== selectedEvent);
-            } else {
-              freshEvents = events.slice();
-            }
-
-            freshEvents.push({
-              start: startDate as Date,
-              end: endDate as Date,
-              title: eventTitle,
-            });
-            setEvents(freshEvents);
             postEvent();
           }}
         >
