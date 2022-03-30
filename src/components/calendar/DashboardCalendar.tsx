@@ -7,7 +7,7 @@ import '../../styles/DashboardCalendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { StandardInput } from '../utils/Inputs';
 import TimeSelect from './TimeSelect';
-import { StandardButton } from '../utils/Buttons';
+import { RaspberryButton, StandardButton } from '../utils/Buttons';
 import { Title } from '../utils/Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
@@ -40,6 +40,7 @@ export default function DashboardCalendar(props: {
   const [endDate, setEndDate] = useState(null as null | Date);
   const [events, setEvents] = useState([] as Event[]);
   const [fetchedEvents, setFetchedEvents] = useState(false);
+  const [scheduleError, setScheduleError] = useState(false);
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   const { user } = useAuth();
   const thinThemeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
@@ -71,8 +72,6 @@ export default function DashboardCalendar(props: {
       end: moment(fetchedBlock.end_time).toDate(),
       type: fetchedBlock.type,
     } as Event));
-    console.log('convertedBlocks');
-    console.log(convertedBlocks);
     setEvents(convertedBlocks);
     setFetchedEvents(true);
   };
@@ -88,21 +87,32 @@ export default function DashboardCalendar(props: {
       end_time: endDate,
       repeat: '',
     });
-    // const scheduleResponse = await FlaskClient.post('schedule', { id: user.id });
-    // console.log(scheduleResponse);
-    // if (scheduleResponse.failed) {
-    //   // TODO: delete event
-    //   // alert user
-    //   // The event you have created conflicts with your available work time.
-    //   // Delete Event
-    // }
+    const scheduleResponse = await FlaskClient.post('schedule', { id: user.id });
+    console.log(scheduleResponse);
+    if (scheduleResponse.failed) {
+      setScheduleError(true);
+      // TODO: delete event
+      // The event you have created conflicts with your available work time.
+      // Delete Event
+    }
     setFetchedEvents(true);
+  };
+  const deleteEvent = async () => {
+    // TODO: delete event
+    const freshEvents = events.slice().filter((value) => value !== selectedEvent);
+    setEvents(freshEvents);
   };
   useEffect(() => {
     fetchEvents();
   }, [events]);
-  console.log('props.snooze');
-  console.log(props.snooze);
+  let buttonText;
+  if (scheduleError) {
+    buttonText = 'Conflicts With Your Schedule!';
+  } else if (selectedEvent) {
+    buttonText = 'Edit';
+  } else {
+    buttonText = 'Create';
+  }
   return (
     <Panel centerY flex="column" fill>
       <div style={{ width: '95%', flex: 1, marginBottom: 10 }}>
@@ -150,7 +160,6 @@ export default function DashboardCalendar(props: {
           endAccessor="end"
           resizable
           eventPropGetter={(event, start, end, isSelected) => {
-            console.log(event);
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const isEvent = event.type === 'EVENT';
@@ -217,23 +226,39 @@ export default function DashboardCalendar(props: {
             postEvent();
           }}
         >
-          {selectedEvent ? 'Edit' : 'Create'}
+          {buttonText}
         </StandardButton>
         { selectedEvent
         && (
-        <StandardButton
-          style={cancelButtonStyle}
-          variant="outlined"
-          fullWidth
-          onMouseDown={() => {
-            setSelectedEvent(null);
-            setEventTitle('');
-            setStartDate(null);
-            setEndDate(null);
-          }}
-        >
-          Cancel
-        </StandardButton>
+        <>
+          <StandardButton
+            style={cancelButtonStyle}
+            variant="outlined"
+            fullWidth
+            onMouseDown={() => {
+              setSelectedEvent(null);
+              setEventTitle('');
+              setStartDate(null);
+              setEndDate(null);
+            }}
+          >
+            Cancel
+          </StandardButton>
+          <RaspberryButton
+            style={cancelButtonStyle}
+            variant="outlined"
+            fullWidth
+            onMouseDown={() => {
+              setSelectedEvent(null);
+              setEventTitle('');
+              setStartDate(null);
+              setEndDate(null);
+              deleteEvent();
+            }}
+          >
+            Delete
+          </RaspberryButton>
+        </>
         )}
       </Panel>
     </Panel>
