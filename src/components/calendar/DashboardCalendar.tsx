@@ -97,11 +97,12 @@ export default function DashboardCalendar(props: {
     if (selectedEvent === null) {
       return;
     }
-    await FlaskClient.post('events/deleteEvent', {
+    const deleteSuccess = await FlaskClient.post('events/deleteEvent', {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       id: selectedEvent.id,
     });
+    console.log(deleteSuccess);
     setEvents(null);
   };
   useEffect(() => {
@@ -157,6 +158,7 @@ export default function DashboardCalendar(props: {
           // }}
           onSelectEvent={(event: Event) => {
             setSelectedEvent(event);
+            setEventTitle(event.title as string);
             setStartDate(event.start as Date);
             setEndDate(event.end as Date);
           }}
