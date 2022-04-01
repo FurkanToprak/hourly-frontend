@@ -24,7 +24,7 @@ export interface SnoozeSchema {
   endOfDay: string;
 }
 const rowStyle = {
-  margin: 10, width: '50%',
+  margin: 10, width: '50%', display: 'flex',
 };
 const hoursToFloat = (inputHours: string): number => {
   const splitArr = inputHours.split(':');
@@ -195,26 +195,57 @@ export default function Dashboard() {
               />
             </div>
             <div style={rowStyle}>
-              <StandardTimeInput
-                fullWidth
-                label="Estimated Time (HH:MM)" // TODO: change to half-hour intervals
-                onTimeChange={(newTime) => {
-                  setEstimatedTime(newTime);
-                }}
-              />
+              <div style={{ display: 'flex', alignItems: 'center', marginRight: 10 }}>
+                <Body>Estimated Time</Body>
+              </div>
+              <div style={{ flex: 1 }}>
+                <StandardSelect
+                  label="Hours"
+                  values={new Map<string, any>(Object.entries({
+                    1: '01',
+                    2: '02',
+                    3: '03',
+                    4: '04',
+                    5: '05',
+                    6: '06',
+                    7: '07',
+                    8: '08',
+                    9: '09',
+                    10: '10',
+                  }))}
+                  onSelect={(select: string) => {
+                    setLabel(select);
+                  }}
+                />
+              </div>
+              <div style={{ width: 10 }} />
+              <div style={{ flex: 1 }}>
+                <StandardSelect
+                  label="Minutes"
+                  values={new Map<string, any>(Object.entries({
+                    '00': '0',
+                    30: '0',
+                  }))}
+                  onSelect={(select: string) => {
+                    setLabel(select);
+                  }}
+                />
+              </div>
             </div>
             <div style={rowStyle}>
-              <StandardSelect
-                label="Label"
-                values={new Map<string, any>(Object.entries({
-                  'MATH 222': 'id1',
-                  'CSCE 132': 'id2',
-                  'CSCE 999': 'id3',
-                }))}
-                onSelect={(select: string) => {
-                  setLabel(select);
-                }}
-              />
+              <div style={{ flex: 1 }}>
+                <StandardSelect
+                  label="Label"
+                  values={new Map<string, any>(Object.entries({
+                    'MATH 222': 'id1',
+                    'CSCE 132': 'id2',
+                    'CSCE 999': 'id3',
+                  }))}
+                  onSelect={(select: string) => {
+                    setLabel(select);
+                  }}
+                />
+              </div>
             </div>
             <div style={rowStyle}>
               <TimeSelect
