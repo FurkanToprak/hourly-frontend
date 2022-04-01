@@ -78,7 +78,6 @@ export default function Groups() {
           variant="outlined"
         >
           Create
-
         </RaspberryButton>
       </Modal>
       <Title>Groups</Title>
