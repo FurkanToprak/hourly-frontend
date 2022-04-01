@@ -30,7 +30,7 @@ export default function SettingsModal(props: {
     if (fetchedTimeAlready) {
       return;
     }
-    const fetchedTime: { endOfDay: string; startOfDay: string;} = await FlaskClient.post('users/getSleep', { id: user.id });
+    const fetchedTime: { endOfDay: string; startOfDay: string;} = await FlaskClient.post('users/getSleep', { user_id: user.id });
     const fetchedStart = moment(fetchedTime.startOfDay).toDate();
     const fetchedEnd = moment(fetchedTime.endOfDay).toDate();
     setStartTime(fetchedStart);
