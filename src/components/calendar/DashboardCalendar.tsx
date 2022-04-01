@@ -104,7 +104,7 @@ export default function DashboardCalendar(props: {
   if (scheduleError) {
     buttonText = 'Conflicts With Your Schedule!';
   } else {
-    buttonText = 'Create';
+    buttonText = 'Create Event';
   }
   return (
     <Panel centerY flex="column" fill>
@@ -139,7 +139,6 @@ export default function DashboardCalendar(props: {
         />
       </div>
       <Panel centerY flex="column" margin>
-        <Title size="s">Create Event</Title>
         <StandardInput
           label="Title"
           value={eventTitle}

@@ -61,6 +61,9 @@ export default function Table(props: {
                               const isBoolean: boolean = itemColumn === 'completed';
                               const booleanValue = isBoolean ? undefined : (cell === 1);
                               const isDateType = itemColumn.includes('date') || itemColumn.includes('time');
+                              if (itemColumn === 'due_date') {
+                                console.log(cell);
+                              }
                               const cellDate = isDateType ? new Date(cell) : null;
                               const cellText = cellDate !== null ? `${cellDate.getMonth()}/${cellDate.getDay()}/${cellDate.getFullYear()}` : cell;
                               const booleanIndicator = booleanValue

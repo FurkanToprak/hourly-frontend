@@ -153,8 +153,8 @@ export default function Dashboard() {
         <Title size="l">Events</Title>
         {events !== null && (
         <Table
-          keys={['name', 'repeat', 'completed', 'label', 'start_time', 'end_time']}
-          columns={['Name', 'Repeats?', 'Completed', 'Label', 'Start Time', 'End Time']}
+          keys={['name', 'repeat', 'start_time', 'end_time']}
+          columns={['Name', 'Repeats?', 'Start Time', 'End Time']}
           items={events}
           emptyMessage="No scheduled events"
         />
@@ -275,8 +275,8 @@ export default function Dashboard() {
         {tasks !== null && (
         <Table
           urlPrefix="task"
-          keys={['name', 'description', 'label', 'due date']}
-          columns={['Name', 'Description', 'Label', 'Due Date']}
+          keys={['name', 'description', 'label', 'due_date', 'completed']}
+          columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
           items={tasks}
           emptyMessage="No scheduled tasks"
         />
