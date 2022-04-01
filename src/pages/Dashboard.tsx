@@ -82,7 +82,18 @@ export default function Dashboard() {
   useEffect(() => {
     fetchSnooze(user.id);
   }, [tasks]);
-
+  const cramTask = async () => {
+    if (taskScheduleError === null) {
+      return;
+    }
+    const cramTaskResponse = await FlaskClient.post('tasks/cramTask', {
+      task_id: taskScheduleError.task_id,
+    });
+    // TODO: never tested
+    console.log('cramTaskResponse');
+    console.log(cramTaskResponse);
+    setTaskScheduleError(null);
+  };
   return (
     <Page fullHeight centerY>
       <Modal open={openCalendarModal} onClose={() => { setOpenCalendarModal(false); }}>
@@ -93,7 +104,7 @@ export default function Dashboard() {
         open={taskScheduleError !== null}
         onClose={() => {
           setTaskScheduleError(null);
-          // TODO: /tasks/DoNotSchedule
+          cramTask();
         }}
       >
         <Title size="l">Oops!</Title>

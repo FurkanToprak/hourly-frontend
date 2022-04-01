@@ -7,7 +7,7 @@ import '../../styles/DashboardCalendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { StandardInput } from '../utils/Inputs';
 import TimeSelect from './TimeSelect';
-import { RaspberryButton, StandardButton } from '../utils/Buttons';
+import { StandardButton } from '../utils/Buttons';
 import { Title } from '../utils/Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
@@ -25,7 +25,6 @@ const DnDCalendar = withDragAndDrop(Calendar);
 const inputStyle: React.CSSProperties = {
   margin: 10,
 };
-const cancelButtonStyle = { marginTop: 10 };
 const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
 const calendarStyle = { margin: 10 };
 
