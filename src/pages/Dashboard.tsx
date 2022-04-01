@@ -143,7 +143,7 @@ export default function Dashboard() {
         <Title size="l">Events</Title>
         {tasks !== null && (
         <Table
-          keys={['name', 'description', 'label', 'due date']}
+          keys={['name', 'description', 'label', 'due_date']}
           columns={['Name', 'Description', 'Label', 'Due Date']}
           items={tasks}
           emptyMessage="No scheduled events"

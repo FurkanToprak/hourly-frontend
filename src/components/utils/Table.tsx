@@ -54,7 +54,9 @@ export default function Table(props: {
               {
                             props.keys.map((itemColumn) => {
                               const cell = item[itemColumn];
-                              const cellText = (cell instanceof Date) ? `${cell.getMonth()}/${cell.getDay()}/${cell.getFullYear()}` : cell;
+                              const isDateType = itemColumn.includes('date');
+                              const cellDate = isDateType ? new Date(cell) : null;
+                              const cellText = cellDate !== null ? `${cellDate.getMonth()}/${cellDate.getDay()}/${cellDate.getFullYear()}` : cell;
                               return (
                                 <TableCell align="left" style={{ borderBottom: thinThemeBorder }} key={`row-${item.name}-col-${itemColumn}`}>
                                   <Body>
