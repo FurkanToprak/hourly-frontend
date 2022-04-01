@@ -10,7 +10,7 @@ import FlaskClient from '../connections/Flask';
 import { purple, raspberry, white } from '../styles/Theme';
 import { toShortTimeString } from '../utils/Time';
 
-export interface TaskItem {
+export interface TaskSchema {
   completed: 0 | 1;
   name: string;
   description: string;
@@ -27,7 +27,7 @@ const rowStyle: React.CSSProperties = { marginBottom: 10 };
 const statRowStyle: React.CSSProperties = { flex: 1, display: 'flex', marginTop: 10 };
 
 export default function Task() {
-  const [fetchedTask, setFetchedTask] = useState(null as null | TaskItem);
+  const [fetchedTask, setFetchedTask] = useState(null as null | TaskSchema);
   const taskParams = useParams();
   const taskId = taskParams.taskid || '';
   const fetchTask = async () => {

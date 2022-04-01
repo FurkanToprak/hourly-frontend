@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Navigate } from 'react-router-dom';
-import DashboardCalendar from '../components/calendar/DashboardCalendar';
+import DashboardCalendar, { EventSchema } from '../components/calendar/DashboardCalendar';
 import Page from '../components/utils/Page';
 import { Body, Title } from '../components/utils/Texts';
 import { useTheme } from '../contexts/Theme';
@@ -15,7 +15,7 @@ import Table from '../components/utils/Table';
 import Panel from '../components/utils/Panel';
 import StandardSelect from '../components/utils/Select';
 import { StandardInput, StandardTimeInput } from '../components/utils/Inputs';
-import { TaskItem } from './Task';
+import { TaskSchema } from './Task';
 import FlaskClient from '../connections/Flask';
 import SettingsModal from '../components/calendar/SettingsModal';
 
@@ -36,7 +36,8 @@ const hoursToFloat = (inputHours: string): number => {
   return hoursWhole + minsWhole / 60;
 };
 export default function Dashboard() {
-  const [tasks, setTasks] = useState(null as null | TaskItem[]);
+  const [tasks, setTasks] = useState(null as null | TaskSchema[]);
+  const [events, setEvents] = useState(null as null | EventSchema[]);
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
   const [openEvents, setOpenEvents] = useState(false);
@@ -44,7 +45,7 @@ export default function Dashboard() {
   const [openAddTask, setOpenAddTask] = useState(false);
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
   const [openSettingsModal, setOpenSettingsModal] = useState(false);
-  const [taskScheduleError, setTaskScheduleError] = useState(null as null | TaskItem);
+  const [taskScheduleError, setTaskScheduleError] = useState(null as null | TaskSchema);
   const [snooze, setSnooze] = useState(null as null | SnoozeSchema);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -57,11 +58,18 @@ export default function Dashboard() {
   if (!user) {
     return <Navigate to="/" />;
   }
+  const fetchEvents = async (userId: string) => {
+    if (tasks !== null) {
+      return;
+    }
+    const fetchedEvents: { events: EventSchema[]} = await FlaskClient.post('events/getEvents', { user_id: userId });
+    setEvents(fetchedEvents.events);
+  };
   const fetchTasks = async (userId: string) => {
     if (tasks !== null) {
       return;
     }
-    const fetchedTasks: { tasks: TaskItem[]} = await FlaskClient.post('tasks/getUserTasks', { user_id: userId });
+    const fetchedTasks: { tasks: TaskSchema[]} = await FlaskClient.post('tasks/getUserTasks', { user_id: userId });
     setTasks(fetchedTasks.tasks);
   };
   const deleteTask = async (taskId: string) => {
@@ -77,21 +85,23 @@ export default function Dashboard() {
     setSnooze(fetchedSnooze);
   };
   useEffect(() => {
+    fetchEvents(user.id);
+  }, [events]);
+  useEffect(() => {
     fetchTasks(user.id);
   }, [tasks]);
   useEffect(() => {
     fetchSnooze(user.id);
-  }, [tasks]);
+  }, [snooze]);
+
   const cramTask = async () => {
     if (taskScheduleError === null) {
       return;
     }
-    const cramTaskResponse = await FlaskClient.post('tasks/cramTask', {
+    await FlaskClient.post('tasks/cramTask', {
       task_id: taskScheduleError.task_id,
     });
     // TODO: never tested
-    console.log('cramTaskResponse');
-    console.log(cramTaskResponse);
     setTaskScheduleError(null);
   };
   return (
@@ -141,11 +151,11 @@ export default function Dashboard() {
       <SettingsModal open={openSettingsModal} onClose={() => { setOpenSettingsModal(false); }} />
       <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
         <Title size="l">Events</Title>
-        {tasks !== null && (
+        {events !== null && (
         <Table
-          keys={['name', 'description', 'label', 'due_date']}
-          columns={['Name', 'Description', 'Label', 'Due Date']}
-          items={tasks}
+          keys={['name', 'repeat', 'completed', 'label', 'start_time', 'end_time']}
+          columns={['Name', 'Repeats?', 'Completed', 'Label', 'Start Time', 'End Time']}
+          items={events}
           emptyMessage="No scheduled events"
         />
         )}
@@ -224,7 +234,7 @@ export default function Dashboard() {
                   if (!readyToSchedule || tasks === null) {
                     return;
                   }
-                  const payload: TaskItem = {
+                  const payload: TaskSchema = {
                     name,
                     description,
                     label,
@@ -236,7 +246,7 @@ export default function Dashboard() {
                     completed: 0,
                   };
                   // send payload
-                  const createdTask: TaskItem = await FlaskClient.post('tasks/createTask', payload);
+                  const createdTask: TaskSchema = await FlaskClient.post('tasks/createTask', payload);
                   const scheduledTask = await FlaskClient.post('schedule', { user_id: user.id });
                   if (scheduledTask.failed) {
                     setTaskScheduleError(createdTask);

@@ -28,7 +28,7 @@ const inputStyle: React.CSSProperties = {
 const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
 const calendarStyle = { margin: 10 };
 
-interface EventSchema {
+export interface EventSchema {
   event_id: string;
   completed: number;
   start_time: string;

@@ -3,10 +3,13 @@ import {
   TableBody, TableContainer, Table as MuiTable, TableHead, TableRow, TableCell,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Body, Title } from './Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
-  darkBorder, lightBorder, purple, thinDarkBorder, thinLightBorder,
+  black,
+  darkBorder, lightBorder, purple, thinDarkBorder, thinLightBorder, white,
 } from '../../styles/Theme';
 
 export default function Table(props: {
@@ -21,6 +24,7 @@ export default function Table(props: {
   const { theme } = useTheme();
   const thickThemeBorder = theme === 'light' ? lightBorder : darkBorder;
   const thinThemeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
+  const themeColor = theme === 'light' ? black : white;
   return (
     <TableContainer>
       <MuiTable>
@@ -54,14 +58,21 @@ export default function Table(props: {
               {
                             props.keys.map((itemColumn) => {
                               const cell = item[itemColumn];
-                              const isDateType = itemColumn.includes('date');
+                              const isBoolean: boolean = itemColumn === 'completed';
+                              const booleanValue = isBoolean ? undefined : (cell === 1);
+                              const isDateType = itemColumn.includes('date') || itemColumn.includes('time');
                               const cellDate = isDateType ? new Date(cell) : null;
                               const cellText = cellDate !== null ? `${cellDate.getMonth()}/${cellDate.getDay()}/${cellDate.getFullYear()}` : cell;
+                              const booleanIndicator = booleanValue
+                                ? <CheckBoxIcon htmlColor={themeColor} />
+                                : <CheckBoxOutlineBlankIcon htmlColor={themeColor} />;
                               return (
                                 <TableCell align="left" style={{ borderBottom: thinThemeBorder }} key={`row-${item.name}-col-${itemColumn}`}>
-                                  <Body>
-                                    {cellText}
-                                  </Body>
+                                  {isBoolean ? booleanIndicator : (
+                                    <Body>
+                                      {cellText}
+                                    </Body>
+                                  )}
                                 </TableCell>
                               );
                             })
