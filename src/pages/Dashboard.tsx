@@ -66,7 +66,7 @@ export default function Dashboard() {
   };
   const deleteTask = async (taskId: string) => {
     await FlaskClient.post('tasks/deleteTask', {
-      id: taskId,
+      task_id: taskId,
     });
   };
   const fetchSnooze = async (userId: string) => {
@@ -109,7 +109,7 @@ export default function Dashboard() {
             if (taskScheduleError === null) {
               return;
             }
-            deleteTask(taskScheduleError.id);
+            deleteTask(taskScheduleError.task_id);
           }}
         >
           Cancel Task
@@ -121,7 +121,7 @@ export default function Dashboard() {
             if (taskScheduleError === null) {
               return;
             }
-            FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.id });
+            FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.task_id });
           }}
         >
           Cram Task
@@ -220,21 +220,18 @@ export default function Dashboard() {
                     start_date: new Date(),
                     due_date: dueDate,
                     estimated_time: hoursToFloat(estimatedTime),
-                    id: '',
+                    task_id: '',
                     user_id: user.id,
                     completed: 0,
                   };
                   // send payload
                   const createdTask: TaskItem = await FlaskClient.post('tasks/createTask', payload);
-                  const scheduledTask = await FlaskClient.post('schedule', { id: user.id });
+                  const scheduledTask = await FlaskClient.post('schedule', { user_id: user.id });
                   if (scheduledTask.failed) {
                     setTaskScheduleError(createdTask);
                   }
-                  console.log('a');
                   const freshTasks = tasks.slice();
-                  console.log('b');
                   freshTasks.push(createdTask);
-                  console.log('c');
                   setTasks(freshTasks);
                 }}
               >

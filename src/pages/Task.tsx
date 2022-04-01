@@ -18,7 +18,7 @@ export interface TaskItem {
   estimated_time: number;
   start_date: Date;
   due_date: Date;
-  id: string;
+  task_id: string;
   user_id: string;
 }
 

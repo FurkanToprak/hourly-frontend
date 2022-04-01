@@ -87,11 +87,11 @@ export default function DashboardCalendar(props: {
       completed: 0,
       type: 'EVENT',
     } as EventSchema);
-    const scheduleResponse = await FlaskClient.post('schedule', { id: user.id });
+    const scheduleResponse = await FlaskClient.post('schedule', { user_id: user.id });
     if (scheduleResponse.failed) {
       setScheduleError(true);
-      // TODO: Delete Event
-      const deleteResponse: EventSchema = await FlaskClient.post('events/deleteEvent', {
+      // TODO: never checked
+      await FlaskClient.post('events/deleteEvent', {
         event_id: createdEvent.id,
         user_id: user.id,
       });
