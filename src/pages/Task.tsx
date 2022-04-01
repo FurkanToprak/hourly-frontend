@@ -34,7 +34,7 @@ export default function Task() {
     if (taskId.length === 0) {
       return;
     }
-    const thisTask = await FlaskClient.post('tasks/getTaskById', { id: taskId });
+    const thisTask = await FlaskClient.post('tasks/getTaskById', { task_id: taskId });
     if (!thisTask) {
       return;
     }

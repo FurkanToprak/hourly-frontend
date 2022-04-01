@@ -61,7 +61,7 @@ export default function Dashboard() {
     if (tasks !== null) {
       return;
     }
-    const fetchedTasks: { tasks: TaskItem[]} = await FlaskClient.post('tasks/getTasks', { id: userId });
+    const fetchedTasks: { tasks: TaskItem[]} = await FlaskClient.post('tasks/getUserTasks', { user_id: userId });
     setTasks(fetchedTasks.tasks);
   };
   const deleteTask = async (taskId: string) => {
@@ -73,7 +73,7 @@ export default function Dashboard() {
     if (snooze !== null) {
       return;
     }
-    const fetchedSnooze: SnoozeSchema = await FlaskClient.post('users/getSleep', { id: userId });
+    const fetchedSnooze: SnoozeSchema = await FlaskClient.post('users/getSleep', { user_id: userId });
     setSnooze(fetchedSnooze);
   };
   useEffect(() => {
