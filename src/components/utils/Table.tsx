@@ -5,6 +5,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { DeleteOutlined } from '@mui/icons-material';
+import { AnyRecord } from 'dns';
 import { Body, Title } from './Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
@@ -16,6 +18,7 @@ export default function Table(props: {
     keys: string[]
     columns: string[];
     items: any[];
+    onDelete?: (deletedItem: any) => void;
     emptyMessage: string;
     urlPrefix?: string;
 }) {
@@ -35,6 +38,7 @@ export default function Table(props: {
                 <Title size="s">{column}</Title>
               </TableCell>
             ))}
+            <TableCell />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,9 +65,6 @@ export default function Table(props: {
                               const isBoolean: boolean = itemColumn === 'completed';
                               const booleanValue = isBoolean ? undefined : (cell === 1);
                               const isDateType = itemColumn.includes('date') || itemColumn.includes('time');
-                              if (itemColumn === 'due_date') {
-                                console.log(cell);
-                              }
                               const cellDate = isDateType ? new Date(cell) : null;
                               const cellText = cellDate !== null ? `${cellDate.getMonth()}/${cellDate.getDay()}/${cellDate.getFullYear()}` : cell;
                               const booleanIndicator = booleanValue
@@ -80,6 +81,24 @@ export default function Table(props: {
                               );
                             })
                         }
+              <TableCell>
+                { props.onDelete && hoverRow === rowNumber ? (
+                  <DeleteOutlined
+                    htmlColor={themeColor}
+                    onMouseDown={() => {
+                      if (!props.onDelete) {
+                        return;
+                      }
+                      const deletedItem = props.items[hoverRow];
+                      props.onDelete(deletedItem);
+                    }}
+                  />
+                ) : (
+                  <DeleteOutlined
+                    style={{ visibility: 'hidden' }}
+                  />
+                )}
+              </TableCell>
             </TableRow>
           ))}
           {props.items.length === 0 && (

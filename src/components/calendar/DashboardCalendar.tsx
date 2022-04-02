@@ -29,7 +29,7 @@ const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
 const calendarStyle = { margin: 10 };
 
 export interface EventSchema {
-  event_id: string;
+  id: string;
   completed: number;
   start_time: string;
   end_time: string;
@@ -76,7 +76,7 @@ export default function DashboardCalendar(props: {
       return;
     }
     const createdEvent = await FlaskClient.post('events/createEvent', {
-      event_id: '',
+      id: '',
       user_id: user.id,
       task_id: '',
       name: eventTitle,
@@ -95,6 +95,9 @@ export default function DashboardCalendar(props: {
         user_id: user.id,
       });
     }
+    setEventTitle('');
+    setStartDate(null);
+    setEndDate(null);
     setEvents(null);
   };
   useEffect(() => {

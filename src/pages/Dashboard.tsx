@@ -14,7 +14,7 @@ import { useAuth } from '../contexts/Auth';
 import Table from '../components/utils/Table';
 import Panel from '../components/utils/Panel';
 import StandardSelect from '../components/utils/Select';
-import { StandardInput, StandardTimeInput } from '../components/utils/Inputs';
+import { StandardInput } from '../components/utils/Inputs';
 import { TaskSchema } from './Task';
 import FlaskClient from '../connections/Flask';
 import SettingsModal from '../components/calendar/SettingsModal';
@@ -59,7 +59,7 @@ export default function Dashboard() {
     return <Navigate to="/" />;
   }
   const fetchEvents = async (userId: string) => {
-    if (tasks !== null) {
+    if (events !== null) {
       return;
     }
     const fetchedEvents: { events: EventSchema[]} = await FlaskClient.post('events/getEvents', { user_id: userId });
@@ -93,7 +93,12 @@ export default function Dashboard() {
   useEffect(() => {
     fetchSnooze(user.id);
   }, [snooze]);
-
+  const deleteEvent = async (deletedEvent: EventSchema) => {
+    await FlaskClient.post('events/deleteEvent', {
+      event_id: deletedEvent.id,
+    });
+    setEvents(null);
+  };
   const cramTask = async () => {
     if (taskScheduleError === null) {
       return;
@@ -153,6 +158,9 @@ export default function Dashboard() {
         <Title size="l">Events</Title>
         {events !== null && (
         <Table
+          onDelete={(deletedEvent) => {
+            deleteEvent(deletedEvent);
+          }}
           keys={['name', 'repeat', 'start_time', 'end_time']}
           columns={['Name', 'Repeats?', 'Start Time', 'End Time']}
           items={events}
@@ -329,6 +337,7 @@ export default function Dashboard() {
           variant="outlined"
           onMouseDown={() => {
             setOpenEvents(true);
+            setEvents(null);
           }}
         >
           Events
@@ -337,6 +346,7 @@ export default function Dashboard() {
           variant="outlined"
           onMouseDown={() => {
             setOpenTasks(true);
+            setTasks(null);
           }}
         >
           Tasks
