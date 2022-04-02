@@ -3,14 +3,14 @@ import React, { useState } from 'react';
 import { purple, raspberry, white } from '../../styles/Theme';
 import { Body } from './Texts';
 
-export default function WeekSelector() {
+export default function WeekSelector(props: { onChange: (newDaysOfWeek: string) => void}) {
   const [selected, setSelected] = useState(new Set<string>());
   const daysOfWeek = {
     U: 'S',
     M: 'M',
     T: 'T',
     W: 'W',
-    H: 'T',
+    R: 'T',
     F: 'F',
     S: 'S',
   };
@@ -42,6 +42,11 @@ export default function WeekSelector() {
                       freshSelected.add(dayValue);
                     }
                     setSelected(freshSelected);
+                    let daysString = '';
+                    Object.keys(freshSelected).forEach(((selectedDay) => {
+                      daysString += selectedDay;
+                    }));
+                    props.onChange(daysString);
                   }}
                 >
                   <Body color={white}>{dayDisplay}</Body>

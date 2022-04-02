@@ -51,6 +51,7 @@ export default function DashboardCalendar(props: {
   const [endDate, setEndDate] = useState(null as null | Date);
   const [repeatsEnabled, setRepeatsEnabled] = useState(false);
   const [repeats, setRepeats] = useState('');
+  const [repeatDays, setRepeatDays] = useState('');
   // events, errors, auth
   const [events, setEvents] = useState(null as null | Event[]);
   const [scheduleError, setScheduleError] = useState(false);
@@ -80,6 +81,14 @@ export default function DashboardCalendar(props: {
     if (!eventTitle || !startDate || !endDate) {
       return;
     }
+    let repeatValue = '';
+    if (repeats === 'MONTHLY') {
+      repeatValue = repeats;
+    } else if (repeats === 'daily') {
+      repeatValue = 'MTWRSFU';
+    } else if (repeats.length > 0) {
+      repeatValue = repeatDays;
+    }
     const createdEvent = await FlaskClient.post('events/createEvent', {
       id: '',
       user_id: user.id,
@@ -87,7 +96,7 @@ export default function DashboardCalendar(props: {
       name: eventTitle,
       start_time: startDate.toISOString(),
       end_time: endDate.toISOString(),
-      repeat: '',
+      repeat: repeatValue,
       completed: 0,
       type: 'EVENT',
     } as EventSchema);
@@ -114,7 +123,6 @@ export default function DashboardCalendar(props: {
   } else {
     buttonText = 'Create Event';
   }
-  console.log(repeats);
   return (
     <Panel centerY flex="column" fill>
       <div style={{ width: '95%', flex: 1, marginBottom: 10 }}>
@@ -216,18 +224,23 @@ export default function DashboardCalendar(props: {
                 checkColor={raspberry}
                 onCheck={(newCheck: boolean) => {
                   if (newCheck) {
-                    setRepeats('monthly');
+                    setRepeats('MONTHLY');
                   } else {
                     setRepeats('');
                   }
                 }}
-                isChecked={repeats === 'monthly'}
+                isChecked={repeats === 'MONTHLY'}
               />
             </>
             )}
         </div>
         <div style={{ marginBottom: 10 }}>
-          { repeats === 'weekly' && <WeekSelector />}
+          { repeats === 'weekly' && (
+          <WeekSelector onChange={(newDaysOfWeek) => {
+            setRepeatDays(newDaysOfWeek);
+          }}
+          />
+          )}
         </div>
         <StandardButton
           fullWidth
