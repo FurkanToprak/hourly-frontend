@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Navigate } from 'react-router-dom';
-import DashboardCalendar from '../components/calendar/DashboardCalendar';
+import DashboardCalendar, { EventSchema } from '../components/calendar/DashboardCalendar';
 import Page from '../components/utils/Page';
 import { Body, Title } from '../components/utils/Texts';
 import { useTheme } from '../contexts/Theme';
@@ -14,8 +14,8 @@ import { useAuth } from '../contexts/Auth';
 import Table from '../components/utils/Table';
 import Panel from '../components/utils/Panel';
 import StandardSelect from '../components/utils/Select';
-import { StandardInput, StandardTimeInput } from '../components/utils/Inputs';
-import { TaskItem } from './Task';
+import { StandardInput } from '../components/utils/Inputs';
+import { TaskSchema } from './Task';
 import FlaskClient from '../connections/Flask';
 import SettingsModal from '../components/calendar/SettingsModal';
 
@@ -24,7 +24,7 @@ export interface SnoozeSchema {
   endOfDay: string;
 }
 const rowStyle = {
-  margin: 10, width: '50%',
+  margin: 10, width: '50%', display: 'flex',
 };
 const hoursToFloat = (inputHours: string): number => {
   const splitArr = inputHours.split(':');
@@ -36,7 +36,8 @@ const hoursToFloat = (inputHours: string): number => {
   return hoursWhole + minsWhole / 60;
 };
 export default function Dashboard() {
-  const [tasks, setTasks] = useState(null as null | TaskItem[]);
+  const [tasks, setTasks] = useState(null as null | TaskSchema[]);
+  const [events, setEvents] = useState(null as null | EventSchema[]);
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
   const [openEvents, setOpenEvents] = useState(false);
@@ -44,7 +45,7 @@ export default function Dashboard() {
   const [openAddTask, setOpenAddTask] = useState(false);
   const [openCalendarModal, setOpenCalendarModal] = useState(false);
   const [openSettingsModal, setOpenSettingsModal] = useState(false);
-  const [taskScheduleError, setTaskScheduleError] = useState(null as null | TaskItem);
+  const [taskScheduleError, setTaskScheduleError] = useState(null as null | TaskSchema);
   const [snooze, setSnooze] = useState(null as null | SnoozeSchema);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -57,16 +58,23 @@ export default function Dashboard() {
   if (!user) {
     return <Navigate to="/" />;
   }
+  const fetchEvents = async (userId: string) => {
+    if (events !== null) {
+      return;
+    }
+    const fetchedEvents: { events: EventSchema[]} = await FlaskClient.post('events/getEvents', { user_id: userId });
+    setEvents(fetchedEvents.events);
+  };
   const fetchTasks = async (userId: string) => {
     if (tasks !== null) {
       return;
     }
-    const fetchedTasks: { tasks: TaskItem[]} = await FlaskClient.post('tasks/getUserTasks', { user_id: userId });
+    const fetchedTasks: { tasks: TaskSchema[]} = await FlaskClient.post('tasks/getUserTasks', { user_id: userId });
     setTasks(fetchedTasks.tasks);
   };
   const deleteTask = async (taskId: string) => {
     await FlaskClient.post('tasks/deleteTask', {
-      id: taskId,
+      task_id: taskId,
     });
   };
   const fetchSnooze = async (userId: string) => {
@@ -77,12 +85,30 @@ export default function Dashboard() {
     setSnooze(fetchedSnooze);
   };
   useEffect(() => {
+    fetchEvents(user.id);
+  }, [events]);
+  useEffect(() => {
     fetchTasks(user.id);
   }, [tasks]);
   useEffect(() => {
     fetchSnooze(user.id);
-  }, [tasks]);
-
+  }, [snooze]);
+  const deleteEvent = async (deletedEvent: EventSchema) => {
+    await FlaskClient.post('events/deleteEvent', {
+      event_id: deletedEvent.id,
+    });
+    setEvents(null);
+  };
+  const cramTask = async () => {
+    if (taskScheduleError === null) {
+      return;
+    }
+    await FlaskClient.post('tasks/cramTask', {
+      task_id: taskScheduleError.task_id,
+    });
+    // TODO: never tested
+    setTaskScheduleError(null);
+  };
   return (
     <Page fullHeight centerY>
       <Modal open={openCalendarModal} onClose={() => { setOpenCalendarModal(false); }}>
@@ -93,7 +119,7 @@ export default function Dashboard() {
         open={taskScheduleError !== null}
         onClose={() => {
           setTaskScheduleError(null);
-          // TODO: /tasks/DoNotSchedule
+          cramTask();
         }}
       >
         <Title size="l">Oops!</Title>
@@ -109,7 +135,7 @@ export default function Dashboard() {
             if (taskScheduleError === null) {
               return;
             }
-            deleteTask(taskScheduleError.id);
+            deleteTask(taskScheduleError.task_id);
           }}
         >
           Cancel Task
@@ -121,7 +147,7 @@ export default function Dashboard() {
             if (taskScheduleError === null) {
               return;
             }
-            FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.id });
+            FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.task_id });
           }}
         >
           Cram Task
@@ -130,11 +156,14 @@ export default function Dashboard() {
       <SettingsModal open={openSettingsModal} onClose={() => { setOpenSettingsModal(false); }} />
       <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
         <Title size="l">Events</Title>
-        {tasks !== null && (
+        {events !== null && (
         <Table
-          keys={['name', 'description', 'label', 'due date']}
-          columns={['Name', 'Description', 'Label', 'Due Date']}
-          items={tasks}
+          onDelete={(deletedEvent) => {
+            deleteEvent(deletedEvent);
+          }}
+          keys={['name', 'repeat', 'start_time', 'end_time']}
+          columns={['Name', 'Repeats?', 'Start Time', 'End Time']}
+          items={events}
           emptyMessage="No scheduled events"
         />
         )}
@@ -174,26 +203,57 @@ export default function Dashboard() {
               />
             </div>
             <div style={rowStyle}>
-              <StandardTimeInput
-                fullWidth
-                label="Estimated Time (HH:MM)" // TODO: change to half-hour intervals
-                onTimeChange={(newTime) => {
-                  setEstimatedTime(newTime);
-                }}
-              />
+              <div style={{ display: 'flex', alignItems: 'center', marginRight: 10 }}>
+                <Body>Estimated Time</Body>
+              </div>
+              <div style={{ flex: 1 }}>
+                <StandardSelect
+                  label="Hours"
+                  values={new Map<string, any>(Object.entries({
+                    1: '01',
+                    2: '02',
+                    3: '03',
+                    4: '04',
+                    5: '05',
+                    6: '06',
+                    7: '07',
+                    8: '08',
+                    9: '09',
+                    10: '10',
+                  }))}
+                  onSelect={(select: string) => {
+                    setLabel(select);
+                  }}
+                />
+              </div>
+              <div style={{ width: 10 }} />
+              <div style={{ flex: 1 }}>
+                <StandardSelect
+                  label="Minutes"
+                  values={new Map<string, any>(Object.entries({
+                    '00': '0',
+                    30: '0',
+                  }))}
+                  onSelect={(select: string) => {
+                    setLabel(select);
+                  }}
+                />
+              </div>
             </div>
             <div style={rowStyle}>
-              <StandardSelect
-                label="Label"
-                values={new Map<string, any>(Object.entries({
-                  'MATH 222': 'id1',
-                  'CSCE 132': 'id2',
-                  'CSCE 999': 'id3',
-                }))}
-                onSelect={(select: string) => {
-                  setLabel(select);
-                }}
-              />
+              <div style={{ flex: 1 }}>
+                <StandardSelect
+                  label="Label"
+                  values={new Map<string, any>(Object.entries({
+                    'MATH 222': 'id1',
+                    'CSCE 132': 'id2',
+                    'CSCE 999': 'id3',
+                  }))}
+                  onSelect={(select: string) => {
+                    setLabel(select);
+                  }}
+                />
+              </div>
             </div>
             <div style={rowStyle}>
               <TimeSelect
@@ -213,28 +273,25 @@ export default function Dashboard() {
                   if (!readyToSchedule || tasks === null) {
                     return;
                   }
-                  const payload: TaskItem = {
+                  const payload: TaskSchema = {
                     name,
                     description,
                     label,
                     start_date: new Date(),
                     due_date: dueDate,
                     estimated_time: hoursToFloat(estimatedTime),
-                    id: '',
+                    task_id: '',
                     user_id: user.id,
                     completed: 0,
                   };
                   // send payload
-                  const createdTask: TaskItem = await FlaskClient.post('tasks/createTask', payload);
-                  const scheduledTask = await FlaskClient.post('schedule', { id: user.id });
+                  const createdTask: TaskSchema = await FlaskClient.post('tasks/createTask', payload);
+                  const scheduledTask = await FlaskClient.post('schedule', { user_id: user.id });
                   if (scheduledTask.failed) {
                     setTaskScheduleError(createdTask);
                   }
-                  console.log('a');
                   const freshTasks = tasks.slice();
-                  console.log('b');
                   freshTasks.push(createdTask);
-                  console.log('c');
                   setTasks(freshTasks);
                 }}
               >
@@ -257,8 +314,8 @@ export default function Dashboard() {
         {tasks !== null && (
         <Table
           urlPrefix="task"
-          keys={['name', 'description', 'label', 'due date']}
-          columns={['Name', 'Description', 'Label', 'Due Date']}
+          keys={['name', 'description', 'label', 'due_date', 'completed']}
+          columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
           items={tasks}
           emptyMessage="No scheduled tasks"
         />
@@ -280,6 +337,7 @@ export default function Dashboard() {
           variant="outlined"
           onMouseDown={() => {
             setOpenEvents(true);
+            setEvents(null);
           }}
         >
           Events
@@ -288,6 +346,7 @@ export default function Dashboard() {
           variant="outlined"
           onMouseDown={() => {
             setOpenTasks(true);
+            setTasks(null);
           }}
         >
           Tasks

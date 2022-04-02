@@ -7,7 +7,7 @@ import '../../styles/DashboardCalendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { StandardInput } from '../utils/Inputs';
 import TimeSelect from './TimeSelect';
-import { RaspberryButton, StandardButton } from '../utils/Buttons';
+import { StandardButton } from '../utils/Buttons';
 import { Title } from '../utils/Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
@@ -25,12 +25,11 @@ const DnDCalendar = withDragAndDrop(Calendar);
 const inputStyle: React.CSSProperties = {
   margin: 10,
 };
-const cancelButtonStyle = { marginTop: 10 };
 const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
-const calendarStyle = { margin: 10 };
+const calendarStyle = { margin: 10, minHeight: 500 };
 
-interface EventSchema {
-  event_id: string;
+export interface EventSchema {
+  id: string;
   completed: number;
   start_time: string;
   end_time: string;
@@ -77,25 +76,28 @@ export default function DashboardCalendar(props: {
       return;
     }
     const createdEvent = await FlaskClient.post('events/createEvent', {
-      event_id: '',
+      id: '',
       user_id: user.id,
       task_id: '',
       name: eventTitle,
-      start_time: startDate.toString(),
-      end_time: startDate.toString(),
+      start_time: startDate.toISOString(),
+      end_time: endDate.toISOString(),
       repeat: '',
       completed: 0,
       type: 'EVENT',
     } as EventSchema);
-    const scheduleResponse = await FlaskClient.post('schedule', { id: user.id });
+    const scheduleResponse = await FlaskClient.post('schedule', { user_id: user.id });
     if (scheduleResponse.failed) {
       setScheduleError(true);
-      // TODO: Delete Event
-      const deleteResponse: EventSchema = await FlaskClient.post('events/deleteEvent', {
+      // TODO: never checked
+      await FlaskClient.post('events/deleteEvent', {
         event_id: createdEvent.id,
         user_id: user.id,
       });
     }
+    setEventTitle('');
+    setStartDate(null);
+    setEndDate(null);
     setEvents(null);
   };
   useEffect(() => {
@@ -105,7 +107,7 @@ export default function DashboardCalendar(props: {
   if (scheduleError) {
     buttonText = 'Conflicts With Your Schedule!';
   } else {
-    buttonText = 'Create';
+    buttonText = 'Create Event';
   }
   return (
     <Panel centerY flex="column" fill>
@@ -140,7 +142,6 @@ export default function DashboardCalendar(props: {
         />
       </div>
       <Panel centerY flex="column" margin>
-        <Title size="s">Create Event</Title>
         <StandardInput
           label="Title"
           value={eventTitle}
