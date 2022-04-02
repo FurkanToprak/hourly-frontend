@@ -8,7 +8,6 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { StandardInput } from '../utils/Inputs';
 import TimeSelect from './TimeSelect';
 import { StandardButton } from '../utils/Buttons';
-import { Title } from '../utils/Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
   black, darkBorder, lightBorder, purple, raspberry, white,
@@ -16,6 +15,7 @@ import {
 import FlaskClient from '../../connections/Flask';
 import { useAuth } from '../../contexts/Auth';
 import { SnoozeSchema } from '../../pages/Dashboard';
+import Checkbox from '../utils/Checkbox';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -44,9 +44,13 @@ export default function DashboardCalendar(props: {
 }) {
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
+  // input
   const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
   const [endDate, setEndDate] = useState(null as null | Date);
+  const [repeatsEnabled, setRepeatsEnabled] = useState(false);
+  const [repeats, setRepeats] = useState('');
+  // events, errors, auth
   const [events, setEvents] = useState(null as null | Event[]);
   const [scheduleError, setScheduleError] = useState(false);
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
@@ -109,6 +113,7 @@ export default function DashboardCalendar(props: {
   } else {
     buttonText = 'Create Event';
   }
+  console.log(repeats);
   return (
     <Panel centerY flex="column" fill>
       <div style={{ width: '95%', flex: 1, marginBottom: 10 }}>
@@ -168,6 +173,58 @@ export default function DashboardCalendar(props: {
               setEndDate(newDate);
             }}
           />
+        </div>
+        <div style={fullRowStyle}>
+          <Checkbox
+            label="Repeats?"
+            onCheck={(newCheck: boolean) => {
+              setRepeatsEnabled(newCheck);
+              setRepeats('');
+            }}
+            isChecked={repeatsEnabled}
+          />
+          { repeatsEnabled
+            && (
+            <>
+              <Checkbox
+                label="Daily"
+                checkColor={raspberry}
+                onCheck={(newCheck: boolean) => {
+                  if (newCheck) {
+                    setRepeats('daily');
+                  } else {
+                    setRepeats('');
+                  }
+                }}
+                isChecked={repeats === 'daily'}
+              />
+              <Checkbox
+                label="Weekly"
+                checkColor={raspberry}
+                onCheck={(newCheck: boolean) => {
+                  if (newCheck) {
+                    setRepeats('weekly');
+                  } else {
+                    setRepeats('');
+                  }
+                }}
+                isChecked={repeats === 'weekly'}
+              />
+              <Checkbox
+                label="Monthly"
+                checkColor={raspberry}
+                onCheck={(newCheck: boolean) => {
+                  if (newCheck) {
+                    setRepeats('monthly');
+                  } else {
+                    setRepeats('');
+                  }
+                }}
+                isChecked={repeats === 'monthly'}
+              />
+            </>
+            )}
+
         </div>
         <StandardButton
           fullWidth
