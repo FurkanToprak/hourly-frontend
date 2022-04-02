@@ -16,6 +16,7 @@ import FlaskClient from '../../connections/Flask';
 import { useAuth } from '../../contexts/Auth';
 import { SnoozeSchema } from '../../pages/Dashboard';
 import Checkbox from '../utils/Checkbox';
+import WeekSelector from '../utils/WeekSelector';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -224,7 +225,9 @@ export default function DashboardCalendar(props: {
               />
             </>
             )}
-
+        </div>
+        <div style={{ marginBottom: 10 }}>
+          { repeats === 'weekly' && <WeekSelector />}
         </div>
         <StandardButton
           fullWidth
