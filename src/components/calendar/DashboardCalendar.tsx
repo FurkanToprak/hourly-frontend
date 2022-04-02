@@ -26,7 +26,7 @@ const inputStyle: React.CSSProperties = {
   margin: 10,
 };
 const fullRowStyle = { width: '100%', display: 'flex', marginBottom: 10 };
-const calendarStyle = { margin: 10 };
+const calendarStyle = { margin: 10, minHeight: 500 };
 
 export interface EventSchema {
   id: string;
