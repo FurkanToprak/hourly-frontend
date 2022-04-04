@@ -127,10 +127,6 @@ button.rbc-input::-moz-focus-inner {
   display: none;
 }
 
-.rbc-today {
-  background-color: #ffffff;
-}
-
 .rbc-toolbar {
   display: flex;
   flex-wrap: wrap;
