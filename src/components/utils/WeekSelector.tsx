@@ -1,6 +1,9 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import React, { useState } from 'react';
-import { purple, raspberry, white } from '../../styles/Theme';
+import { useTheme } from '../../contexts/Theme';
+import {
+  black, raspberry, white,
+} from '../../styles/Theme';
 import { Body } from './Texts';
 
 export default function WeekSelector(props: { onChange: (newDaysOfWeek: string) => void}) {
@@ -14,6 +17,8 @@ export default function WeekSelector(props: { onChange: (newDaysOfWeek: string) 
     F: 'F',
     S: 'S',
   };
+  const { theme } = useTheme();
+  const circleColor = theme === 'light' ? black : white;
   return (
     <div style={{ display: 'flex' }}>
       {
@@ -24,7 +29,7 @@ export default function WeekSelector(props: { onChange: (newDaysOfWeek: string) 
                 <div
                   role="button"
                   style={{
-                    backgroundColor: daySelected ? raspberry : purple,
+                    backgroundColor: daySelected ? raspberry : circleColor,
                     borderRadius: '50%',
                     justifyContent: 'center',
                     alignItems: 'center',
