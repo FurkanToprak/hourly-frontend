@@ -293,6 +293,7 @@ export default function Dashboard() {
                   const freshTasks = tasks.slice();
                   freshTasks.push(createdTask);
                   setTasks(freshTasks);
+                  setCalendarEvents(null);
                 }}
               >
                 Schedule
