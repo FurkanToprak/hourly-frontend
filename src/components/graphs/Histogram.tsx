@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResponsiveBar } from '@nivo/bar';
 import {
+  black,
   darkBackground,
   lightBackground, white,
 } from '../../styles/Theme';
@@ -39,6 +40,7 @@ export default function Histogram(props: {
     color: string;
 }) {
   const { theme } = useTheme();
+  const themeColor = theme === 'light' ? black : white;
   const borderColor = theme === 'light' ? darkBackground : lightBackground;
   const numBins = 6;
   const bins = generateStats(props.data, numBins);
@@ -49,7 +51,6 @@ export default function Histogram(props: {
         <div style={{ position: 'absolute', width: '100%', height: '100%' }}>
           <ResponsiveBar
             colors={props.color}
-            labelTextColor={white}
             data={bins}
             indexBy="x"
             borderColor={borderColor}
@@ -58,6 +59,9 @@ export default function Histogram(props: {
               top: 50,
               left: 30,
               bottom: 30,
+            }}
+            theme={{
+              textColor: themeColor,
             }}
             borderRadius={4}
             borderWidth={3}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Navigate } from 'react-router-dom';
-import DashboardCalendar, { EventSchema } from '../components/calendar/DashboardCalendar';
+import DashboardCalendar, { DisplayedEvent, EventSchema } from '../components/calendar/DashboardCalendar';
 import Page from '../components/utils/Page';
 import { Body, Title } from '../components/utils/Texts';
 import { useTheme } from '../contexts/Theme';
@@ -26,18 +26,11 @@ export interface SnoozeSchema {
 const rowStyle = {
   margin: 10, width: '50%', display: 'flex',
 };
-const hoursToFloat = (inputHours: string): number => {
-  const splitArr = inputHours.split(':');
-  if (splitArr.length !== 2) {
-    return Number(splitArr);
-  }
-  const hoursWhole = Number(splitArr[0]);
-  const minsWhole = Number(splitArr[1]);
-  return hoursWhole + minsWhole / 60;
-};
+
 export default function Dashboard() {
   const [tasks, setTasks] = useState(null as null | TaskSchema[]);
   const [events, setEvents] = useState(null as null | EventSchema[]);
+  const [calendarEvents, setCalendarEvents] = useState(null as null | DisplayedEvent[]);
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
   const [openEvents, setOpenEvents] = useState(false);
@@ -102,6 +95,7 @@ export default function Dashboard() {
       user_id: user.id,
     });
     setEvents(null);
+    setCalendarEvents(null);
   };
   const cramTask = async () => {
     if (taskScheduleError === null) {
@@ -297,6 +291,7 @@ export default function Dashboard() {
                   const freshTasks = tasks.slice();
                   freshTasks.push(createdTask);
                   setTasks(freshTasks);
+                  setCalendarEvents(null);
                 }}
               >
                 Schedule
@@ -318,8 +313,8 @@ export default function Dashboard() {
         {tasks !== null && (
         <Table
           urlPrefix="task"
-          keys={['name', 'description', 'label', 'due_date', 'completed']}
-          columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
+          keys={['name', 'description', 'label', 'due_date']}
+          columns={['Name', 'Description', 'Label', 'Due Date']}
           items={tasks}
           emptyMessage="No scheduled tasks"
         />
@@ -364,7 +359,7 @@ export default function Dashboard() {
           }}
         />
       </div>
-      <DashboardCalendar snooze={snooze} />
+      <DashboardCalendar snooze={snooze} events={calendarEvents} setEvents={setCalendarEvents} />
     </Page>
   );
 }

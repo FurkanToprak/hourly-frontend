@@ -44,7 +44,7 @@ export interface EventSchema {
   name: string;
 }
 
-interface DisplayedEvent {
+export interface DisplayedEvent {
   title: string;
   start: Date;
   end: Date;
@@ -56,6 +56,8 @@ interface DisplayedEvent {
 
 export default function DashboardCalendar(props: {
   snooze: null | SnoozeSchema;
+  events: null | DisplayedEvent[]
+  setEvents: React.Dispatch<React.SetStateAction<DisplayedEvent[] | null>>
 }) {
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
@@ -67,8 +69,6 @@ export default function DashboardCalendar(props: {
   const [repeatsEnabled, setRepeatsEnabled] = useState(false);
   const [repeats, setRepeats] = useState('');
   const [repeatDays, setRepeatDays] = useState('');
-  // events, errors, auth
-  const [events, setEvents] = useState(null as null | DisplayedEvent[]);
   const [scheduleError, setScheduleError] = useState(false);
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   const { user } = useAuth();
@@ -79,7 +79,7 @@ export default function DashboardCalendar(props: {
     return <div />;
   }
   const fetchEvents = async () => {
-    if (events !== null) {
+    if (props.events !== null) {
       return;
     }
     const getEvents = await FlaskClient.post('blocks/getBlocks', {
@@ -95,7 +95,7 @@ export default function DashboardCalendar(props: {
       id: fetchedBlock.id,
       completed: fetchedBlock.completed,
     } as DisplayedEvent));
-    setEvents(convertedBlocks);
+    props.setEvents(convertedBlocks);
   };
   const postEvent = async () => {
     if (!eventTitle || !startDate || !endDate) {
@@ -132,7 +132,7 @@ export default function DashboardCalendar(props: {
     setEventTitle('');
     setStartDate(null);
     setEndDate(null);
-    setEvents(null);
+    props.setEvents(null);
   };
   const completeSelectedTask = async () => {
     if (selectedEvent === null || selectedEvent.task_id === '') {
@@ -152,7 +152,7 @@ export default function DashboardCalendar(props: {
   };
   useEffect(() => {
     fetchEvents();
-  }, [events]);
+  }, [props.events]);
   let buttonText;
   if (scheduleError) {
     buttonText = 'Conflicts With Your Schedule!';
@@ -216,7 +216,7 @@ export default function DashboardCalendar(props: {
             day: true, week: true, month: true,
           }}
           localizer={localizer}
-          events={events || []}
+          events={props.events || []}
           startAccessor="start"
           endAccessor="end"
           resizable
