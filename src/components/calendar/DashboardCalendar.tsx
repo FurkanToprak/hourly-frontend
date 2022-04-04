@@ -74,7 +74,7 @@ export default function DashboardCalendar(props: {
   const { user } = useAuth();
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
   const [complete, setComplete] = useState(false);
-  const [completeWhole, setCompleteWhole] = useState(false);
+  const [completeAll, setCompleteAll] = useState(false);
   if (!user) {
     return <div />;
   }
@@ -134,6 +134,22 @@ export default function DashboardCalendar(props: {
     setEndDate(null);
     setEvents(null);
   };
+  const completeSelectedTask = async () => {
+    if (selectedEvent === null || selectedEvent.task_id === '') {
+      return;
+    }
+    if (completeAll) {
+      await FlaskClient.post('tasks/completeTask', { task_id: selectedEvent.task_id });
+    } else if (complete) {
+      const startTime = selectedEvent.start.getTime();
+      const endTime = selectedEvent.end.getTime();
+      const durationMs = endTime - startTime;
+      const durationMins = durationMs / (60 * 1000);
+      const durationHours = durationMins / 60;
+      await FlaskClient.post('tasks/updateTask', { task_id: selectedEvent.task_id, hours: durationHours });
+    }
+    await FlaskClient.post('schedule', { user_id: user.id });
+  };
   useEffect(() => {
     fetchEvents();
   }, [events]);
@@ -171,16 +187,16 @@ export default function DashboardCalendar(props: {
               <Checkbox
                 label="Complete All"
                 labelPosition="end"
-                isChecked={completeWhole}
+                isChecked={completeAll}
                 onCheck={(newChecked) => {
                   setComplete(newChecked);
-                  setCompleteWhole(newChecked);
+                  setCompleteAll(newChecked);
                 }}
               />
               <PurpleButton
                 variant="outlined"
                 onMouseDown={() => {
-                  //
+                  completeSelectedTask();
                 }}
               >
                 {`Update ${selectedEvent.type}`}
