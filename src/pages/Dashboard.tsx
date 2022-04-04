@@ -158,8 +158,6 @@ export default function Dashboard() {
         <Table
           onDelete={(deletedEvent) => {
             deleteEvent(deletedEvent);
-            console.log('test');
-            setCalendarEvents(null);
           }}
           keys={['name', 'repeat', 'start_time', 'end_time']}
           columns={['Name', 'Repeats?', 'Start Time', 'End Time']}
@@ -315,8 +313,8 @@ export default function Dashboard() {
         {tasks !== null && (
         <Table
           urlPrefix="task"
-          keys={['name', 'description', 'label', 'due_date', 'completed']}
-          columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
+          keys={['name', 'description', 'label', 'due_date']}
+          columns={['Name', 'Description', 'Label', 'Due Date']}
           items={tasks}
           emptyMessage="No scheduled tasks"
         />

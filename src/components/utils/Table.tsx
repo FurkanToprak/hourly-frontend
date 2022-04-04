@@ -3,8 +3,6 @@ import {
   TableBody, TableContainer, Table as MuiTable, TableHead, TableRow, TableCell,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { DeleteOutlined } from '@mui/icons-material';
 import { Body, Title } from './Texts';
 import { useTheme } from '../../contexts/Theme';
@@ -61,21 +59,18 @@ export default function Table(props: {
               {
                             props.keys.map((itemColumn) => {
                               const cell = item[itemColumn];
-                              const isBoolean: boolean = itemColumn === 'completed';
-                              const booleanValue = isBoolean ? undefined : (cell === 1);
                               const isDateType = itemColumn.includes('date') || itemColumn.includes('time');
                               const cellDate = isDateType ? new Date(cell) : null;
                               const cellText = cellDate !== null ? `${cellDate.getMonth()}/${cellDate.getDay()}/${cellDate.getFullYear()}` : cell;
-                              const booleanIndicator = booleanValue
-                                ? <CheckBoxIcon htmlColor={themeColor} />
-                                : <CheckBoxOutlineBlankIcon htmlColor={themeColor} />;
                               return (
-                                <TableCell align="left" style={{ borderBottom: thinThemeBorder }} key={`row-${item.name}-col-${itemColumn}`}>
-                                  {isBoolean ? booleanIndicator : (
-                                    <Body>
-                                      {cellText}
-                                    </Body>
-                                  )}
+                                <TableCell
+                                  align="left"
+                                  style={{ borderBottom: thinThemeBorder }}
+                                  key={`row-${item.name}-col-${itemColumn}`}
+                                >
+                                  <Body>
+                                    {cellText}
+                                  </Body>
                                 </TableCell>
                               );
                             })
