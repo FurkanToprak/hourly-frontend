@@ -54,6 +54,12 @@ interface DisplayedEvent {
   completed: 0 | 1;
 }
 
+function CustomEvent(props: any) {
+  console.log('hello');
+  console.log(props);
+  return <div>HI</div>;
+}
+
 export default function DashboardCalendar(props: {
   snooze: null | SnoozeSchema;
 }) {
@@ -177,12 +183,16 @@ export default function DashboardCalendar(props: {
                   setCompleteWhole(newChecked);
                 }}
               />
-              <PurpleButton variant="outlined">
+              <PurpleButton
+                variant="outlined"
+                onMouseDown={() => {
+                  //
+                }}
+              >
                 {`Update ${selectedEvent.type}`}
               </PurpleButton>
             </div>
           )}
-
       </Modal>
       <div style={{ width: '95%', flex: 1, marginBottom: 10 }}>
         {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -236,6 +246,7 @@ export default function DashboardCalendar(props: {
             };
           }}
           style={{ color: themeFont, ...calendarStyle }}
+          formats={{ eventTimeRangeFormat: () => null }}
         />
       </div>
       <Panel centerY flex="column" margin>
