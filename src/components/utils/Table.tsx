@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { DeleteOutlined } from '@mui/icons-material';
-import { AnyRecord } from 'dns';
 import { Body, Title } from './Texts';
 import { useTheme } from '../../contexts/Theme';
 import {

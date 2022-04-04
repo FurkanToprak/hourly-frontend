@@ -8,14 +8,17 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { StandardInput } from '../utils/Inputs';
 import TimeSelect from './TimeSelect';
 import { StandardButton } from '../utils/Buttons';
-import { Title } from '../utils/Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
-  black, darkBorder, lightBorder, purple, raspberry, white,
+  black, darkBorder, darkPurple, darkRaspberry,
+  lightBorder, lightPurple, lightRaspberry,
+  purple, raspberry, white,
 } from '../../styles/Theme';
 import FlaskClient from '../../connections/Flask';
 import { useAuth } from '../../contexts/Auth';
 import { SnoozeSchema } from '../../pages/Dashboard';
+import Checkbox from '../utils/Checkbox';
+import WeekSelector from '../utils/WeekSelector';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -39,15 +42,30 @@ export interface EventSchema {
   name: string;
 }
 
+interface DisplayedEvent {
+  title: string;
+  start: Date;
+  end: Date;
+  type: string;
+  task_id: string;
+  id: string;
+  completed: 0 | 1;
+}
+
 export default function DashboardCalendar(props: {
   snooze: null | SnoozeSchema;
 }) {
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
+  // input
   const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
   const [endDate, setEndDate] = useState(null as null | Date);
-  const [events, setEvents] = useState(null as null | Event[]);
+  const [repeatsEnabled, setRepeatsEnabled] = useState(false);
+  const [repeats, setRepeats] = useState('');
+  const [repeatDays, setRepeatDays] = useState('');
+  // events, errors, auth
+  const [events, setEvents] = useState(null as null | DisplayedEvent[]);
   const [scheduleError, setScheduleError] = useState(false);
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   const { user } = useAuth();
@@ -68,12 +86,23 @@ export default function DashboardCalendar(props: {
       start: moment(fetchedBlock.start_time).toDate(),
       end: moment(fetchedBlock.end_time).toDate(),
       type: fetchedBlock.type,
-    } as Event));
+      task_id: fetchedBlock.task_id,
+      id: fetchedBlock.id,
+      completed: fetchedBlock.completed,
+    } as DisplayedEvent));
     setEvents(convertedBlocks);
   };
   const postEvent = async () => {
     if (!eventTitle || !startDate || !endDate) {
       return;
+    }
+    let repeatValue = '';
+    if (repeats === 'MONTHLY') {
+      repeatValue = repeats;
+    } else if (repeats === 'daily') {
+      repeatValue = 'MTWRSFU';
+    } else if (repeats.length > 0) {
+      repeatValue = repeatDays;
     }
     const createdEvent = await FlaskClient.post('events/createEvent', {
       id: '',
@@ -82,11 +111,15 @@ export default function DashboardCalendar(props: {
       name: eventTitle,
       start_time: startDate.toISOString(),
       end_time: endDate.toISOString(),
-      repeat: '',
+      repeat: repeatValue,
       completed: 0,
       type: 'EVENT',
     } as EventSchema);
+    console.log('createdEvent');
+    console.log(createdEvent);
     const scheduleResponse = await FlaskClient.post('schedule', { user_id: user.id });
+    console.log('scheduleResponse');
+    console.log(scheduleResponse);
     if (scheduleResponse.failed) {
       setScheduleError(true);
       // TODO: never checked
@@ -127,13 +160,37 @@ export default function DashboardCalendar(props: {
           startAccessor="start"
           endAccessor="end"
           resizable
-          eventPropGetter={(event) => {
+          onSelectEvent={(event: DisplayedEvent) => {
+            console.log(event);
+          }}
+          eventPropGetter={(event: DisplayedEvent) => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const isEvent = event.type === 'EVENT';
+            const startEvent = new Date(event.start);
+            const endEvent = new Date(event.end);
+            const nowDate = new Date();
+            const eventIsPast = endEvent < nowDate;
+            const eventIsOngoing = startEvent < nowDate && endEvent > nowDate;
+            let eventColor = white;
+            if (isEvent) {
+              if (eventIsPast) {
+                eventColor = lightPurple;
+              } else if (eventIsOngoing) {
+                eventColor = darkPurple;
+              } else {
+                eventColor = purple;
+              }
+            } else if (eventIsPast) {
+              eventColor = lightRaspberry;
+            } else if (eventIsOngoing) {
+              eventColor = darkRaspberry;
+            } else {
+              eventColor = raspberry;
+            }
             return {
               style: {
-                backgroundColor: isEvent ? purple : raspberry,
+                backgroundColor: eventColor,
                 border: themeBorder,
               },
             };
@@ -168,6 +225,65 @@ export default function DashboardCalendar(props: {
               setEndDate(newDate);
             }}
           />
+        </div>
+        <div style={fullRowStyle}>
+          <Checkbox
+            label="Repeats?"
+            onCheck={(newCheck: boolean) => {
+              setRepeatsEnabled(newCheck);
+              setRepeats('');
+            }}
+            isChecked={repeatsEnabled}
+          />
+          { repeatsEnabled
+            && (
+            <>
+              <Checkbox
+                label="Daily"
+                checkColor={raspberry}
+                onCheck={(newCheck: boolean) => {
+                  if (newCheck) {
+                    setRepeats('daily');
+                  } else {
+                    setRepeats('');
+                  }
+                }}
+                isChecked={repeats === 'daily'}
+              />
+              <Checkbox
+                label="Weekly"
+                checkColor={raspberry}
+                onCheck={(newCheck: boolean) => {
+                  if (newCheck) {
+                    setRepeats('weekly');
+                  } else {
+                    setRepeats('');
+                  }
+                }}
+                isChecked={repeats === 'weekly'}
+              />
+              <Checkbox
+                label="Monthly"
+                checkColor={raspberry}
+                onCheck={(newCheck: boolean) => {
+                  if (newCheck) {
+                    setRepeats('MONTHLY');
+                  } else {
+                    setRepeats('');
+                  }
+                }}
+                isChecked={repeats === 'MONTHLY'}
+              />
+            </>
+            )}
+        </div>
+        <div style={{ marginBottom: 10 }}>
+          { repeats === 'weekly' && (
+          <WeekSelector onChange={(newDaysOfWeek) => {
+            setRepeatDays(newDaysOfWeek);
+          }}
+          />
+          )}
         </div>
         <StandardButton
           fullWidth
