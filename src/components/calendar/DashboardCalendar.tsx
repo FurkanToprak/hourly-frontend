@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Calendar, Event, momentLocalizer } from 'react-big-calendar';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
 import Panel from '../utils/Panel';
@@ -7,7 +7,7 @@ import '../../styles/DashboardCalendar.css';
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
 import { StandardInput } from '../utils/Inputs';
 import TimeSelect from './TimeSelect';
-import { StandardButton } from '../utils/Buttons';
+import { PurpleButton, StandardButton } from '../utils/Buttons';
 import { useTheme } from '../../contexts/Theme';
 import {
   black, darkBorder, darkPurple, darkRaspberry,
@@ -19,6 +19,8 @@ import { useAuth } from '../../contexts/Auth';
 import { SnoozeSchema } from '../../pages/Dashboard';
 import Checkbox from '../utils/Checkbox';
 import WeekSelector from '../utils/WeekSelector';
+import { Body, Title } from '../utils/Texts';
+import Modal from '../utils/Modal';
 
 const localizer = momentLocalizer(moment);
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -58,6 +60,7 @@ export default function DashboardCalendar(props: {
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
   // input
+  const [selectedEvent, setSelectedEvent] = useState(null as null | DisplayedEvent);
   const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
   const [endDate, setEndDate] = useState(null as null | Date);
@@ -70,6 +73,8 @@ export default function DashboardCalendar(props: {
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   const { user } = useAuth();
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
+  const [complete, setComplete] = useState(false);
+  const [completeWhole, setCompleteWhole] = useState(false);
   if (!user) {
     return <div />;
   }
@@ -115,11 +120,7 @@ export default function DashboardCalendar(props: {
       completed: 0,
       type: 'EVENT',
     } as EventSchema);
-    console.log('createdEvent');
-    console.log(createdEvent);
     const scheduleResponse = await FlaskClient.post('schedule', { user_id: user.id });
-    console.log('scheduleResponse');
-    console.log(scheduleResponse);
     if (scheduleResponse.failed) {
       setScheduleError(true);
       // TODO: never checked
@@ -144,6 +145,45 @@ export default function DashboardCalendar(props: {
   }
   return (
     <Panel centerY flex="column" fill>
+      <Modal open={selectedEvent !== null && selectedEvent.type === 'TASK'} onClose={() => { setSelectedEvent(null); }}>
+        {(selectedEvent === null)
+          ? <div /> : (
+            <div style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+            >
+              <Title size="xs">
+                {selectedEvent.type}
+              </Title>
+              <Body size="l">
+                {selectedEvent.title}
+              </Body>
+              <Checkbox
+                label="Complete"
+                labelPosition="end"
+                isChecked={complete}
+                onCheck={(newChecked) => {
+                  setComplete(newChecked);
+                }}
+              />
+              <Checkbox
+                label="Complete All"
+                labelPosition="end"
+                isChecked={completeWhole}
+                onCheck={(newChecked) => {
+                  setComplete(newChecked);
+                  setCompleteWhole(newChecked);
+                }}
+              />
+              <PurpleButton variant="outlined">
+                {`Update ${selectedEvent.type}`}
+              </PurpleButton>
+            </div>
+          )}
+
+      </Modal>
       <div style={{ width: '95%', flex: 1, marginBottom: 10 }}>
         {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment
        * @ts-ignore */}
@@ -161,7 +201,7 @@ export default function DashboardCalendar(props: {
           endAccessor="end"
           resizable
           onSelectEvent={(event: DisplayedEvent) => {
-            console.log(event);
+            setSelectedEvent(event);
           }}
           eventPropGetter={(event: DisplayedEvent) => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
