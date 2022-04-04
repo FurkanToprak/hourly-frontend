@@ -18,6 +18,7 @@ export default function WeekSelector(props: { onChange: (newDaysOfWeek: string) 
     S: 'S',
   };
   const { theme } = useTheme();
+  const themeColor = theme === 'light' ? white : black;
   const circleColor = theme === 'light' ? black : white;
   return (
     <div style={{ display: 'flex' }}>
@@ -54,7 +55,7 @@ export default function WeekSelector(props: { onChange: (newDaysOfWeek: string) 
                     props.onChange(daysString);
                   }}
                 >
-                  <Body color={white}>{dayDisplay}</Body>
+                  <Body color={themeColor}>{dayDisplay}</Body>
                 </div>
               );
             })

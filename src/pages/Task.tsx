@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import Histogram from '../components/graphs/Histogram';
 import Pie from '../components/graphs/Pie';
 import Checkbox from '../components/utils/Checkbox';
+import { StandardInput } from '../components/utils/Inputs';
 import Label from '../components/utils/Label';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
@@ -76,6 +77,11 @@ export default function Task() {
             onCheck={(newChecked) => {
               setComplete(newChecked);
             }}
+          />
+        </div>
+        <div style={rowStyle}>
+          <StandardInput
+            label="Adjust estimated time"
           />
         </div>
         <div style={rowStyle}>
