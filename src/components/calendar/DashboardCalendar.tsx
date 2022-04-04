@@ -54,12 +54,6 @@ interface DisplayedEvent {
   completed: 0 | 1;
 }
 
-function CustomEvent(props: any) {
-  console.log('hello');
-  console.log(props);
-  return <div>HI</div>;
-}
-
 export default function DashboardCalendar(props: {
   snooze: null | SnoozeSchema;
 }) {

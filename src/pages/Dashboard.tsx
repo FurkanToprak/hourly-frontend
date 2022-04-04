@@ -97,6 +97,9 @@ export default function Dashboard() {
     await FlaskClient.post('events/deleteEvent', {
       event_id: deletedEvent.id,
     });
+    await FlaskClient.post('schedule', {
+      user_id: user.id,
+    });
     setEvents(null);
   };
   const cramTask = async () => {
