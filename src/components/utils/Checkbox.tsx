@@ -7,6 +7,7 @@ import { purple } from '../../styles/Theme';
 
 export default function Checkbox(props:
     { label: string;
+      labelPosition?: 'top' | 'bottom' | 'start' | 'end';
       checkColor?: string;
         isChecked: boolean;
         onCheck: (newChecked: boolean) => void } & CheckboxProps) {
@@ -28,7 +29,7 @@ export default function Checkbox(props:
             />
 )}
           label={<Body>{props.label}</Body>}
-          labelPlacement="start"
+          labelPlacement={props.labelPosition || 'start'}
         />
       </FormGroup>
     </FormControl>

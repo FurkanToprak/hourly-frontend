@@ -50,9 +50,10 @@ export default function Dashboard() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [label, setLabel] = useState('');
-  const [estimatedTime, setEstimatedTime] = useState('');
+  const [estimatedHours, setEstimatedHours] = useState('');
+  const [estimatedMinutes, setEstimatedMinutes] = useState('');
   const [dueDate, setDueDate] = useState(new Date());
-  const readyToSchedule = !Number.isNaN(estimatedTime)
+  const readyToSchedule = estimatedMinutes !== '' && estimatedHours !== ''
     && name.length > 0 && description.length > 0 && label.length > 0;
   const { user } = useAuth();
   if (!user) {
@@ -96,6 +97,9 @@ export default function Dashboard() {
   const deleteEvent = async (deletedEvent: EventSchema) => {
     await FlaskClient.post('events/deleteEvent', {
       event_id: deletedEvent.id,
+    });
+    await FlaskClient.post('schedule', {
+      user_id: user.id,
     });
     setEvents(null);
   };
@@ -177,7 +181,8 @@ export default function Dashboard() {
           setName('');
           setDescription('');
           setLabel('');
-          setEstimatedTime('');
+          setEstimatedHours('');
+          setEstimatedMinutes('');
           setDueDate(new Date());
         }}
       >
@@ -222,7 +227,7 @@ export default function Dashboard() {
                     10: '10',
                   }))}
                   onSelect={(select: string) => {
-                    setLabel(select);
+                    setEstimatedHours(select);
                   }}
                 />
               </div>
@@ -232,10 +237,10 @@ export default function Dashboard() {
                   label="Minutes"
                   values={new Map<string, any>(Object.entries({
                     '00': '0',
-                    30: '0',
+                    30: '30',
                   }))}
                   onSelect={(select: string) => {
-                    setLabel(select);
+                    setEstimatedMinutes(select);
                   }}
                 />
               </div>
@@ -279,12 +284,11 @@ export default function Dashboard() {
                     label,
                     start_date: new Date(),
                     due_date: dueDate,
-                    estimated_time: hoursToFloat(estimatedTime),
+                    estimated_time: Number(estimatedHours) + Number(estimatedMinutes) / 60,
                     task_id: '',
                     user_id: user.id,
                     completed: 0,
                   };
-                  // send payload
                   const createdTask: TaskSchema = await FlaskClient.post('tasks/createTask', payload);
                   const scheduledTask = await FlaskClient.post('schedule', { user_id: user.id });
                   if (scheduledTask.failed) {
