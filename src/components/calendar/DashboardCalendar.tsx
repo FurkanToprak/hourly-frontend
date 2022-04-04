@@ -10,7 +10,9 @@ import TimeSelect from './TimeSelect';
 import { StandardButton } from '../utils/Buttons';
 import { useTheme } from '../../contexts/Theme';
 import {
-  black, darkBorder, lightBorder, purple, raspberry, white,
+  black, darkBorder, darkPurple, darkRaspberry,
+  lightBorder, lightPurple, lightRaspberry,
+  purple, raspberry, white,
 } from '../../styles/Theme';
 import FlaskClient from '../../connections/Flask';
 import { useAuth } from '../../contexts/Auth';
@@ -40,6 +42,16 @@ export interface EventSchema {
   name: string;
 }
 
+interface DisplayedEvent {
+  title: string;
+  start: Date;
+  end: Date;
+  type: string;
+  task_id: string;
+  id: string;
+  completed: 0 | 1;
+}
+
 export default function DashboardCalendar(props: {
   snooze: null | SnoozeSchema;
 }) {
@@ -53,7 +65,7 @@ export default function DashboardCalendar(props: {
   const [repeats, setRepeats] = useState('');
   const [repeatDays, setRepeatDays] = useState('');
   // events, errors, auth
-  const [events, setEvents] = useState(null as null | Event[]);
+  const [events, setEvents] = useState(null as null | DisplayedEvent[]);
   const [scheduleError, setScheduleError] = useState(false);
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   const { user } = useAuth();
@@ -74,7 +86,10 @@ export default function DashboardCalendar(props: {
       start: moment(fetchedBlock.start_time).toDate(),
       end: moment(fetchedBlock.end_time).toDate(),
       type: fetchedBlock.type,
-    } as Event));
+      task_id: fetchedBlock.task_id,
+      id: fetchedBlock.id,
+      completed: fetchedBlock.completed,
+    } as DisplayedEvent));
     setEvents(convertedBlocks);
   };
   const postEvent = async () => {
@@ -100,7 +115,11 @@ export default function DashboardCalendar(props: {
       completed: 0,
       type: 'EVENT',
     } as EventSchema);
+    console.log('createdEvent');
+    console.log(createdEvent);
     const scheduleResponse = await FlaskClient.post('schedule', { user_id: user.id });
+    console.log('scheduleResponse');
+    console.log(scheduleResponse);
     if (scheduleResponse.failed) {
       setScheduleError(true);
       // TODO: never checked
@@ -141,13 +160,37 @@ export default function DashboardCalendar(props: {
           startAccessor="start"
           endAccessor="end"
           resizable
-          eventPropGetter={(event) => {
+          onSelectEvent={(event: DisplayedEvent) => {
+            console.log(event);
+          }}
+          eventPropGetter={(event: DisplayedEvent) => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const isEvent = event.type === 'EVENT';
+            const startEvent = new Date(event.start);
+            const endEvent = new Date(event.end);
+            const nowDate = new Date();
+            const eventIsPast = endEvent < nowDate;
+            const eventIsOngoing = startEvent < nowDate && endEvent > nowDate;
+            let eventColor = white;
+            if (isEvent) {
+              if (eventIsPast) {
+                eventColor = lightPurple;
+              } else if (eventIsOngoing) {
+                eventColor = darkPurple;
+              } else {
+                eventColor = purple;
+              }
+            } else if (eventIsPast) {
+              eventColor = lightRaspberry;
+            } else if (eventIsOngoing) {
+              eventColor = darkRaspberry;
+            } else {
+              eventColor = raspberry;
+            }
             return {
               style: {
-                backgroundColor: isEvent ? purple : raspberry,
+                backgroundColor: eventColor,
                 border: themeBorder,
               },
             };
