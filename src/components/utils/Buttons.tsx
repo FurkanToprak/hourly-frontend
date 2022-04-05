@@ -14,6 +14,13 @@ export const PurpleButton = styled(Button)(() => ({
     color: '#FFF',
     borderWidth: 2,
   },
+  '&:disabled': {
+    backgroundColor: purple,
+    color: '#FFF',
+    opacity: 0.7,
+    borderColor: purple,
+    borderWidth: 2,
+  },
 }));
 
 export const RaspberryButton = styled(Button)(() => ({
@@ -25,6 +32,13 @@ export const RaspberryButton = styled(Button)(() => ({
     color: '#FFF',
     borderWidth: 2,
     borderColor: raspberry,
+  },
+  '&:disabled': {
+    backgroundColor: raspberry,
+    color: '#FFF',
+    opacity: 0.7,
+    borderColor: raspberry,
+    borderWidth: 2,
   },
 }));
 
@@ -39,6 +53,12 @@ export const StandardButton = styled(Button)(() => {
     '&:hover': {
       backgroundColor: colorOne,
       color: colorTwo,
+      borderColor: colorOne,
+      borderWidth: 2,
+    },
+    '&:disabled': {
+      color: colorOne,
+      opacity: 0.7,
       borderColor: colorOne,
       borderWidth: 2,
     },

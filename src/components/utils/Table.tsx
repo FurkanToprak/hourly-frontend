@@ -60,8 +60,18 @@ export default function Table(props: {
                             props.keys.map((itemColumn) => {
                               const cell = item[itemColumn];
                               const isDateType = itemColumn.includes('date') || itemColumn.includes('time');
+                              const isBoolean = itemColumn === 'completed';
                               const cellDate = isDateType ? new Date(cell) : null;
-                              const cellText = cellDate !== null ? `${cellDate.getMonth()}/${cellDate.getDay()}/${cellDate.getFullYear()}` : cell;
+                              let cellText = '';
+                              if (cellDate === null) {
+                                if (isBoolean) {
+                                  cellText = cell === 1 ? 'Yes' : 'No';
+                                } else {
+                                  cellText = cell;
+                                }
+                              } else {
+                                cellText = `${cellDate.getMonth()}/${cellDate.getDay()}/${cellDate.getFullYear()}`;
+                              }
                               return (
                                 <TableCell
                                   align="left"

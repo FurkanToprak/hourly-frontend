@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Histogram from '../components/graphs/Histogram';
-import Pie from '../components/graphs/Pie';
-import Checkbox from '../components/utils/Checkbox';
-import { StandardInput } from '../components/utils/Inputs';
 import Label from '../components/utils/Label';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
 import { Body, Title } from '../components/utils/Texts';
 import FlaskClient from '../connections/Flask';
-import { purple, raspberry, white } from '../styles/Theme';
+import { purple, raspberry } from '../styles/Theme';
 import { toShortTimeString } from '../utils/Time';
 
 export interface TaskSchema {
@@ -40,7 +37,6 @@ export default function Task() {
     }
     setFetchedTask(thisTask);
   };
-  const [complete, setComplete] = useState(false);
   useEffect(() => {
     if (fetchedTask) {
       return;
@@ -70,19 +66,8 @@ export default function Task() {
           <Body>{`${fetchedTask.estimated_time} hours`}</Body>
         </div>
         <div style={rowStyle}>
-          <Checkbox
-            label="Complete"
-            labelPosition="end"
-            isChecked={complete}
-            onCheck={(newChecked) => {
-              setComplete(newChecked);
-            }}
-          />
-        </div>
-        <div style={rowStyle}>
-          <StandardInput
-            label="Adjust estimated time"
-          />
+          <Title size="xs">{'Complete: '}</Title>
+          <Body>{`${fetchedTask.completed ? 'Yes' : 'No'}`}</Body>
         </div>
         <div style={rowStyle}>
           <Title size="xs">{'Due Date: '}</Title>

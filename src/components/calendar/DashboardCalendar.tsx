@@ -73,8 +73,8 @@ export default function DashboardCalendar(props: {
   const eventReady = eventTitle !== '' && startDate !== null && endDate !== null;
   const { user } = useAuth();
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
-  const [complete, setComplete] = useState(false);
-  const [completeAll, setCompleteAll] = useState(false);
+  const [complete, setComplete] = useState(selectedEvent ? selectedEvent.completed : null);
+  const [completeAll, setCompleteAll] = useState(selectedEvent ? selectedEvent.completed : null);
   if (!user) {
     return <div />;
   }
@@ -134,12 +134,14 @@ export default function DashboardCalendar(props: {
     setEndDate(null);
     props.setEvents(null);
   };
+  console.log(selectedEvent);
   const completeSelectedTask = async () => {
-    if (selectedEvent === null || selectedEvent.task_id === '') {
+    if (selectedEvent === null || selectedEvent.task_id === '' || selectedEvent.completed) {
       return;
     }
     if (completeAll) {
       await FlaskClient.post('tasks/completeTask', { task_id: selectedEvent.task_id });
+      // TODO: check success
     } else if (complete) {
       const startTime = selectedEvent.start.getTime();
       const endTime = selectedEvent.end.getTime();
@@ -149,6 +151,7 @@ export default function DashboardCalendar(props: {
       await FlaskClient.post('tasks/updateTask', { task_id: selectedEvent.task_id, hours: durationHours });
     }
     await FlaskClient.post('schedule', { user_id: user.id });
+    props.setEvents(null);
   };
   useEffect(() => {
     fetchEvents();
@@ -179,23 +182,26 @@ export default function DashboardCalendar(props: {
               <Checkbox
                 label="Complete"
                 labelPosition="end"
-                isChecked={complete}
+                isChecked={complete === 1}
                 onCheck={(newChecked) => {
-                  setComplete(newChecked);
+                  setComplete(newChecked ? 1 : 0);
                 }}
               />
               <Checkbox
                 label="Complete All"
                 labelPosition="end"
-                isChecked={completeAll}
+                isChecked={completeAll === 1}
                 onCheck={(newChecked) => {
-                  setComplete(newChecked);
-                  setCompleteAll(newChecked);
+                  setComplete(newChecked ? 1 : 0);
+                  setCompleteAll(newChecked ? 1 : 0);
                 }}
               />
               <PurpleButton
                 variant="outlined"
                 onMouseDown={() => {
+                  if (completeAll) {
+                    return;
+                  }
                   completeSelectedTask();
                 }}
               >
