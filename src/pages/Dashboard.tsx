@@ -313,8 +313,8 @@ export default function Dashboard() {
         {tasks !== null && (
         <Table
           urlPrefix="task"
-          keys={['name', 'description', 'label', 'due_date']}
-          columns={['Name', 'Description', 'Label', 'Due Date']}
+          keys={['name', 'description', 'label', 'due_date', 'completed']}
+          columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
           items={tasks}
           emptyMessage="No scheduled tasks"
         />
