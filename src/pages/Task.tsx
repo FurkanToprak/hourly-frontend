@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Histogram from '../components/graphs/Histogram';
-import Checkbox from '../components/utils/Checkbox';
 import Label from '../components/utils/Label';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
@@ -38,7 +37,6 @@ export default function Task() {
     }
     setFetchedTask(thisTask);
   };
-  const [complete, setComplete] = useState(false);
   useEffect(() => {
     if (fetchedTask) {
       return;
@@ -68,14 +66,8 @@ export default function Task() {
           <Body>{`${fetchedTask.estimated_time} hours`}</Body>
         </div>
         <div style={rowStyle}>
-          <Checkbox
-            label="Complete"
-            labelPosition="end"
-            isChecked={complete}
-            onCheck={(newChecked) => {
-              setComplete(newChecked);
-            }}
-          />
+          <Title size="xs">{'Complete: '}</Title>
+          <Body>{`${fetchedTask.completed ? 'Yes' : 'No'}`}</Body>
         </div>
         <div style={rowStyle}>
           <Title size="xs">{'Due Date: '}</Title>
