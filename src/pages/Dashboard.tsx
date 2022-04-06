@@ -282,6 +282,7 @@ export default function Dashboard() {
                     task_id: '',
                     user_id: user.id,
                     completed: 0,
+                    do_not_schedule: false,
                   };
                   const createdTask: TaskSchema = await FlaskClient.post('tasks/createTask', payload);
                   const scheduledTask = await FlaskClient.post('schedule', { user_id: user.id });

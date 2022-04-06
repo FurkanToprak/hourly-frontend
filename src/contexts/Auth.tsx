@@ -52,6 +52,7 @@ export function AuthProvider({ children }: any) {
           }
           // The signed-in user info.
           const { user } = result;
+          console.log(user);
           // start of day, end of day
           const startOfDay = moment('8:00 AM', 'h:mm A').toDate();
           const endOfDay = moment('10:00 PM', 'h:mm A').toDate();
