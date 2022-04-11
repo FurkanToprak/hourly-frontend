@@ -26,6 +26,7 @@ export default function GroupPage() {
   const groupId = groupParams.groupid || '';
   const [thisGroup, setThisGroup] = useState(null as null | false | Group);
   const [groupStats, setGroupStats] = useState(null as null | StatsSchema);
+  console.log(groupStats);
   const leaveGroup = async () => {
     if (user === null || thisGroup === null || thisGroup === false) {
       return;
@@ -43,13 +44,16 @@ export default function GroupPage() {
     if (thisGroup !== null) {
       return;
     }
+    const fetchedGroup: { group: Group} = await FlaskClient.post('groups/getGroupInfo', {
+      group_id: groupId,
+    });
     const fetchedStats: StatsSchema = await FlaskClient.post('groups/getStats', {
       group_id: groupId,
     });
 
     setGroupStats(fetchedStats);
     // TODO: fetch group with group ID
-    setThisGroup(false);
+    setThisGroup(fetchedGroup.group);
   };
   useEffect(() => {
     fetchGroup();
@@ -59,35 +63,41 @@ export default function GroupPage() {
   }
   return (
     <Page centerY fullHeight>
-      <Panel fill flex="column" centerY>
+      <Panel fill flex="column" centerY margin>
         <Title>{thisGroup.name}</Title>
-        <Body>{thisGroup.description}</Body>
+        <Title size="s">{thisGroup.description}</Title>
         {
           groupStats && (
           <>
-            <Body>{`Total work hours this week: ${groupStats.total_week_hours}`}</Body>
-            <Pie
-              title="Task Completion Distribution"
-              data={[{
-                id: 'num_incompleted_tasks',
-                label: '# of Incompleted Tasks',
-                value: groupStats.num_incompleted_tasks,
-                color: purple,
-              }, {
-                id: 'num_completed_tasks',
-                label: '# of Completed Tasks',
-                value: groupStats.num_completed_tasks,
-                color: raspberry,
-              }]}
-            />
-            <Histogram title="Completed Time" data={groupStats.completed_hours_list} color={raspberry} />
-            <Histogram title="Estimated Time" data={groupStats.estimated_hours_list} color={purple} />
+            <Body>{`Your group will work ${groupStats.total_week_hours} hours this week.`}</Body>
+            <div style={{ height: 30 }} />
+            <div style={{ width: '100%', height: 200, display: 'flex' }}>
+              <Pie
+                title="Completed Tasks"
+                data={[{
+                  id: '# of Incompleted Tasks',
+                  label: '# of Incompleted Tasks',
+                  value: groupStats.num_incompleted_tasks,
+                  color: purple,
+                }, {
+                  id: '# of Completed Tasks',
+                  label: '# of Completed Tasks',
+                  value: groupStats.num_completed_tasks,
+                  color: raspberry,
+                }]}
+              />
+            </div>
+            <div style={{ width: '100%', height: 300, display: 'flex' }}><Histogram title="Completed Time" data={groupStats.completed_hours_list} color={raspberry} /></div>
+            <div style={{ width: '100%', height: 300, display: 'flex' }}><Histogram title="Estimated Time" data={groupStats.estimated_hours_list} color={purple} /></div>
           </>
           )
         }
-        <RaspberryButton onMouseDown={() => {
-          leaveGroup();
-        }}
+        <RaspberryButton
+          fullWidth
+          variant="outlined"
+          onMouseDown={() => {
+            leaveGroup();
+          }}
         >
           Leave Group
         </RaspberryButton>
