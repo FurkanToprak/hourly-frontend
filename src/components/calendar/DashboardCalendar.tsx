@@ -212,9 +212,6 @@ export default function DashboardCalendar(props: {
               <PurpleButton
                 variant="outlined"
                 onMouseDown={() => {
-                  if (completeAll) {
-                    return;
-                  }
                   completeSelectedTask();
                 }}
               >
