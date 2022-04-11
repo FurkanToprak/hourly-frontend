@@ -19,6 +19,7 @@ export interface TaskSchema {
   due_date: Date;
   task_id: string;
   user_id: string;
+  do_not_schedule: boolean;
 }
 
 const rowStyle: React.CSSProperties = { marginBottom: 10 };

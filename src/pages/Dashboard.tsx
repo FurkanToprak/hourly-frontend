@@ -110,9 +110,8 @@ export default function Dashboard() {
     if (taskScheduleError === null) {
       return;
     }
-    await FlaskClient.post('tasks/cramTask', {
-      task_id: taskScheduleError.task_id,
-    });
+    await FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.task_id });
+    await FlaskClient.post('schedule', { user_id: user.id });
     // TODO: never tested
     setTaskScheduleError(null);
   };
@@ -154,7 +153,7 @@ export default function Dashboard() {
             if (taskScheduleError === null) {
               return;
             }
-            FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.task_id });
+            cramTask();
           }}
         >
           Cram Task
@@ -287,6 +286,7 @@ export default function Dashboard() {
                     task_id: '',
                     user_id: user.id,
                     completed: 0,
+                    do_not_schedule: false,
                   };
                   const createdTask: TaskSchema = await FlaskClient.post('tasks/createTask', payload);
                   const scheduledTask = await FlaskClient.post('schedule', { user_id: user.id });
