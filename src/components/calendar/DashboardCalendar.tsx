@@ -134,7 +134,6 @@ export default function DashboardCalendar(props: {
     setEndDate(null);
     props.setEvents(null);
   };
-  console.log(selectedEvent);
   const completeSelectedTask = async () => {
     if (selectedEvent === null || selectedEvent.task_id === '' || selectedEvent.completed) {
       return;
@@ -233,23 +232,28 @@ export default function DashboardCalendar(props: {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             const isEvent = event.type === 'EVENT';
-            const startEvent = new Date(event.start);
-            const endEvent = new Date(event.end);
+            const isCram = event.type === 'CRAM';
+            const startBlock = new Date(event.start);
+            const endBlock = new Date(event.end);
             const nowDate = new Date();
-            const eventIsPast = endEvent < nowDate;
-            const eventIsOngoing = startEvent < nowDate && endEvent > nowDate;
-            let eventColor = white;
-            if (isEvent) {
-              if (eventIsPast) {
+            const blockIsPast = endBlock < nowDate;
+            const blockIsOngoing = startBlock < nowDate && endBlock > nowDate;
+            let eventColor: string | undefined = white;
+            let eventBoxShadow: string | undefined;
+            if (isCram) {
+              eventColor = 'red';
+              eventBoxShadow = '0 0 10px red';
+            } else if (isEvent) {
+              if (blockIsPast) {
                 eventColor = lightPurple;
-              } else if (eventIsOngoing) {
+              } else if (blockIsOngoing) {
                 eventColor = darkPurple;
               } else {
                 eventColor = purple;
               }
-            } else if (eventIsPast) {
+            } else if (blockIsPast) {
               eventColor = lightRaspberry;
-            } else if (eventIsOngoing) {
+            } else if (blockIsOngoing) {
               eventColor = darkRaspberry;
             } else {
               eventColor = raspberry;
@@ -258,6 +262,7 @@ export default function DashboardCalendar(props: {
               style: {
                 backgroundColor: eventColor,
                 border: themeBorder,
+                boxShadow: eventBoxShadow,
               },
             };
           }}
