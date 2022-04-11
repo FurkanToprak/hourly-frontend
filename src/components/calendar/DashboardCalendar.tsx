@@ -134,7 +134,6 @@ export default function DashboardCalendar(props: {
     setEndDate(null);
     props.setEvents(null);
   };
-  console.log(selectedEvent);
   const completeSelectedTask = async () => {
     if (selectedEvent === null || selectedEvent.task_id === '' || selectedEvent.completed) {
       return;

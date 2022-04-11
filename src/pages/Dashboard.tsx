@@ -46,6 +46,7 @@ export default function Dashboard() {
   const [estimatedHours, setEstimatedHours] = useState('');
   const [estimatedMinutes, setEstimatedMinutes] = useState('');
   const [dueDate, setDueDate] = useState(new Date());
+  const [taskLabels, setTaskLabels] = useState(null as null | string[]);
   const readyToSchedule = estimatedMinutes !== '' && estimatedHours !== ''
     && name.length > 0 && description.length > 0 && label.length > 0;
   const { user } = useAuth();
@@ -63,7 +64,11 @@ export default function Dashboard() {
     if (tasks !== null) {
       return;
     }
+    const fetchedTaskLabels: { labels: string[] } = await FlaskClient.post('groups/getUsersLabels', {
+      user_id: user.id,
+    });
     const fetchedTasks: { tasks: TaskSchema[]} = await FlaskClient.post('tasks/getUserTasks', { user_id: userId });
+    setTaskLabels(fetchedTaskLabels.labels);
     setTasks(fetchedTasks.tasks);
   };
   const deleteTask = async (taskId: string) => {
@@ -87,6 +92,10 @@ export default function Dashboard() {
   useEffect(() => {
     fetchSnooze(user.id);
   }, [snooze]);
+  const labelDictionary = taskLabels ? new Map(taskLabels.map(
+    ((taskLabel) => [taskLabel, taskLabel]),
+  ))
+    : new Map();
   const deleteEvent = async (deletedEvent: EventSchema) => {
     await FlaskClient.post('events/deleteEvent', {
       event_id: deletedEvent.id,
@@ -243,11 +252,7 @@ export default function Dashboard() {
               <div style={{ flex: 1 }}>
                 <StandardSelect
                   label="Label"
-                  values={new Map<string, any>(Object.entries({
-                    'MATH 222': 'id1',
-                    'CSCE 132': 'id2',
-                    'CSCE 999': 'id3',
-                  }))}
+                  values={labelDictionary}
                   onSelect={(select: string) => {
                     setLabel(select);
                   }}
