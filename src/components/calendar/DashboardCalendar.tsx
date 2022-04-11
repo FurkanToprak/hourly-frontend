@@ -139,18 +139,25 @@ export default function DashboardCalendar(props: {
       return;
     }
     if (completeAll) {
-      await FlaskClient.post('tasks/completeTask', { task_id: selectedEvent.task_id });
+      const completeAllResponse = await FlaskClient.post('tasks/completeTask', { task_id: selectedEvent.task_id });
       // TODO: check success
+      console.log('completeAllResponse');
+      console.log(completeAllResponse);
     } else if (complete) {
       const startTime = selectedEvent.start.getTime();
       const endTime = selectedEvent.end.getTime();
       const durationMs = endTime - startTime;
       const durationMins = durationMs / (60 * 1000);
       const durationHours = durationMins / 60;
-      await FlaskClient.post('tasks/updateTask', { task_id: selectedEvent.task_id, hours: durationHours });
+      const completeResponse = await FlaskClient.post('tasks/updateTask', { task_id: selectedEvent.task_id, hours: durationHours });
+      console.log('completeResponse');
+      console.log(completeResponse);
     }
-    await FlaskClient.post('schedule', { user_id: user.id });
+    const scheduleResponse = await FlaskClient.post('schedule', { user_id: user.id });
+    console.log('scheduleResponse');
+    console.log(scheduleResponse);
     props.setEvents(null);
+    // TODO: completing needs to be debugged and more robust
   };
   useEffect(() => {
     fetchEvents();
@@ -163,7 +170,14 @@ export default function DashboardCalendar(props: {
   }
   return (
     <Panel centerY flex="column" fill>
-      <Modal open={selectedEvent !== null && selectedEvent.type === 'TASK'} onClose={() => { setSelectedEvent(null); }}>
+      <Modal
+        open={selectedEvent !== null && selectedEvent.type === 'TASK'}
+        onClose={() => {
+          setSelectedEvent(null);
+          setComplete(0);
+          setCompleteAll(0);
+        }}
+      >
         {(selectedEvent === null)
           ? <div /> : (
             <div style={{
