@@ -360,7 +360,7 @@ export default function Dashboard() {
           fontSize="large"
           style={{ cursor: 'pointer', color: themeFont }}
           onMouseDown={() => {
-            // Google Calendar Import
+            // Google Calendar Export
             setOpenCalendarModal(true);
           }}
         />
