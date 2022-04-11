@@ -67,15 +67,15 @@ export default function GroupPage() {
           <>
             <Body>{`Total work hours this week: ${groupStats.total_week_hours}`}</Body>
             <Pie
-              title=""
+              title="Task Completion Distribution"
               data={[{
                 id: 'num_incompleted_tasks',
-                label: 'Incompleted Tasks',
+                label: '# of Incompleted Tasks',
                 value: groupStats.num_incompleted_tasks,
                 color: purple,
               }, {
                 id: 'num_completed_tasks',
-                label: 'Completed Tasks',
+                label: '# of Completed Tasks',
                 value: groupStats.num_completed_tasks,
                 color: raspberry,
               }]}
