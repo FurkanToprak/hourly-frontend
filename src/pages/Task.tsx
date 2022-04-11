@@ -76,19 +76,6 @@ export default function Task() {
         </div>
       </Panel>
       )}
-      <Panel flex="column" margin fill>
-        <Title>Statistics</Title>
-        <Histogram
-          color={purple}
-          title="Estimated Time"
-          data={[10, 20, 14, 12, 55, 11, 2, 122]}
-        />
-        <Histogram
-          color={raspberry}
-          title="Actual Time"
-          data={[192, 222, 343, 452, 5522, 241]}
-        />
-      </Panel>
     </Page>
   );
 }
