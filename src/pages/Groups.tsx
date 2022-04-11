@@ -6,7 +6,7 @@ import Modal from '../components/utils/Modal';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
 import Table from '../components/utils/Table';
-import { Title } from '../components/utils/Texts';
+import { Body, Title } from '../components/utils/Texts';
 import FlaskClient from '../connections/Flask';
 import { useAuth } from '../contexts/Auth';
 
@@ -19,6 +19,7 @@ export interface Group {
 
 export default function Groups() {
   const { user } = useAuth();
+  const [groupError, setGroupError] = useState(undefined as undefined | string);
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const [groupId, setGroupId] = useState('');
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -48,7 +49,7 @@ export default function Groups() {
     };
     const postResult: { success: boolean } = await FlaskClient.post('groups/createGroup', newGroup);
     if (postResult.success === false) {
-      // TODO:
+      setGroupError('Could not join group. Make sure the group ID is correct.');
       return;
     }
     setGroups(null);
@@ -75,6 +76,15 @@ export default function Groups() {
   }
   return (
     <Page centerY fullHeight>
+      <Modal
+        open={groupError !== undefined}
+        onClose={() => {
+          setGroupError(undefined);
+        }}
+      >
+        <Title size="m">Oops!</Title>
+        <Body>{groupError || ''}</Body>
+      </Modal>
       <Modal
         open={joinModalOpen}
         onClose={() => {
