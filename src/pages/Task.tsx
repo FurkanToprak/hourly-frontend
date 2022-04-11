@@ -46,35 +46,38 @@ export default function Task() {
   }, [fetchedTask]);
 
   return (
-    <Page fullHeight>
+    <Page fullHeight centerY>
       { fetchedTask
       && (
-      <Panel flex="column" margin>
-        <div style={rowStyle}>
-          <Title size="xs">{'Task: '}</Title>
-          <Body>{fetchedTask.name}</Body>
-        </div>
-        <div style={rowStyle}>
-          <Title size="xs">{'Label: '}</Title>
-          <Label>{fetchedTask.label}</Label>
-        </div>
-        <div style={rowStyle}>
-          <Title size="xs">{'Description: '}</Title>
-          <Body>{fetchedTask.description}</Body>
-        </div>
-        <div style={rowStyle}>
-          <Title size="xs">{'Estimated Time: '}</Title>
-          <Body>{`${fetchedTask.estimated_time} hours`}</Body>
-        </div>
-        <div style={rowStyle}>
-          <Title size="xs">{'Complete: '}</Title>
-          <Body>{`${fetchedTask.completed ? 'Yes' : 'No'}`}</Body>
-        </div>
-        <div style={rowStyle}>
-          <Title size="xs">{'Due Date: '}</Title>
-          <Body>{toShortTimeString(new Date(fetchedTask.due_date))}</Body>
-        </div>
-      </Panel>
+        <>
+          <Title size="m">Task Details</Title>
+          <Panel flex="column" margin>
+            <div style={rowStyle}>
+              <Title size="xs">{'Task: '}</Title>
+              <Body>{fetchedTask.name}</Body>
+            </div>
+            <div style={rowStyle}>
+              <Title size="xs">{'Label: '}</Title>
+              <Label>{fetchedTask.label}</Label>
+            </div>
+            <div style={rowStyle}>
+              <Title size="xs">{'Description: '}</Title>
+              <Body>{fetchedTask.description}</Body>
+            </div>
+            <div style={rowStyle}>
+              <Title size="xs">{'Estimated Time: '}</Title>
+              <Body>{`${fetchedTask.estimated_time} hours`}</Body>
+            </div>
+            <div style={rowStyle}>
+              <Title size="xs">{'Complete: '}</Title>
+              <Body>{`${fetchedTask.completed ? 'Yes' : 'No'}`}</Body>
+            </div>
+            <div style={rowStyle}>
+              <Title size="xs">{'Due Date: '}</Title>
+              <Body>{toShortTimeString(new Date(fetchedTask.due_date))}</Body>
+            </div>
+          </Panel>
+        </>
       )}
     </Page>
   );
