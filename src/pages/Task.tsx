@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Histogram from '../components/graphs/Histogram';
 import Label from '../components/utils/Label';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
 import { Body, Title } from '../components/utils/Texts';
 import FlaskClient from '../connections/Flask';
-import { purple, raspberry } from '../styles/Theme';
 import { toShortTimeString } from '../utils/Time';
 
 export interface TaskSchema {
