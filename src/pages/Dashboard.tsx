@@ -208,6 +208,7 @@ export default function Dashboard() {
                 <StandardSelect
                   label="Hours"
                   values={new Map<string, any>(Object.entries({
+                    0: '00',
                     1: '01',
                     2: '02',
                     3: '03',
