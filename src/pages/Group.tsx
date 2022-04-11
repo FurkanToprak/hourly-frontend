@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Histogram from '../components/graphs/Histogram';
+import Pie from '../components/graphs/Pie';
 import { RaspberryButton } from '../components/utils/Buttons';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
@@ -13,8 +14,8 @@ import { Group } from './Groups';
 interface StatsSchema {
   completed_hours_list: number[];
   estimated_hours_list: number[];
-  num_completed_tasks: number[];
-  num_incompleted_tasks: number[];
+  num_completed_tasks: number;
+  num_incompleted_tasks: number;
   total_week_hours: number[];
 }
 export default function GroupPage() {
@@ -40,15 +41,14 @@ export default function GroupPage() {
   };
   const fetchGroup = async () => {
     if (thisGroup !== null) {
-      console.log('a');
       return;
     }
     const fetchedStats: StatsSchema = await FlaskClient.post('groups/getStats', {
       group_id: groupId,
     });
 
-    // TODO: fetch group with group ID
     setGroupStats(fetchedStats);
+    // TODO: fetch group with group ID
     setThisGroup(false);
   };
   useEffect(() => {
@@ -60,11 +60,26 @@ export default function GroupPage() {
   return (
     <Page centerY fullHeight>
       <Panel fill flex="column" centerY>
-        <Title>MATH 411</Title>
-        <Body>A group for MATH 411.</Body>
+        <Title>{thisGroup.name}</Title>
+        <Body>{thisGroup.description}</Body>
         {
           groupStats && (
           <>
+            <Body>{`Total work hours this week: ${groupStats.total_week_hours}`}</Body>
+            <Pie
+              title=""
+              data={[{
+                id: 'num_incompleted_tasks',
+                label: 'Incompleted Tasks',
+                value: groupStats.num_incompleted_tasks,
+                color: purple,
+              }, {
+                id: 'num_completed_tasks',
+                label: 'Completed Tasks',
+                value: groupStats.num_completed_tasks,
+                color: raspberry,
+              }]}
+            />
             <Histogram title="Completed Time" data={groupStats.completed_hours_list} color={raspberry} />
             <Histogram title="Estimated Time" data={groupStats.estimated_hours_list} color={purple} />
           </>
@@ -75,7 +90,6 @@ export default function GroupPage() {
         }}
         >
           Leave Group
-
         </RaspberryButton>
       </Panel>
     </Page>
