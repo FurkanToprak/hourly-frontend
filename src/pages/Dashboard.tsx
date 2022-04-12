@@ -63,7 +63,7 @@ export default function Dashboard() {
     setEvents(fetchedEvents.events);
   };
   const fetchExpiredTasks = async (userId: string) => {
-    const expiredResponse: { expired_tasks: (ExpiredTaskSchema)[]} = await FlaskClient.post('/blocks/expiredSubTasks', {
+    const expiredResponse: { expired_tasks: (ExpiredTaskSchema)[]} = await FlaskClient.post('blocks/expiredSubTasks', {
       user_id: userId,
     });
     if (expiredTasks !== null) {
