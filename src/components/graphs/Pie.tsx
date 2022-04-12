@@ -4,7 +4,7 @@ import {
   black, darkBackground, lightBackground, purple, raspberry, white,
 } from '../../styles/Theme';
 import { useTheme } from '../../contexts/Theme';
-import { Title } from '../utils/Texts';
+import { Body, Title } from '../utils/Texts';
 
 interface PieData {
 id: string;
@@ -17,6 +17,9 @@ export default function Pie(props: {
   title: string;
     data: PieData[];
 }) {
+  if (props.data[0].value === 0 || props.data[1].value === 0) {
+    return <Body>{`Not Enough Data To Display The ${props.title}`}</Body>;
+  }
   const { theme } = useTheme();
   const textColor = theme === 'light' ? black : white;
   return (
@@ -39,7 +42,7 @@ export default function Pie(props: {
             borderWidth={3}
             borderColor={textColor}
             margin={{
-              top: 10, right: 10, left: 10, bottom: 10,
+              top: 40, right: 10, left: 10, bottom: 40,
             }}
             colors={[purple, raspberry, theme === 'light' ? lightBackground : darkBackground]}
             arcLinkLabelsTextColor={textColor}

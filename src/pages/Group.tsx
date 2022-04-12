@@ -26,7 +26,6 @@ export default function GroupPage() {
   const groupId = groupParams.groupid || '';
   const [thisGroup, setThisGroup] = useState(null as null | false | Group);
   const [groupStats, setGroupStats] = useState(null as null | StatsSchema);
-  console.log(groupStats);
   const leaveGroup = async () => {
     if (user === null || thisGroup === null || thisGroup === false) {
       return;
@@ -71,7 +70,7 @@ export default function GroupPage() {
           <>
             <Body>{`Your group will work ${groupStats.total_week_hours} hours this week.`}</Body>
             <div style={{ height: 30 }} />
-            <div style={{ width: '100%', height: 200, display: 'flex' }}>
+            <div style={{ width: '100%', height: 250, display: 'flex' }}>
               <Pie
                 title="Completed Tasks"
                 data={[{
