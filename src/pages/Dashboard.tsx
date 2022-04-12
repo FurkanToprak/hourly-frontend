@@ -33,9 +33,7 @@ const titleText = titleOptions[Math.floor(Math.random() * titleOptions.length)];
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState(null as null | ExpiredTaskSchema[]);
-  const [expiredTasks, setExpiredTasks] = useState([{
-    id: '',
-  } as ExpiredTaskSchema] as null | ExpiredTaskSchema[]);
+  const [expiredTasks, setExpiredTasks] = useState(null as null | ExpiredTaskSchema[]);
   const [events, setEvents] = useState(null as null | EventSchema[]);
   const [calendarEvents, setCalendarEvents] = useState(null as null | DisplayedEvent[]);
   const { theme } = useTheme();
@@ -111,8 +109,6 @@ export default function Dashboard() {
   useEffect(() => {
     fetchSnooze(user.id);
   }, [snooze]);
-  // console.log('taskScheduleError');
-  // console.log(taskScheduleError);
   const labelDictionary = taskLabels ? new Map(taskLabels.map(
     ((taskLabel) => [taskLabel, taskLabel]),
   ))
@@ -143,10 +139,10 @@ export default function Dashboard() {
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   return (
     <Page fullHeight centerY>
-      {/* <Modal
+      <Modal
         open={expiredExists}
         onClose={() => {
-          // setExpiredTasks([]);
+          setExpiredTasks([]);
         }}
       >
         <Title>
@@ -167,7 +163,7 @@ export default function Dashboard() {
         >
           Reschedule remaining tasks
         </RaspberryButton>
-      </Modal> */}
+      </Modal>
       <Modal open={openCalendarModal} onClose={() => { setOpenCalendarModal(false); }}>
         <Title size="l">Import Calendar</Title>
         <StandardButton variant="outlined">Connect Google Calendar</StandardButton>
