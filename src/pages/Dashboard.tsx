@@ -28,9 +28,14 @@ const rowStyle = {
   margin: 10, width: '50%', display: 'flex',
 };
 
+const titleOptions = ['Working hard or hardly working?', 'You\'re finally awake!', 'A sight for sore eyes!', 'How was your day?', 'What have you been up to?', 'Welcome back!', 'What\'s new?', 'Hey there champ!'];
+const titleText = titleOptions[Math.floor(Math.random() * titleOptions.length)];
+
 export default function Dashboard() {
   const [tasks, setTasks] = useState(null as null | ExpiredTaskSchema[]);
-  const [expiredTasks, setExpiredTasks] = useState(null as null | ExpiredTaskSchema[]);
+  const [expiredTasks, setExpiredTasks] = useState([{
+    id: '',
+  } as ExpiredTaskSchema] as null | ExpiredTaskSchema[]);
   const [events, setEvents] = useState(null as null | EventSchema[]);
   const [calendarEvents, setCalendarEvents] = useState(null as null | DisplayedEvent[]);
   const { theme } = useTheme();
@@ -63,7 +68,8 @@ export default function Dashboard() {
     setEvents(fetchedEvents.events);
   };
   const fetchExpiredTasks = async (userId: string) => {
-    const expiredResponse: { expired_tasks: (ExpiredTaskSchema)[]} = await FlaskClient.post('blocks/expiredSubTasks', {
+    const expiredResponse: { expired_tasks: (ExpiredTaskSchema)[]} = await
+    FlaskClient.post('blocks/expiredSubTasks', {
       user_id: userId,
     });
     if (expiredTasks !== null) {
@@ -101,12 +107,12 @@ export default function Dashboard() {
   useEffect(() => {
     fetchExpiredTasks(user.id);
     fetchTasks(user.id);
-  }, [tasks]);
+  }, [expiredTasks, tasks]);
   useEffect(() => {
     fetchSnooze(user.id);
   }, [snooze]);
-  console.log('taskScheduleError');
-  console.log(taskScheduleError);
+  // console.log('taskScheduleError');
+  // console.log(taskScheduleError);
   const labelDictionary = taskLabels ? new Map(taskLabels.map(
     ((taskLabel) => [taskLabel, taskLabel]),
   ))
@@ -136,10 +142,27 @@ export default function Dashboard() {
       <Modal
         open={expiredExists}
         onClose={() => {
-          setExpiredTasks([]);
+          // setExpiredTasks([]);
         }}
       >
-        <div />
+        <Title>
+          {titleText}
+        </Title>
+        <Body>
+          Click the checkmark
+          to confirm you sticked to your schedule, or make
+          changes if you changed your plans.
+        </Body>
+        <RaspberryButton
+          onMouseDown={() => {
+            // TODO:
+            setExpiredTasks(null);
+          }}
+          fullWidth
+          variant="outlined"
+        >
+          Reschedule remaining tasks
+        </RaspberryButton>
       </Modal>
       {
         expiredTasks && (
