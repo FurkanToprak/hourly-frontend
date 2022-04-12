@@ -136,10 +136,14 @@ export default function Dashboard() {
     // TODO: never tested
     setTaskScheduleError(null);
   };
+  // console.log('tasks');
+  // console.log(tasks);
+  // console.log('events');
+  // console.log(events);
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   return (
     <Page fullHeight centerY>
-      <Modal
+      {/* <Modal
         open={expiredExists}
         onClose={() => {
           // setExpiredTasks([]);
@@ -163,269 +167,263 @@ export default function Dashboard() {
         >
           Reschedule remaining tasks
         </RaspberryButton>
+      </Modal> */}
+      <Modal open={openCalendarModal} onClose={() => { setOpenCalendarModal(false); }}>
+        <Title size="l">Import Calendar</Title>
+        <StandardButton variant="outlined">Connect Google Calendar</StandardButton>
       </Modal>
-      {
-        expiredTasks && (
-        <>
-          <Modal open={openCalendarModal} onClose={() => { setOpenCalendarModal(false); }}>
-            <Title size="l">Import Calendar</Title>
-            <StandardButton variant="outlined">Connect Google Calendar</StandardButton>
-          </Modal>
-          <Modal
-            open={taskScheduleError !== null}
-            onClose={() => {
-              setTaskScheduleError(null);
-              cramTask();
-            }}
-          >
-            <Title size="l">Oops!</Title>
-            <Body>
-              {"You don't have enough time for this task. \
+      <Modal
+        open={taskScheduleError !== null}
+        onClose={() => {
+          setTaskScheduleError(null);
+          cramTask();
+        }}
+      >
+        <Title size="l">Oops!</Title>
+        <Body>
+          {"You don't have enough time for this task. \
           We'll save the task for you, but we can't fit it in your schedule."}
-            </Body>
-            <RaspberryButton
-              style={{ marginTop: 10, marginBottom: 10 }}
-              fullWidth
-              variant="outlined"
-              onMouseDown={() => {
-                if (taskScheduleError === null) {
-                  return;
-                }
-                deleteTask(taskScheduleError.id);
-              }}
-            >
-              Cancel Task
-            </RaspberryButton>
+        </Body>
+        <RaspberryButton
+          style={{ marginTop: 10, marginBottom: 10 }}
+          fullWidth
+          variant="outlined"
+          onMouseDown={() => {
+            if (taskScheduleError === null) {
+              return;
+            }
+            deleteTask(taskScheduleError.id);
+          }}
+        >
+          Cancel Task
+        </RaspberryButton>
+        <PurpleButton
+          fullWidth
+          variant="outlined"
+          onMouseDown={() => {
+            if (taskScheduleError === null) {
+              return;
+            }
+            cramTask();
+          }}
+        >
+          Cram Task
+        </PurpleButton>
+      </Modal>
+      <SettingsModal
+        open={openSettingsModal}
+        onClose={() => { setOpenSettingsModal(false); }}
+      />
+      <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
+        <Title size="l">Events</Title>
+        {events !== null && (
+        <Table
+          onDelete={(deletedEvent) => {
+            deleteEvent(deletedEvent);
+          }}
+          keys={['name', 'repeat', 'start_time', 'end_time']}
+          columns={['Name', 'Repeats?', 'Start Time', 'End Time']}
+          items={events}
+          emptyMessage="No scheduled events"
+        />
+        )}
+
+      </Modal>
+      <Modal
+        open={openTasks}
+        onClose={() => {
+          setOpenTasks(false);
+          setOpenAddTask(false);
+          setName('');
+          setDescription('');
+          setLabel('');
+          setEstimatedHours('');
+          setEstimatedMinutes('');
+          setDueDate(new Date());
+        }}
+      >
+        <Title size="l">Tasks</Title>
+        {openAddTask ? (
+          <Panel centerY flex="column">
+            <div style={rowStyle}>
+              <StandardInput
+                label="Name"
+                fullWidth
+                onChange={(event) => {
+                  setName(event.target.value);
+                }}
+              />
+            </div>
+            <div style={rowStyle}>
+              <StandardInput
+                label="Description"
+                fullWidth
+                onChange={(event) => {
+                  setDescription(event.target.value);
+                }}
+              />
+            </div>
+            <div style={rowStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', marginRight: 10 }}>
+                <Body>Estimated Time</Body>
+              </div>
+              <div style={{ flex: 1 }}>
+                <StandardSelect
+                  label="Hours"
+                  values={new Map<string, any>(Object.entries({
+                    0: '00',
+                    1: '01',
+                    2: '02',
+                    3: '03',
+                    4: '04',
+                    5: '05',
+                    6: '06',
+                    7: '07',
+                    8: '08',
+                    9: '09',
+                    10: '10',
+                  }))}
+                  onSelect={(select: string) => {
+                    setEstimatedHours(select);
+                  }}
+                />
+              </div>
+              <div style={{ width: 10 }} />
+              <div style={{ flex: 1 }}>
+                <StandardSelect
+                  label="Minutes"
+                  values={new Map<string, any>(Object.entries({
+                    '00': '0',
+                    30: '30',
+                  }))}
+                  onSelect={(select: string) => {
+                    setEstimatedMinutes(select);
+                  }}
+                />
+              </div>
+            </div>
+            <div style={rowStyle}>
+              <div style={{ flex: 1 }}>
+                <StandardSelect
+                  label="Label"
+                  values={labelDictionary}
+                  onSelect={(select: string) => {
+                    setLabel(select);
+                  }}
+                />
+              </div>
+            </div>
+            <div style={rowStyle}>
+              <TimeSelect
+                default={new Date()}
+                label="Due Date (MM/DD/YYYY)"
+                onDateChange={(newDate) => {
+                  setDueDate(newDate);
+                }}
+              />
+            </div>
+            <div style={rowStyle}>
+              <StandardButton
+                disabled={!readyToSchedule}
+                variant="outlined"
+                fullWidth
+                onMouseDown={async () => {
+                  if (!readyToSchedule || tasks === null) {
+                    return;
+                  }
+                  const payload: TaskSchema = {
+                    name,
+                    description,
+                    label,
+                    start_date: new Date(),
+                    due_date: dueDate,
+                    estimated_time: Number(estimatedHours) + Number(estimatedMinutes) / 60,
+                    id: '',
+                    user_id: user.id,
+                    completed: 0,
+                    do_not_schedule: false,
+                  };
+                  const createdTask: TaskSchema = await FlaskClient.post('tasks/createTask', payload);
+                  const scheduledTask = await FlaskClient.post('schedule', { user_id: user.id });
+                  if (scheduledTask.failed) {
+                    setTaskScheduleError(createdTask);
+                  }
+                  const freshTasks = tasks.slice();
+                  freshTasks.push(createdTask);
+                  setTasks(freshTasks);
+                  setCalendarEvents(null);
+                }}
+              >
+                Schedule
+              </StandardButton>
+            </div>
+          </Panel>
+        )
+          : (
             <PurpleButton
               fullWidth
-              variant="outlined"
               onMouseDown={() => {
-                if (taskScheduleError === null) {
-                  return;
-                }
-                cramTask();
+                setOpenAddTask(true);
               }}
+              variant="outlined"
             >
-              Cram Task
+              +
             </PurpleButton>
-          </Modal>
-          <SettingsModal
-            open={openSettingsModal}
-            onClose={() => { setOpenSettingsModal(false); }}
-          />
-          <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
-            <Title size="l">Events</Title>
-            {events !== null && (
-            <Table
-              onDelete={(deletedEvent) => {
-                deleteEvent(deletedEvent);
-              }}
-              keys={['name', 'repeat', 'start_time', 'end_time']}
-              columns={['Name', 'Repeats?', 'Start Time', 'End Time']}
-              items={events}
-              emptyMessage="No scheduled events"
-            />
-            )}
-
-          </Modal>
-          <Modal
-            open={openTasks}
-            onClose={() => {
-              setOpenTasks(false);
-              setOpenAddTask(false);
-              setName('');
-              setDescription('');
-              setLabel('');
-              setEstimatedHours('');
-              setEstimatedMinutes('');
-              setDueDate(new Date());
-            }}
-          >
-            <Title size="l">Tasks</Title>
-            {openAddTask ? (
-              <Panel centerY flex="column">
-                <div style={rowStyle}>
-                  <StandardInput
-                    label="Name"
-                    fullWidth
-                    onChange={(event) => {
-                      setName(event.target.value);
-                    }}
-                  />
-                </div>
-                <div style={rowStyle}>
-                  <StandardInput
-                    label="Description"
-                    fullWidth
-                    onChange={(event) => {
-                      setDescription(event.target.value);
-                    }}
-                  />
-                </div>
-                <div style={rowStyle}>
-                  <div style={{ display: 'flex', alignItems: 'center', marginRight: 10 }}>
-                    <Body>Estimated Time</Body>
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <StandardSelect
-                      label="Hours"
-                      values={new Map<string, any>(Object.entries({
-                        0: '00',
-                        1: '01',
-                        2: '02',
-                        3: '03',
-                        4: '04',
-                        5: '05',
-                        6: '06',
-                        7: '07',
-                        8: '08',
-                        9: '09',
-                        10: '10',
-                      }))}
-                      onSelect={(select: string) => {
-                        setEstimatedHours(select);
-                      }}
-                    />
-                  </div>
-                  <div style={{ width: 10 }} />
-                  <div style={{ flex: 1 }}>
-                    <StandardSelect
-                      label="Minutes"
-                      values={new Map<string, any>(Object.entries({
-                        '00': '0',
-                        30: '30',
-                      }))}
-                      onSelect={(select: string) => {
-                        setEstimatedMinutes(select);
-                      }}
-                    />
-                  </div>
-                </div>
-                <div style={rowStyle}>
-                  <div style={{ flex: 1 }}>
-                    <StandardSelect
-                      label="Label"
-                      values={labelDictionary}
-                      onSelect={(select: string) => {
-                        setLabel(select);
-                      }}
-                    />
-                  </div>
-                </div>
-                <div style={rowStyle}>
-                  <TimeSelect
-                    default={new Date()}
-                    label="Due Date (MM/DD/YYYY)"
-                    onDateChange={(newDate) => {
-                      setDueDate(newDate);
-                    }}
-                  />
-                </div>
-                <div style={rowStyle}>
-                  <StandardButton
-                    disabled={!readyToSchedule}
-                    variant="outlined"
-                    fullWidth
-                    onMouseDown={async () => {
-                      if (!readyToSchedule || tasks === null) {
-                        return;
-                      }
-                      const payload: TaskSchema = {
-                        name,
-                        description,
-                        label,
-                        start_date: new Date(),
-                        due_date: dueDate,
-                        estimated_time: Number(estimatedHours) + Number(estimatedMinutes) / 60,
-                        id: '',
-                        user_id: user.id,
-                        completed: 0,
-                        do_not_schedule: false,
-                      };
-                      const createdTask: TaskSchema = await FlaskClient.post('tasks/createTask', payload);
-                      const scheduledTask = await FlaskClient.post('schedule', { user_id: user.id });
-                      if (scheduledTask.failed) {
-                        setTaskScheduleError(createdTask);
-                      }
-                      const freshTasks = tasks.slice();
-                      freshTasks.push(createdTask);
-                      setTasks(freshTasks);
-                      setCalendarEvents(null);
-                    }}
-                  >
-                    Schedule
-                  </StandardButton>
-                </div>
-              </Panel>
-            )
-              : (
-                <PurpleButton
-                  fullWidth
-                  onMouseDown={() => {
-                    setOpenAddTask(true);
-                  }}
-                  variant="outlined"
-                >
-                  +
-                </PurpleButton>
-              )}
-            {tasks !== null && (
-            <Table
-              urlPrefix="task"
-              keys={['name', 'description', 'label', 'due_date', 'completed']}
-              columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
-              items={tasks}
-              emptyMessage="No scheduled tasks"
-            />
-            )}
-          </Modal>
-          <Title>Dashboard</Title>
-          <div style={{
-            width: '100%', display: 'flex', justifyContent: 'space-between', marginLeft: 40, marginRight: 40,
+          )}
+        {tasks !== null && (
+        <Table
+          urlPrefix="task"
+          keys={['name', 'description', 'label', 'due_date', 'completed']}
+          columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
+          items={tasks}
+          emptyMessage="No scheduled tasks"
+        />
+        )}
+      </Modal>
+      <Title>Dashboard</Title>
+      <div style={{
+        width: '100%', display: 'flex', justifyContent: 'space-between', marginLeft: 40, marginRight: 40,
+      }}
+      >
+        <SettingsIcon
+          fontSize="large"
+          style={{ cursor: 'pointer', color: themeFont }}
+          onMouseDown={() => {
+            setOpenSettingsModal(true);
           }}
-          >
-            <SettingsIcon
-              fontSize="large"
-              style={{ cursor: 'pointer', color: themeFont }}
-              onMouseDown={() => {
-                setOpenSettingsModal(true);
-              }}
-            />
-            <StandardButton
-              variant="outlined"
-              onMouseDown={() => {
-                setOpenEvents(true);
-                setEvents(null);
-              }}
-            >
-              Events
-            </StandardButton>
-            <StandardButton
-              variant="outlined"
-              onMouseDown={() => {
-                setOpenTasks(true);
-                setTasks(null);
-              }}
-            >
-              Tasks
-            </StandardButton>
-            <DownloadIcon
-              fontSize="large"
-              style={{ cursor: 'pointer', color: themeFont }}
-              onMouseDown={() => {
-                // Google Calendar Export
-                setOpenCalendarModal(true);
-              }}
-            />
-          </div>
-          <DashboardCalendar
-            snooze={snooze}
-            events={calendarEvents}
-            setEvents={setCalendarEvents}
-          />
-        </>
-        )
-      }
+        />
+        <StandardButton
+          variant="outlined"
+          onMouseDown={() => {
+            setOpenEvents(true);
+            setEvents(null);
+          }}
+        >
+          Events
+        </StandardButton>
+        <StandardButton
+          variant="outlined"
+          onMouseDown={() => {
+            setOpenTasks(true);
+            setTasks(null);
+          }}
+        >
+          Tasks
+        </StandardButton>
+        <DownloadIcon
+          fontSize="large"
+          style={{ cursor: 'pointer', color: themeFont }}
+          onMouseDown={() => {
+            // Google Calendar Export
+            setOpenCalendarModal(true);
+          }}
+        />
+      </div>
+      <DashboardCalendar
+        snooze={snooze}
+        events={calendarEvents}
+        setEvents={setCalendarEvents}
+      />
     </Page>
   );
 }
