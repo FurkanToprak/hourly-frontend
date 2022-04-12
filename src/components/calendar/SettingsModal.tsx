@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
 import moment from 'moment';
-import { Title } from '../utils/Texts';
+import { useNavigate } from 'react-router-dom';
+import { Body, Title } from '../utils/Texts';
 import Modal from '../utils/Modal';
 import TimeSelect from './TimeSelect';
-import { StandardButton } from '../utils/Buttons';
+import { RaspberryButton, StandardButton } from '../utils/Buttons';
 import { useAuth } from '../../contexts/Auth';
 import { useTheme } from '../../contexts/Theme';
 import { black, white } from '../../styles/Theme';
@@ -18,10 +19,12 @@ export default function SettingsModal(props: {
   if (!user) {
     return <div />;
   }
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
   const [startTime, setStartTime] = useState(moment().toDate());
   const [endTime, setEndTime] = useState(moment().toDate());
+  const experimental = true;
   const [fetchedTimeAlready, setFetchedTimeAlready] = useState(false);
   const postTimes = async () => {
     await FlaskClient.post('users/updateSleep', { id: user.id, startOfDay: startTime, endOfDay: endTime });
@@ -36,6 +39,10 @@ export default function SettingsModal(props: {
     setStartTime(fetchedStart);
     setEndTime(fetchedEnd);
     setFetchedTimeAlready(true);
+  };
+  const deleteEverything = async () => {
+    await FlaskClient.post('users/deleteEverything', { user_id: user.id });
+    navigate('/');
   };
   useEffect(() => {
     fetchTimes();
@@ -65,6 +72,16 @@ export default function SettingsModal(props: {
           />
         </StandardButton>
       </div>
+      { experimental && (
+      <RaspberryButton
+        style={{ marginTop: 10 }}
+        onMouseDown={deleteEverything}
+        fullWidth
+        variant="outlined"
+      >
+        Reset Account
+      </RaspberryButton>
+      )}
     </Modal>
   );
 }

@@ -5,7 +5,7 @@ import {
   darkBackground,
   lightBackground, white,
 } from '../../styles/Theme';
-import { Title } from '../utils/Texts';
+import { Body, Title } from '../utils/Texts';
 import { useTheme } from '../../contexts/Theme';
 
 function generateStats(values: number[], numBins: number) {
@@ -39,6 +39,9 @@ export default function Histogram(props: {
     data: number[];
     color: string;
 }) {
+  if (props.data.length < 2) {
+    return <Body>{`Not Enough Data To Display The ${props.title}`}</Body>;
+  }
   const { theme } = useTheme();
   const themeColor = theme === 'light' ? black : white;
   const borderColor = theme === 'light' ? darkBackground : lightBackground;
@@ -56,9 +59,9 @@ export default function Histogram(props: {
             borderColor={borderColor}
             keys={['y']}
             margin={{
-              top: 50,
-              left: 30,
-              bottom: 30,
+              top: 20,
+              left: 50,
+              bottom: 50,
             }}
             theme={{
               textColor: themeColor,
@@ -68,6 +71,14 @@ export default function Histogram(props: {
             tooltip={noToolTip}
             animate
             isInteractive
+            axisLeft={{
+              legend: 'Percentage (%)',
+              legendOffset: -40,
+            }}
+            axisBottom={{
+              legend: 'Hours',
+              legendOffset: 30,
+            }}
           />
         </div>
       </div>
