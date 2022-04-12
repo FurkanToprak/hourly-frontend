@@ -39,7 +39,15 @@ export default function Histogram(props: {
     data: number[];
     color: string;
 }) {
-  if (props.data.length < 2) {
+  const dataSum = props.data.reduce((sum, newNum) => sum + newNum);
+  const dataAvg = dataSum / props.data.length;
+  let dataUnique = true;
+  props.data.forEach((datum) => {
+    if (dataAvg !== datum) {
+      dataUnique = false;
+    }
+  });
+  if (dataUnique || props.data.length < 2) {
     return <Body>{`Not Enough Data To Display The ${props.title}`}</Body>;
   }
   const { theme } = useTheme();

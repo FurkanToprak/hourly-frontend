@@ -8,7 +8,10 @@ import Panel from '../components/utils/Panel';
 import { Body, Title } from '../components/utils/Texts';
 import FlaskClient from '../connections/Flask';
 import { useAuth } from '../contexts/Auth';
-import { purple, raspberry } from '../styles/Theme';
+import { useTheme } from '../contexts/Theme';
+import {
+  purple, raspberry, thinDarkBorder, thinLightBorder,
+} from '../styles/Theme';
 import { Group } from './Groups';
 
 interface StatsSchema {
@@ -20,12 +23,15 @@ interface StatsSchema {
 }
 export default function GroupPage() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
+  const themeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
   const groupParams = useParams();
   const { user } = useAuth();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const groupId = groupParams.groupid || '';
   const [thisGroup, setThisGroup] = useState(null as null | false | Group);
   const [groupStats, setGroupStats] = useState(null as null | StatsSchema);
+  const [groupMembers, setGroupMembers] = useState(null as null | string[]);
   const leaveGroup = async () => {
     if (user === null || thisGroup === null || thisGroup === false) {
       return;
@@ -49,9 +55,11 @@ export default function GroupPage() {
     const fetchedStats: StatsSchema = await FlaskClient.post('groups/getStats', {
       group_id: groupId,
     });
-
+    const fetchedMembers: { names: string[] } = await FlaskClient.post('groups/getUsers', {
+      group_id: groupId,
+    });
+    setGroupMembers(fetchedMembers.names);
     setGroupStats(fetchedStats);
-    // TODO: fetch group with group ID
     setThisGroup(fetchedGroup.group);
   };
   useEffect(() => {
@@ -62,7 +70,7 @@ export default function GroupPage() {
   }
   return (
     <Page centerY fullHeight>
-      <Panel fill flex="column" centerY margin>
+      <Panel flex="column" centerY margin>
         <Title>{thisGroup.name}</Title>
         <Title size="s">{thisGroup.description}</Title>
         {
@@ -100,6 +108,23 @@ export default function GroupPage() {
         >
           Leave Group
         </RaspberryButton>
+      </Panel>
+      <Panel centerY flex="column">
+        <Title size="m">Group Members</Title>
+        {(groupMembers || []).map((value) => (
+          <div style={{
+            borderTop: themeBorder,
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            paddingTop: 4,
+            paddingBottom: 4,
+          }}
+          >
+            <Body>{value}</Body>
+          </div>
+        ))}
       </Panel>
     </Page>
   );
