@@ -172,7 +172,6 @@ export default function Dashboard() {
     // TODO: never tested
     setTaskScheduleError(null);
   };
-  console.log(tasks);
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   return (
     <Page fullHeight centerY>
