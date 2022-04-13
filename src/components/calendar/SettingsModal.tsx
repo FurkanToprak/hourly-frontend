@@ -27,7 +27,7 @@ export default function SettingsModal(props: {
   const experimental = true;
   const [fetchedTimeAlready, setFetchedTimeAlready] = useState(false);
   const postTimes = async () => {
-    await FlaskClient.post('users/updateSleep', { id: user.id, startOfDay: startTime, endOfDay: endTime });
+    await FlaskClient.post('users/updateSleep', { user_id: user.id, startOfDay: startTime, endOfDay: endTime });
   };
   const fetchTimes = async () => {
     if (fetchedTimeAlready) {
