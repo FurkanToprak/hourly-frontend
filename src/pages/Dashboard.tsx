@@ -6,7 +6,9 @@ import DashboardCalendar, { DisplayedEvent, EventSchema } from '../components/ca
 import Page from '../components/utils/Page';
 import { Body, Title } from '../components/utils/Texts';
 import { useTheme } from '../contexts/Theme';
-import { black, white } from '../styles/Theme';
+import {
+  black, white,
+} from '../styles/Theme';
 import Modal from '../components/utils/Modal';
 import { PurpleButton, RaspberryButton, StandardButton } from '../components/utils/Buttons';
 import TimeSelect from '../components/calendar/TimeSelect';
@@ -18,17 +20,52 @@ import { StandardInput } from '../components/utils/Inputs';
 import { TaskSchema } from './Task';
 import FlaskClient from '../connections/Flask';
 import SettingsModal from '../components/calendar/SettingsModal';
+import TasksLeft from '../components/calendar/TasksLeft';
 
 export interface SnoozeSchema {
   startOfDay: string;
   endOfDay: string;
 }
+export type ExpiredTaskSchema = TaskSchema & {hours: number};
 const rowStyle = {
   margin: 10, width: '50%', display: 'flex',
 };
 
+const titleOptions = ['Working hard or hardly working?', 'A sight for sore eyes!', 'How was your day?', 'What have you been up to?', 'Welcome back!', 'What\'s new?', 'Hey there champ!'];
+
+const titleText = titleOptions[Math.floor(Math.random() * titleOptions.length)];
+
+// const exampleExpired1: ExpiredTaskSchema = {
+//   completed: 0,
+//   name: 'test 1',
+//   description: '',
+//   label: 'MATH',
+//   estimated_time: 2.5,
+//   start_date: new Date(),
+//   due_date: new Date(),
+//   id: 'id1',
+//   user_id: 'meeee',
+//   do_not_schedule: false,
+//   hours: 2.5,
+// };
+
+// const exampleExpired2: ExpiredTaskSchema = {
+//   completed: 0,
+//   name: 'test 2',
+//   description: '',
+//   label: 'MATH',
+//   estimated_time: 3,
+//   start_date: new Date(),
+//   due_date: new Date(),
+//   id: 'id2',
+//   user_id: 'meeee',
+//   do_not_schedule: false,
+//   hours: 3,
+// };
+
 export default function Dashboard() {
   const [tasks, setTasks] = useState(null as null | TaskSchema[]);
+  const [expiredTasks, setExpiredTasks] = useState(null as null | ExpiredTaskSchema[]);
   const [events, setEvents] = useState(null as null | EventSchema[]);
   const [calendarEvents, setCalendarEvents] = useState(null as null | DisplayedEvent[]);
   const { theme } = useTheme();
@@ -60,6 +97,16 @@ export default function Dashboard() {
     const fetchedEvents: { events: EventSchema[]} = await FlaskClient.post('events/getEvents', { user_id: userId });
     setEvents(fetchedEvents.events);
   };
+  const fetchExpiredTasks = async (userId: string) => {
+    if (expiredTasks !== null) {
+      return;
+    }
+    const expiredResponse: { expired_tasks: (ExpiredTaskSchema)[]} = await
+    FlaskClient.post('blocks/expiredSubTasks', {
+      user_id: userId,
+    });
+    setExpiredTasks(expiredResponse.expired_tasks);
+  };
   const fetchTasks = async (userId: string) => {
     if (tasks !== null) {
       return;
@@ -75,6 +122,7 @@ export default function Dashboard() {
     await FlaskClient.post('tasks/deleteTask', {
       task_id: taskId,
     });
+    setTaskScheduleError(null);
   };
   const fetchSnooze = async (userId: string) => {
     if (snooze !== null) {
@@ -89,6 +137,9 @@ export default function Dashboard() {
   useEffect(() => {
     fetchTasks(user.id);
   }, [tasks]);
+  useEffect(() => {
+    fetchExpiredTasks(user.id);
+  }, [expiredTasks]);
   useEffect(() => {
     fetchSnooze(user.id);
   }, [snooze]);
@@ -106,17 +157,50 @@ export default function Dashboard() {
     setEvents(null);
     setCalendarEvents(null);
   };
+  const scheduleExpired = async () => {
+    await FlaskClient.post('schedule', { user_id: user.id });
+    setCalendarEvents(null);
+    setTasks(null);
+    setExpiredTasks(null);
+  };
   const cramTask = async () => {
     if (taskScheduleError === null) {
       return;
     }
-    await FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.task_id });
+    await FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.id });
     await FlaskClient.post('schedule', { user_id: user.id });
     // TODO: never tested
     setTaskScheduleError(null);
   };
+  console.log(tasks);
+  const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   return (
     <Page fullHeight centerY>
+      <Modal
+        open={expiredExists}
+        onClose={() => {
+          // do nothing, the button controls the modal
+        }}
+      >
+        <Title>
+          {titleText}
+        </Title>
+        <Body>
+          Click the checkmark
+          to confirm you sticked to your schedule, or make
+          changes if you changed your plans.
+        </Body>
+        {expiredExists && <TasksLeft expiredTasks={expiredTasks || []} />}
+        <RaspberryButton
+          onMouseDown={() => {
+            scheduleExpired();
+          }}
+          fullWidth
+          variant="outlined"
+        >
+          Reschedule remaining tasks
+        </RaspberryButton>
+      </Modal>
       <Modal open={openCalendarModal} onClose={() => { setOpenCalendarModal(false); }}>
         <Title size="l">Import Calendar</Title>
         <StandardButton variant="outlined">Connect Google Calendar</StandardButton>
@@ -141,7 +225,7 @@ export default function Dashboard() {
             if (taskScheduleError === null) {
               return;
             }
-            deleteTask(taskScheduleError.task_id);
+            deleteTask(taskScheduleError.id);
           }}
         >
           Cancel Task
@@ -159,7 +243,10 @@ export default function Dashboard() {
           Cram Task
         </PurpleButton>
       </Modal>
-      <SettingsModal open={openSettingsModal} onClose={() => { setOpenSettingsModal(false); }} />
+      <SettingsModal
+        open={openSettingsModal}
+        onClose={() => { setOpenSettingsModal(false); }}
+      />
       <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
         <Title size="l">Events</Title>
         {events !== null && (
@@ -284,7 +371,7 @@ export default function Dashboard() {
                     start_date: new Date(),
                     due_date: dueDate,
                     estimated_time: Number(estimatedHours) + Number(estimatedMinutes) / 60,
-                    task_id: '',
+                    id: '',
                     user_id: user.id,
                     completed: 0,
                     do_not_schedule: false,
@@ -294,9 +381,7 @@ export default function Dashboard() {
                   if (scheduledTask.failed) {
                     setTaskScheduleError(createdTask);
                   }
-                  const freshTasks = tasks.slice();
-                  freshTasks.push(createdTask);
-                  setTasks(freshTasks);
+                  setTasks(null);
                   setCalendarEvents(null);
                 }}
               >
@@ -365,7 +450,11 @@ export default function Dashboard() {
           }}
         />
       </div>
-      <DashboardCalendar snooze={snooze} events={calendarEvents} setEvents={setCalendarEvents} />
+      <DashboardCalendar
+        snooze={snooze}
+        events={calendarEvents}
+        setEvents={setCalendarEvents}
+      />
     </Page>
   );
 }

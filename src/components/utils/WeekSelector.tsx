@@ -28,6 +28,7 @@ export default function WeekSelector(props: { onChange: (newDaysOfWeek: string) 
               const daySelected = selected.has(dayValue);
               return (
                 <div
+                  key={`day-button-${dayValue}`}
                   role="button"
                   style={{
                     backgroundColor: daySelected ? raspberry : circleColor,

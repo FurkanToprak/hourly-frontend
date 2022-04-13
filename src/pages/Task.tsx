@@ -15,7 +15,7 @@ export interface TaskSchema {
   estimated_time: number;
   start_date: Date;
   due_date: Date;
-  task_id: string;
+  id: string;
   user_id: string;
   do_not_schedule: boolean;
 }
