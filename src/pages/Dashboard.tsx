@@ -35,39 +35,37 @@ const titleOptions = ['Working hard or hardly working?', 'A sight for sore eyes!
 
 const titleText = titleOptions[Math.floor(Math.random() * titleOptions.length)];
 
-const exampleExpired1: ExpiredTaskSchema = {
-  completed: 0,
-  name: 'test 1',
-  description: '',
-  label: 'MATH',
-  estimated_time: 2.5,
-  start_date: new Date(),
-  due_date: new Date(),
-  id: 'id1',
-  user_id: 'meeee',
-  do_not_schedule: false,
-  hours: 2.5,
-};
+// const exampleExpired1: ExpiredTaskSchema = {
+//   completed: 0,
+//   name: 'test 1',
+//   description: '',
+//   label: 'MATH',
+//   estimated_time: 2.5,
+//   start_date: new Date(),
+//   due_date: new Date(),
+//   id: 'id1',
+//   user_id: 'meeee',
+//   do_not_schedule: false,
+//   hours: 2.5,
+// };
 
-const exampleExpired2: ExpiredTaskSchema = {
-  completed: 0,
-  name: 'test 2',
-  description: '',
-  label: 'MATH',
-  estimated_time: 3,
-  start_date: new Date(),
-  due_date: new Date(),
-  id: 'id2',
-  user_id: 'meeee',
-  do_not_schedule: false,
-  hours: 3,
-};
+// const exampleExpired2: ExpiredTaskSchema = {
+//   completed: 0,
+//   name: 'test 2',
+//   description: '',
+//   label: 'MATH',
+//   estimated_time: 3,
+//   start_date: new Date(),
+//   due_date: new Date(),
+//   id: 'id2',
+//   user_id: 'meeee',
+//   do_not_schedule: false,
+//   hours: 3,
+// };
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState(null as null | TaskSchema[]);
-  const [expiredTasks, setExpiredTasks] = useState([
-    exampleExpired1, exampleExpired2,
-  ] as null | ExpiredTaskSchema[]);
+  const [expiredTasks, setExpiredTasks] = useState(null as null | ExpiredTaskSchema[]);
   const [events, setEvents] = useState(null as null | EventSchema[]);
   const [calendarEvents, setCalendarEvents] = useState(null as null | DisplayedEvent[]);
   const { theme } = useTheme();
@@ -177,6 +175,7 @@ export default function Dashboard() {
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   console.log('expiredTasks');
   console.log(expiredTasks);
+  console.log(expiredExists);
   return (
     <Page fullHeight centerY>
       <Modal
@@ -193,7 +192,7 @@ export default function Dashboard() {
           to confirm you sticked to your schedule, or make
           changes if you changed your plans.
         </Body>
-        <TasksLeft expiredTasks={expiredTasks || []} />
+        {expiredExists && <TasksLeft expiredTasks={expiredTasks || []} />}
         <RaspberryButton
           onMouseDown={() => {
             scheduleExpired();
