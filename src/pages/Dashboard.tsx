@@ -173,9 +173,6 @@ export default function Dashboard() {
     setTaskScheduleError(null);
   };
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
-  console.log('expiredTasks');
-  console.log(expiredTasks);
-  console.log(expiredExists);
   return (
     <Page fullHeight centerY>
       <Modal

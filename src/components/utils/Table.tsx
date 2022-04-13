@@ -78,9 +78,11 @@ export default function Table(props: {
                                   style={{ borderBottom: thinThemeBorder }}
                                   key={`row-${item.name}-col-${itemColumn}`}
                                 >
-                                  <Body>
-                                    {cellText}
-                                  </Body>
+                                  <div>
+                                    <Body>
+                                      {cellText}
+                                    </Body>
+                                  </div>
                                 </TableCell>
                               );
                             })
@@ -107,7 +109,7 @@ export default function Table(props: {
           ))}
           {props.items.length === 0 && (
           <TableRow style={{ display: 'flex', justifyContent: 'center' }}>
-            <Body>{props.emptyMessage}</Body>
+            <div><Body>{props.emptyMessage}</Body></div>
           </TableRow>
           )}
         </TableBody>
