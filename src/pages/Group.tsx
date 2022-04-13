@@ -22,10 +22,7 @@ interface StatsSchema {
   total_week_hours: number[];
 }
 
-interface MemberSchema { // TODO: might be wrong
-  user_id: string;
-  name: string;
-}
+type MemberSchema = [string, string]; // id , name
 
 export default function GroupPage() {
   const navigate = useNavigate();
