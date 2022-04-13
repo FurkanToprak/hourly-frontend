@@ -95,8 +95,6 @@ export default function DashboardCalendar(props: {
       id: fetchedBlock.id,
       completed: fetchedBlock.completed,
     } as DisplayedEvent));
-    console.log('convertedBlocks');
-    console.log(convertedBlocks);
     props.setEvents(convertedBlocks);
   };
   const postEvent = async () => {

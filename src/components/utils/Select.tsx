@@ -36,21 +36,26 @@ const StandardSelectBase = styled(InputBase)(() => {
   };
 });
 
-export default function StandardSelect(props:
-    { values: Map<string, any>; label: string; onSelect: (select: string) => void}) {
+export default function StandardSelect(props: {
+  defaultValue?: string;
+  values: Map<string, any>;
+  label: string;
+  onSelect: (select: string) => void
+}) {
   const { theme } = useTheme();
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState(props.defaultValue || '');
   const handleChange = (event: any) => {
     props.onSelect(event.target.value);
     setSelected(event.target.value);
   };
   return (
-    <div>
+    <div style={{ marginTop: 10 }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">
           <Body>{props.label}</Body>
         </InputLabel>
         <Select
+          defaultValue={props.defaultValue}
           value={selected}
           onChange={handleChange}
           input={<StandardSelectBase />}
