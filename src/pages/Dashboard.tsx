@@ -7,7 +7,7 @@ import Page from '../components/utils/Page';
 import { Body, Title } from '../components/utils/Texts';
 import { useTheme } from '../contexts/Theme';
 import {
-  black, darkBorder, lightBorder, white,
+  black, white,
 } from '../styles/Theme';
 import Modal from '../components/utils/Modal';
 import { PurpleButton, RaspberryButton, StandardButton } from '../components/utils/Buttons';
@@ -100,13 +100,13 @@ export default function Dashboard() {
     setEvents(fetchedEvents.events);
   };
   const fetchExpiredTasks = async (userId: string) => {
+    if (expiredTasks !== null) {
+      return;
+    }
     const expiredResponse: { expired_tasks: (ExpiredTaskSchema)[]} = await
     FlaskClient.post('blocks/expiredSubTasks', {
       user_id: userId,
     });
-    if (expiredTasks !== null) {
-      return;
-    }
     setExpiredTasks(expiredResponse.expired_tasks);
   };
   const fetchTasks = async (userId: string) => {
@@ -137,9 +137,11 @@ export default function Dashboard() {
     fetchEvents(user.id);
   }, [events]);
   useEffect(() => {
-    fetchExpiredTasks(user.id);
     fetchTasks(user.id);
-  }, [expiredTasks, tasks]);
+  }, [expiredTasks]);
+  useEffect(() => {
+    fetchExpiredTasks(user.id);
+  }, [expiredTasks]);
   useEffect(() => {
     fetchSnooze(user.id);
   }, [snooze]);
@@ -157,6 +159,12 @@ export default function Dashboard() {
     setEvents(null);
     setCalendarEvents(null);
   };
+  const scheduleExpired = async () => {
+    await FlaskClient.post('schedule', { user_id: user.id });
+    setCalendarEvents(null);
+    setTasks(null);
+    setExpiredTasks(null);
+  };
   const cramTask = async () => {
     if (taskScheduleError === null) {
       return;
@@ -167,6 +175,8 @@ export default function Dashboard() {
     setTaskScheduleError(null);
   };
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
+  console.log('expiredTasks');
+  console.log(expiredTasks);
   return (
     <Page fullHeight centerY>
       <Modal
@@ -186,8 +196,7 @@ export default function Dashboard() {
         <TasksLeft expiredTasks={expiredTasks || []} />
         <RaspberryButton
           onMouseDown={() => {
-            // TODO:
-            setExpiredTasks(null);
+            scheduleExpired();
           }}
           fullWidth
           variant="outlined"

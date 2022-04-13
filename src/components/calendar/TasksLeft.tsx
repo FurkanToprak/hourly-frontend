@@ -53,7 +53,7 @@ export default function TasksLeft(props: {
         }
         return (
           <div
-            id={`left-select-${expiredTask.id}`}
+            key={`left-select-${expiredTask.id}`}
             style={{
               marginTop: 10, marginBottom: 10, width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
             }}
@@ -97,7 +97,6 @@ export default function TasksLeft(props: {
                 label=""
               />
             </div>
-
           </div>
         );
       })
