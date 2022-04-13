@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import FlaskClient from '../../connections/Flask';
 import { useTheme } from '../../contexts/Theme';
 import { ExpiredTaskSchema } from '../../pages/Dashboard';
 import { darkBorder, lightBorder } from '../../styles/Theme';
@@ -10,7 +11,18 @@ export default function TasksLeft(props: {
     expiredTasks: ExpiredTaskSchema[]
 }) {
   const { theme } = useTheme();
+  const [updatedTasks, setUpdatedTasks] = useState(new Set<string>());
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
+  const updateTask = async (taskId: string, completedHours: number) => {
+    const updateResponse = await FlaskClient.post('tasks/updateTask', {
+      task_id: taskId,
+      hours: completedHours,
+    });
+    // console.log(updateResponse); TODO: check
+    const freshUpdatedTasks = new Set(updatedTasks);
+    freshUpdatedTasks.add(taskId);
+    setUpdatedTasks(freshUpdatedTasks);
+  };
   return (
     <div style={{ marginTop: 10, borderTop: themeBorder, width: '100%' }}>
       {
@@ -33,6 +45,11 @@ export default function TasksLeft(props: {
         ]);
         if (minutesLeft !== 0 || selectedHoursWorked !== hoursLeft.toString()) {
           minuteOptions.set('30', 30);
+        }
+        const timeSelected = Number.parseInt(selectedHoursWorked, 10)
+         + (Number.parseInt(selectedMinutesWorked, 10) / 60);
+        if (updatedTasks.has(expiredTask.id)) {
+          return undefined;
         }
         return (
           <div
@@ -75,7 +92,7 @@ export default function TasksLeft(props: {
               <Checkbox
                 isChecked={false}
                 onCheck={() => {
-                  // test
+                  updateTask(expiredTask.id, timeSelected);
                 }}
                 label=""
               />
