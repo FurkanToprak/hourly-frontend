@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import DownloadIcon from '@mui/icons-material/Download';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Navigate } from 'react-router-dom';
+import moment from 'moment';
 import DashboardCalendar, { DisplayedEvent, EventSchema } from '../components/calendar/DashboardCalendar';
 import Page from '../components/utils/Page';
 import { Body, Title } from '../components/utils/Texts';
@@ -131,6 +132,7 @@ export default function Dashboard() {
     const fetchedSnooze: SnoozeSchema = await FlaskClient.post('users/getSleep', { user_id: userId });
     setSnooze(fetchedSnooze);
   };
+  const icsRef = useRef(null);
   useEffect(() => {
     fetchEvents(user.id);
   }, [events]);
@@ -172,6 +174,16 @@ export default function Dashboard() {
     // TODO: never tested
     setTaskScheduleError(null);
   };
+  const uploadIcs = async (file: File) => {
+    const sixMonthsAgo = moment().subtract(6, 'months').toISOString();
+    const uploadResponse = await FlaskClient.post('events/uploadICS', {
+      user_id: user.id,
+      start_point: sixMonthsAgo,
+      ics_file: file,
+    });
+    console.log('uploadResponse');
+    console.log(uploadResponse);
+  };
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   return (
     <Page fullHeight centerY>
@@ -202,7 +214,31 @@ export default function Dashboard() {
       </Modal>
       <Modal open={openCalendarModal} onClose={() => { setOpenCalendarModal(false); }}>
         <Title size="l">Import Calendar</Title>
-        <StandardButton variant="outlined">Connect Google Calendar</StandardButton>
+        <input
+          id="ics_file"
+          accept=".ics"
+          type="file"
+          hidden
+          ref={icsRef}
+          onChange={(e) => {
+            if (e === null || e.target === null
+                || e.target.files === null) {
+              return;
+            }
+            const uploadedFile = e.target.files[0];
+            uploadIcs(uploadedFile);
+          }}
+        />
+        <StandardButton
+          variant="outlined"
+          onMouseDown={() => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            icsRef.current.click();
+          }}
+        >
+          Select Calendar File [.ics]
+        </StandardButton>
       </Modal>
       <Modal
         open={taskScheduleError !== null}

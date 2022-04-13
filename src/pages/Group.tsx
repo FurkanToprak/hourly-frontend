@@ -21,6 +21,12 @@ interface StatsSchema {
   num_incompleted_tasks: number;
   total_week_hours: number[];
 }
+
+interface MemberSchema { // TODO: might be wrong
+  user_id: string;
+  name: string;
+}
+
 export default function GroupPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -46,7 +52,7 @@ export default function GroupPage() {
     navigate('/groups');
   };
   const fetchGroup = async () => {
-    if (thisGroup !== null) {
+    if (thisGroup !== null || user === null) {
       return;
     }
     const fetchedGroup: { group: Group} = await FlaskClient.post('groups/getGroupInfo', {
@@ -55,12 +61,18 @@ export default function GroupPage() {
     const fetchedStats: StatsSchema = await FlaskClient.post('groups/getStats', {
       group_id: groupId,
     });
-    const fetchedMembers: { names: string[] } = await FlaskClient.post('groups/getUsers', {
-      group_id: groupId,
-    });
+    const fetchedMembers: {
+      awaiting_their_response: MemberSchema[];
+      awaiting_your_response: MemberSchema[];
+      mutual: MemberSchema[];
+      no_relation: MemberSchema[];
+     } = await FlaskClient.post('groups/getFriendsList', {
+       group_id: groupId,
+       user_id: user.id,
+     });
     console.log('fetchedMembers');
     console.log(fetchedMembers);
-    setGroupMembers(fetchedMembers.names);
+    setGroupMembers([]); // TODO:
     setGroupStats(fetchedStats);
     setThisGroup(fetchedGroup.group);
   };
