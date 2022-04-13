@@ -6,7 +6,9 @@ import DashboardCalendar, { DisplayedEvent, EventSchema } from '../components/ca
 import Page from '../components/utils/Page';
 import { Body, Title } from '../components/utils/Texts';
 import { useTheme } from '../contexts/Theme';
-import { black, white } from '../styles/Theme';
+import {
+  black, darkBorder, lightBorder, white,
+} from '../styles/Theme';
 import Modal from '../components/utils/Modal';
 import { PurpleButton, RaspberryButton, StandardButton } from '../components/utils/Buttons';
 import TimeSelect from '../components/calendar/TimeSelect';
@@ -18,12 +20,13 @@ import { StandardInput } from '../components/utils/Inputs';
 import { TaskSchema } from './Task';
 import FlaskClient from '../connections/Flask';
 import SettingsModal from '../components/calendar/SettingsModal';
+import Checkbox from '../components/utils/Checkbox';
 
 export interface SnoozeSchema {
   startOfDay: string;
   endOfDay: string;
 }
-type ExpiredTaskSchema = TaskSchema | {hours: number};
+type ExpiredTaskSchema = TaskSchema & {hours: number};
 const rowStyle = {
   margin: 10, width: '50%', display: 'flex',
 };
@@ -31,13 +34,31 @@ const rowStyle = {
 const titleOptions = ['Working hard or hardly working?', 'You\'re finally awake!', 'A sight for sore eyes!', 'How was your day?', 'What have you been up to?', 'Welcome back!', 'What\'s new?', 'Hey there champ!'];
 const titleText = titleOptions[Math.floor(Math.random() * titleOptions.length)];
 
+const exampleExpiredTask = {
+  completed: 0,
+  name: 'Exampple TItle',
+  description: 'poop',
+  label: 'ree',
+  estimated_time: 2.5,
+  start_date: new Date(),
+  due_date: new Date(),
+  id: '',
+  user_id: '',
+  do_not_schedule: false,
+  hours: 2,
+};
 export default function Dashboard() {
-  const [tasks, setTasks] = useState(null as null | ExpiredTaskSchema[]);
-  const [expiredTasks, setExpiredTasks] = useState(null as null | ExpiredTaskSchema[]);
+  const [tasks, setTasks] = useState(null as null | TaskSchema[]);
+  const [expiredTasks, setExpiredTasks] = useState([
+    exampleExpiredTask,
+    exampleExpiredTask,
+    exampleExpiredTask,
+  ] as null | ExpiredTaskSchema[]);
   const [events, setEvents] = useState(null as null | EventSchema[]);
   const [calendarEvents, setCalendarEvents] = useState(null as null | DisplayedEvent[]);
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
+  const themeBorder = theme === 'light' ? lightBorder : darkBorder;
   const [openEvents, setOpenEvents] = useState(false);
   const [openTasks, setOpenTasks] = useState(false);
   const [openAddTask, setOpenAddTask] = useState(false);
@@ -140,7 +161,7 @@ export default function Dashboard() {
   return (
     <Page fullHeight centerY>
       <Modal
-        open={expiredExists}
+        open={true || expiredExists}
         onClose={() => {
           setExpiredTasks([]);
         }}
@@ -153,6 +174,45 @@ export default function Dashboard() {
           to confirm you sticked to your schedule, or make
           changes if you changed your plans.
         </Body>
+        <div style={{ marginTop: 10, borderTop: themeBorder, width: '100%' }}>
+          {
+            expiredTasks?.map((expiredTask: ExpiredTaskSchema) => (
+              <div style={{
+                width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between',
+              }}
+              >
+                <div style={{ flex: 1 }}>
+                  <Body>{expiredTask.name}</Body>
+                </div>
+                <div style={{ flex: 1, marginRight: 10 }}>
+                  <StandardSelect
+                    values={new Map()}
+                    onSelect={() => {
+                    // test
+                    }}
+                    label="Hours Worked"
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <StandardSelect
+                    values={new Map()}
+                    onSelect={() => {
+                    // test
+                    }}
+                    label="Minutes Worked"
+                  />
+                </div>
+                <Checkbox
+                  isChecked={false}
+                  onCheck={() => {
+                    // test
+                  }}
+                  label=""
+                />
+              </div>
+            ))
+          }
+        </div>
         <RaspberryButton
           onMouseDown={() => {
             // TODO:
