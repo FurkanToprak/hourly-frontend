@@ -58,6 +58,8 @@ export default function GroupPage() {
     const fetchedMembers: { names: string[] } = await FlaskClient.post('groups/getUsers', {
       group_id: groupId,
     });
+    console.log('fetchedMembers');
+    console.log(fetchedMembers);
     setGroupMembers(fetchedMembers.names);
     setGroupStats(fetchedStats);
     setThisGroup(fetchedGroup.group);
@@ -112,15 +114,16 @@ export default function GroupPage() {
       <Panel centerY flex="column">
         <Title size="m">Group Members</Title>
         {(groupMembers || []).map((value) => (
-          <div style={{
-            borderTop: themeBorder,
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            paddingTop: 4,
-            paddingBottom: 4,
-          }}
+          <div
+            style={{
+              borderTop: themeBorder,
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              paddingTop: 4,
+              paddingBottom: 4,
+            }}
           >
             <Body>{value}</Body>
           </div>
