@@ -136,7 +136,7 @@ export default function Dashboard() {
   }, [events]);
   useEffect(() => {
     fetchTasks(user.id);
-  }, [expiredTasks]);
+  }, [tasks]);
   useEffect(() => {
     fetchExpiredTasks(user.id);
   }, [expiredTasks]);
@@ -172,6 +172,7 @@ export default function Dashboard() {
     // TODO: never tested
     setTaskScheduleError(null);
   };
+  console.log(tasks);
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   return (
     <Page fullHeight centerY>
@@ -380,9 +381,7 @@ export default function Dashboard() {
                   if (scheduledTask.failed) {
                     setTaskScheduleError(createdTask);
                   }
-                  const freshTasks = tasks.slice();
-                  freshTasks.push(createdTask);
-                  setTasks(freshTasks);
+                  setTasks(null);
                   setCalendarEvents(null);
                 }}
               >
