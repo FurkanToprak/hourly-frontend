@@ -43,6 +43,19 @@ export default function GroupPage() {
   const [groupStats, setGroupStats] = useState(null as null | StatsSchema);
   const [groupMembers, setGroupMembers] = useState(null as null | GroupSchema);
   const [highlightedMember, setHightlightedMember] = useState(null as null | string);
+  const addFriend = async (memberId: string) => {
+    if (user === null || !thisGroup) {
+      return;
+    }
+    const addFriendResponse = await FlaskClient.post('groups/addFriend', {
+      user_id_1: user.id,
+      user_id_2: memberId,
+      group_id: thisGroup.id,
+    });
+    console.log('addFriendResponse');
+    console.log(addFriendResponse);
+    setGroupMembers(null);
+  };
   const leaveGroup = async () => {
     if (user === null || thisGroup === null || thisGroup === false) {
       return;
@@ -147,7 +160,6 @@ export default function GroupPage() {
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  justifyContent: thisHighlighted ? 'space-between' : undefined,
                   paddingTop: 4,
                   paddingBottom: 4,
                   height: 40,
@@ -156,7 +168,7 @@ export default function GroupPage() {
                 <Body>{groupMember[1]}</Body>
               </div>
             );
-          }) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>No friends yet :(</Body></div>}
+          }) : <div style={{ width: '100%', paddingLeft: 10, height: 40 }}><Body>No friends yet :(</Body></div>}
         <div style={{ width: '100%', paddingLeft: 10 }}>
           <Title size="s">Pending Friend Requests</Title>
         </div>
@@ -174,7 +186,7 @@ export default function GroupPage() {
                 onMouseLeave={() => {
                   setHightlightedMember(null);
                 }}
-                key={`mutual-member-${groupMember[0]}`}
+                key={`pending-member-${groupMember[0]}`}
                 style={{
                   borderBottom: themeBorder,
                   backgroundColor: thisHighlighted ? purple : undefined,
@@ -189,9 +201,19 @@ export default function GroupPage() {
                 }}
               >
                 <Body>{groupMember[1]}</Body>
+                { thisHighlighted && (
+                <StandardButton
+                  variant="outlined"
+                  onMouseDown={() => {
+                    addFriend(groupMember[0]);
+                  }}
+                >
+                  +
+                </StandardButton>
+                )}
               </div>
             );
-          }) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>No pending friends.</Body></div>}
+          }) : <div style={{ width: '100%', paddingLeft: 10, height: 40 }}><Body>No pending friends.</Body></div>}
         <div style={{ width: '100%', paddingLeft: 10 }}>
           <Title size="s">Sent Friend Requests</Title>
         </div>
@@ -210,7 +232,7 @@ export default function GroupPage() {
                 onMouseLeave={() => {
                   setHightlightedMember(null);
                 }}
-                key={`mutual-member-${groupMember[0]}`}
+                key={`sent-member-${groupMember[0]}`}
                 style={{
                   borderBottom: themeBorder,
                   backgroundColor: thisHighlighted ? purple : undefined,
@@ -218,7 +240,6 @@ export default function GroupPage() {
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  justifyContent: thisHighlighted ? 'space-between' : undefined,
                   paddingTop: 4,
                   paddingBottom: 4,
                   height: 40,
@@ -227,12 +248,11 @@ export default function GroupPage() {
                 <Body>{groupMember[1]}</Body>
               </div>
             );
-          }) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>No sent friends.</Body></div>}
+          }) : <div style={{ width: '100%', paddingLeft: 10, height: 40 }}><Body>No sent friends.</Body></div>}
 
         <div style={{ width: '100%', paddingLeft: 10 }}>
           <Title size="s">Other Members</Title>
         </div>
-
         {(groupMembers?.no_relation === undefined
         || groupMembers?.no_relation.length > 0)
           ? groupMembers?.no_relation.map((groupMember) => {
@@ -247,7 +267,7 @@ export default function GroupPage() {
                 }}
                 onFocus={() => { //
                 }}
-                key={`mutual-member-${groupMember[0]}`}
+                key={`other-member-${groupMember[0]}`}
                 style={{
                   borderBottom: themeBorder,
                   backgroundColor: thisHighlighted ? purple : undefined,
@@ -262,10 +282,19 @@ export default function GroupPage() {
                 }}
               >
                 <Body>{groupMember[1]}</Body>
-                { thisHighlighted && <StandardButton variant="outlined">+</StandardButton>}
+                { thisHighlighted && (
+                <StandardButton
+                  variant="outlined"
+                  onMouseDown={() => {
+                    addFriend(groupMember[0]);
+                  }}
+                >
+                  +
+                </StandardButton>
+                )}
               </div>
             );
-          }) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>Everyone is your friend!</Body></div>}
+          }) : <div style={{ width: '100%', paddingLeft: 10, height: 40 }}><Body>Everyone is your friend!</Body></div>}
 
       </Panel>
     </Page>
