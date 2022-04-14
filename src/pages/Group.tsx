@@ -127,92 +127,107 @@ export default function GroupPage() {
           <Title size="s">Friends</Title>
         </div>
         {(groupMembers?.mutual === undefined || groupMembers?.mutual.length > 0)
-          ? groupMembers?.mutual.map((groupMember) => (
-            <div
-              onMouseOver={() => {
-                setHightlightedMember(groupMember[0]);
-              }}
-              onMouseLeave={() => {
-                setHightlightedMember(null);
-              }}
-              onFocus={() => { //
-              }}
-              key={`mutual-member-${groupMember[0]}`}
-              style={{
-                backgroundColor: groupMember[0] === highlightedMember ? purple : undefined,
-                borderBottom: themeBorder,
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                paddingTop: 4,
-                paddingBottom: 4,
-              }}
-            >
-              <Body>{groupMember[1]}</Body>
-            </div>
-          )) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>No friends yet :(</Body></div>}
+          ? groupMembers?.mutual.map((groupMember) => {
+            const thisHighlighted = groupMember[0] === highlightedMember;
+            return (
+              <div
+                onMouseOver={() => {
+                  setHightlightedMember(groupMember[0]);
+                }}
+                onMouseLeave={() => {
+                  setHightlightedMember(null);
+                }}
+                onFocus={() => { //
+                }}
+                key={`mutual-member-${groupMember[0]}`}
+                style={{
+                  borderBottom: themeBorder,
+                  backgroundColor: thisHighlighted ? purple : undefined,
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: thisHighlighted ? 'space-between' : undefined,
+                  paddingTop: 4,
+                  paddingBottom: 4,
+                  height: 40,
+                }}
+              >
+                <Body>{groupMember[1]}</Body>
+              </div>
+            );
+          }) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>No friends yet :(</Body></div>}
         <div style={{ width: '100%', paddingLeft: 10 }}>
           <Title size="s">Pending Friend Requests</Title>
         </div>
         {(groupMembers?.awaiting_your_response === undefined
         || groupMembers?.awaiting_your_response.length > 0)
-          ? groupMembers?.awaiting_your_response.map((groupMember) => (
-            <div
-              onFocus={() => { //
-              }}
-              onMouseOver={() => {
-                setHightlightedMember(groupMember[0]);
-              }}
-              onMouseLeave={() => {
-                setHightlightedMember(null);
-              }}
-              key={`mutual-member-${groupMember[0]}`}
-              style={{
-                backgroundColor: groupMember[0] === highlightedMember ? purple : undefined,
-                borderBottom: themeBorder,
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                paddingTop: 4,
-                paddingBottom: 4,
-              }}
-            >
-              <Body>{groupMember[1]}</Body>
-            </div>
-          )) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>No pending friends.</Body></div>}
+          ? groupMembers?.awaiting_your_response.map((groupMember) => {
+            const thisHighlighted = groupMember[0] === highlightedMember;
+            return (
+              <div
+                onFocus={() => { //
+                }}
+                onMouseOver={() => {
+                  setHightlightedMember(groupMember[0]);
+                }}
+                onMouseLeave={() => {
+                  setHightlightedMember(null);
+                }}
+                key={`mutual-member-${groupMember[0]}`}
+                style={{
+                  borderBottom: themeBorder,
+                  backgroundColor: thisHighlighted ? purple : undefined,
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: thisHighlighted ? 'space-between' : undefined,
+                  paddingTop: 4,
+                  paddingBottom: 4,
+                  height: 40,
+                }}
+              >
+                <Body>{groupMember[1]}</Body>
+              </div>
+            );
+          }) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>No pending friends.</Body></div>}
         <div style={{ width: '100%', paddingLeft: 10 }}>
           <Title size="s">Sent Friend Requests</Title>
         </div>
 
         {(groupMembers?.awaiting_their_response === undefined
         || groupMembers?.awaiting_their_response.length > 0)
-          ? groupMembers?.awaiting_their_response.map((groupMember) => (
-            <div
-              onFocus={() => { //
-              }}
-              onMouseOver={() => {
-                setHightlightedMember(groupMember[0]);
-              }}
-              onMouseLeave={() => {
-                setHightlightedMember(null);
-              }}
-              key={`mutual-member-${groupMember[0]}`}
-              style={{
-                backgroundColor: groupMember[0] === highlightedMember ? purple : undefined,
-                borderBottom: themeBorder,
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                paddingTop: 4,
-                paddingBottom: 4,
-              }}
-            >
-              <Body>{groupMember[1]}</Body>
-            </div>
-          )) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>No sent friends.</Body></div>}
+          ? groupMembers?.awaiting_their_response.map((groupMember) => {
+            const thisHighlighted = groupMember[0] === highlightedMember;
+            return (
+              <div
+                onFocus={() => { //
+                }}
+                onMouseOver={() => {
+                  setHightlightedMember(groupMember[0]);
+                }}
+                onMouseLeave={() => {
+                  setHightlightedMember(null);
+                }}
+                key={`mutual-member-${groupMember[0]}`}
+                style={{
+                  borderBottom: themeBorder,
+                  backgroundColor: thisHighlighted ? purple : undefined,
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: thisHighlighted ? 'space-between' : undefined,
+                  paddingTop: 4,
+                  paddingBottom: 4,
+                  height: 40,
+                }}
+              >
+                <Body>{groupMember[1]}</Body>
+              </div>
+            );
+          }) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>No sent friends.</Body></div>}
 
         <div style={{ width: '100%', paddingLeft: 10 }}>
           <Title size="s">Other Members</Title>
@@ -220,31 +235,37 @@ export default function GroupPage() {
 
         {(groupMembers?.no_relation === undefined
         || groupMembers?.no_relation.length > 0)
-          ? groupMembers?.no_relation.map((groupMember) => (
-            <div
-              onMouseOver={() => {
-                setHightlightedMember(groupMember[0]);
-              }}
-              onMouseLeave={() => {
-                setHightlightedMember(null);
-              }}
-              onFocus={() => { //
-              }}
-              key={`mutual-member-${groupMember[0]}`}
-              style={{
-                borderBottom: themeBorder,
-                backgroundColor: groupMember[0] === highlightedMember ? purple : undefined,
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                paddingTop: 4,
-                paddingBottom: 4,
-              }}
-            >
-              <Body>{groupMember[1]}</Body>
-            </div>
-          )) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>Everyone is your friend!</Body></div>}
+          ? groupMembers?.no_relation.map((groupMember) => {
+            const thisHighlighted = groupMember[0] === highlightedMember;
+            return (
+              <div
+                onMouseOver={() => {
+                  setHightlightedMember(groupMember[0]);
+                }}
+                onMouseLeave={() => {
+                  setHightlightedMember(null);
+                }}
+                onFocus={() => { //
+                }}
+                key={`mutual-member-${groupMember[0]}`}
+                style={{
+                  borderBottom: themeBorder,
+                  backgroundColor: thisHighlighted ? purple : undefined,
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: thisHighlighted ? 'space-between' : undefined,
+                  paddingTop: 4,
+                  paddingBottom: 4,
+                  height: 40,
+                }}
+              >
+                <Body>{groupMember[1]}</Body>
+                { thisHighlighted && <StandardButton variant="outlined">+</StandardButton>}
+              </div>
+            );
+          }) : <div style={{ width: '100%', paddingLeft: 10 }}><Body>Everyone is your friend!</Body></div>}
 
       </Panel>
     </Page>
