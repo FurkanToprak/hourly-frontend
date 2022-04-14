@@ -39,7 +39,7 @@ export default function Histogram(props: {
     data: number[];
     color: string;
 }) {
-  const dataSum = props.data.reduce((sum, newNum) => sum + newNum);
+  const dataSum = props.data.length === 0 ? 0 : props.data.reduce((sum, newNum) => sum + newNum);
   const dataAvg = dataSum / props.data.length;
   let dataUnique = true;
   props.data.forEach((datum) => {

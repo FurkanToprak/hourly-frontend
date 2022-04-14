@@ -52,8 +52,6 @@ export default function GroupPage() {
       user_id_2: memberId,
       group_id: thisGroup.id,
     });
-    console.log('addFriendResponse');
-    console.log(addFriendResponse);
     setGroupMembers(null);
   };
   const leaveGroup = async () => {
@@ -79,17 +77,25 @@ export default function GroupPage() {
     const fetchedStats: StatsSchema = await FlaskClient.post('groups/getStats', {
       group_id: groupId,
     });
+    setGroupStats(fetchedStats);
+    setThisGroup(fetchedGroup.group);
+  };
+  const fetchGroupMembers = async () => {
+    if (thisGroup === null || user === null || groupMembers !== null) {
+      return;
+    }
     const fetchedMembers: GroupSchema = await FlaskClient.post('groups/getFriendsList', {
       group_id: groupId,
       user_id: user.id,
     });
     setGroupMembers(fetchedMembers);
-    setGroupStats(fetchedStats);
-    setThisGroup(fetchedGroup.group);
   };
   useEffect(() => {
     fetchGroup();
   }, [thisGroup]);
+  useEffect(() => {
+    fetchGroupMembers();
+  }, [groupMembers]);
   if (thisGroup === null || thisGroup === false) {
     return <div />;
   }
