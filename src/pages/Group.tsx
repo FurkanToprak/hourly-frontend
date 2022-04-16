@@ -52,8 +52,12 @@ export default function GroupPage() {
       user_id_2: memberId,
       group_id: thisGroup.id,
     });
+    console.log('addFriendResponse');
+    console.log(addFriendResponse);
     setGroupMembers(null);
   };
+  console.log('groupMembers');
+  console.log(groupMembers);
   const leaveGroup = async () => {
     if (user === null || thisGroup === null || thisGroup === false) {
       return;
@@ -69,6 +73,11 @@ export default function GroupPage() {
   };
   const fetchGroup = async () => {
     if (thisGroup !== null || user === null) {
+      console.log('quit fetchGroup');
+      console.log('thisGroup');
+      console.log(thisGroup);
+      console.log('user');
+      console.log(user);
       return;
     }
     const fetchedGroup: { group: Group} = await FlaskClient.post('groups/getGroupInfo', {
@@ -81,7 +90,18 @@ export default function GroupPage() {
     setThisGroup(fetchedGroup.group);
   };
   const fetchGroupMembers = async () => {
+    console.log('start');
+    console.log(thisGroup);
+    console.log(user);
+    console.log(groupMembers);
     if (thisGroup === null || user === null || groupMembers !== null) {
+      console.log('quit fetchGroupMembers');
+      console.log('thisGroup');
+      console.log(thisGroup);
+      console.log('user');
+      console.log(user);
+      console.log('groupMembers');
+      console.log(groupMembers);
       return;
     }
     const fetchedMembers: GroupSchema = await FlaskClient.post('groups/getFriendsList', {
@@ -95,7 +115,7 @@ export default function GroupPage() {
   }, [thisGroup]);
   useEffect(() => {
     fetchGroupMembers();
-  }, [groupMembers]);
+  }, [groupMembers, thisGroup]);
   if (thisGroup === null || thisGroup === false) {
     return <div />;
   }
