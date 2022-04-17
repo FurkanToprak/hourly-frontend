@@ -123,7 +123,6 @@ export default function DashboardCalendar(props: {
     const scheduleResponse = await FlaskClient.post('schedule', { user_id: user.id });
     if (scheduleResponse.failed) {
       setScheduleError(true);
-      // TODO: never checked
       await FlaskClient.post('events/deleteEvent', {
         event_id: createdEvent.id,
         user_id: user.id,
@@ -150,7 +149,6 @@ export default function DashboardCalendar(props: {
     }
     await FlaskClient.post('schedule', { user_id: user.id });
     props.setEvents(null);
-    // TODO: completing needs to be debugged and more robust
   };
   useEffect(() => {
     fetchEvents();
