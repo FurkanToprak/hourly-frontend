@@ -181,8 +181,6 @@ export default function Dashboard() {
       start_point: sixMonthsAgo,
       ics_file: file,
     });
-    console.log('uploadResponse');
-    console.log(uploadResponse);
   };
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   return (
