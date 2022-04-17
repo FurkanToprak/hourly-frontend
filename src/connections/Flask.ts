@@ -17,6 +17,13 @@ class FlaskClientSingleton {
     const postRequest = await axios.post(`${this.backendUri}/${endpoint}`, params);
     return postRequest.data;
   }
+
+  public async postFormData(endpoint: string, formData: FormData) {
+    const postRequest = await axios.post(`${this.backendUri}/${endpoint}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return postRequest.data;
+  }
 }
 
 const FlaskClient = new FlaskClientSingleton(backendUri);

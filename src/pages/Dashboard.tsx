@@ -176,11 +176,13 @@ export default function Dashboard() {
   };
   const uploadIcs = async (file: File) => {
     const sixMonthsAgo = moment().subtract(6, 'months').toISOString();
-    const uploadResponse = await FlaskClient.post('events/uploadICS', {
-      user_id: user.id,
-      start_point: sixMonthsAgo,
-      ics_file: file,
-    });
+    const bodyFormData = new FormData();
+    bodyFormData.append('user_id', user.id);
+    bodyFormData.append('start_point', sixMonthsAgo);
+    bodyFormData.append('ics_file', file);
+    const uploadResponse = await FlaskClient.postFormData('events/uploadICS', bodyFormData);
+    console.log('uploadResponse');
+    console.log(uploadResponse);
   };
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   return (
