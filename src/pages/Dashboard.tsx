@@ -54,6 +54,7 @@ export default function Dashboard() {
   const [estimatedHours, setEstimatedHours] = useState('');
   const [estimatedMinutes, setEstimatedMinutes] = useState('');
   const [dueDate, setDueDate] = useState(new Date());
+  const [help, setHelp] = useState(false);
   const [taskLabels, setTaskLabels] = useState(null as null | string[]);
   const readyToSchedule = estimatedMinutes !== '' && estimatedHours !== ''
     && name.length > 0 && description.length > 0 && label.length > 0;
@@ -269,6 +270,43 @@ export default function Dashboard() {
 
       </Modal>
       <Modal
+        open={help}
+        onClose={() => {
+          setHelp(false);
+        }}
+      >
+        <Title>Help</Title>
+        <Title size="m">Dashboard</Title>
+        <Body>This is the interface where you can view your events and tasks.</Body>
+        <Body>You can import your calendar by uploading an .ics file.</Body>
+        <Title size="m">Tasks</Title>
+        <Body>You can automatically schedule your to-do list by creating a task.</Body>
+        <Body>Click on a red task on the calendar to complete it.</Body>
+        <Body>
+          You can complete a task session or complete the whole task.
+        </Body>
+        <Body>Select a label to associate the task with a group.</Body>
+        <Title size="m">Events</Title>
+        <Body>Create an event with the input box below the calendar.</Body>
+        <Body>Delete events from the events menu.</Body>
+        <Title size="m">Settings</Title>
+        <Body>You can reset your account and specify your work hours from this menu.</Body>
+        <Body>
+          You will not work on tasks
+          or have meetings with collaborators outside of your work hours.
+        </Body>
+        <Title size="m">Groups</Title>
+        <Body>
+          You can join a group to compare your productivity with
+          your peers.
+        </Body>
+        <Body>
+          You can create a group and share an invite code with your friends who want to join.
+        </Body>
+        <Body>You can make friends and invite them to collaborate.</Body>
+        <Body>Tasks associated with a group are tracked for productivity statistics.</Body>
+      </Modal>
+      <Modal
         open={openTasks}
         onClose={() => {
           setOpenTasks(false);
@@ -438,6 +476,15 @@ export default function Dashboard() {
           }}
         >
           Events
+        </StandardButton>
+        <StandardButton
+          onMouseDown={() => {
+            setHelp(true);
+          }}
+          variant="outlined"
+        >
+          ?
+
         </StandardButton>
         <StandardButton
           variant="outlined"
