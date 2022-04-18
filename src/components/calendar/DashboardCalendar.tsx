@@ -61,7 +61,6 @@ export default function DashboardCalendar(props: {
 }) {
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
-  // input
   const [selectedEvent, setSelectedEvent] = useState(null as null | DisplayedEvent);
   const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
