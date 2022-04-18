@@ -28,41 +28,11 @@ export interface SnoozeSchema {
   endOfDay: string;
 }
 export type ExpiredTaskSchema = TaskSchema & {hours: number};
-const rowStyle = {
-  margin: 10, width: '50%', display: 'flex',
-};
+const rowStyle = { margin: 10, width: '50%', display: 'flex' };
 
 const titleOptions = ['Working hard or hardly working?', 'A sight for sore eyes!', 'How was your day?', 'What have you been up to?', 'Welcome back!', 'What\'s new?', 'Hey there champ!'];
 
 const titleText = titleOptions[Math.floor(Math.random() * titleOptions.length)];
-
-// const exampleExpired1: ExpiredTaskSchema = {
-//   completed: 0,
-//   name: 'test 1',
-//   description: '',
-//   label: 'MATH',
-//   estimated_time: 2.5,
-//   start_date: new Date(),
-//   due_date: new Date(),
-//   id: 'id1',
-//   user_id: 'meeee',
-//   do_not_schedule: false,
-//   hours: 2.5,
-// };
-
-// const exampleExpired2: ExpiredTaskSchema = {
-//   completed: 0,
-//   name: 'test 2',
-//   description: '',
-//   label: 'MATH',
-//   estimated_time: 3,
-//   start_date: new Date(),
-//   due_date: new Date(),
-//   id: 'id2',
-//   user_id: 'meeee',
-//   do_not_schedule: false,
-//   hours: 3,
-// };
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState(null as null | TaskSchema[]);
@@ -84,6 +54,7 @@ export default function Dashboard() {
   const [estimatedHours, setEstimatedHours] = useState('');
   const [estimatedMinutes, setEstimatedMinutes] = useState('');
   const [dueDate, setDueDate] = useState(new Date());
+  const [help, setHelp] = useState(false);
   const [taskLabels, setTaskLabels] = useState(null as null | string[]);
   const readyToSchedule = estimatedMinutes !== '' && estimatedHours !== ''
     && name.length > 0 && description.length > 0 && label.length > 0;
@@ -299,6 +270,43 @@ export default function Dashboard() {
 
       </Modal>
       <Modal
+        open={help}
+        onClose={() => {
+          setHelp(false);
+        }}
+      >
+        <Title>Help</Title>
+        <Title size="m">Dashboard</Title>
+        <Body>This is the interface where you can view your events and tasks.</Body>
+        <Body>You can import your calendar by uploading an .ics file.</Body>
+        <Title size="m">Tasks</Title>
+        <Body>You can automatically schedule your to-do list by creating a task.</Body>
+        <Body>Click on a red task on the calendar to complete it.</Body>
+        <Body>
+          You can complete a task session or complete the whole task.
+        </Body>
+        <Body>Select a label to associate the task with a group.</Body>
+        <Title size="m">Events</Title>
+        <Body>Create an event with the input box below the calendar.</Body>
+        <Body>Delete events from the events menu.</Body>
+        <Title size="m">Settings</Title>
+        <Body>You can reset your account and specify your work hours from this menu.</Body>
+        <Body>
+          You will not work on tasks
+          or have meetings with collaborators outside of your work hours.
+        </Body>
+        <Title size="m">Groups</Title>
+        <Body>
+          You can join a group to compare your productivity with
+          your peers.
+        </Body>
+        <Body>
+          You can create a group and share an invite code with your friends who want to join.
+        </Body>
+        <Body>You can make friends and invite them to collaborate.</Body>
+        <Body>Tasks associated with a group are tracked for productivity statistics.</Body>
+      </Modal>
+      <Modal
         open={openTasks}
         onClose={() => {
           setOpenTasks(false);
@@ -439,6 +447,7 @@ export default function Dashboard() {
           )}
         {tasks !== null && (
         <Table
+          mini
           urlPrefix="task"
           keys={['name', 'description', 'label', 'due_date', 'completed']}
           columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
@@ -467,6 +476,15 @@ export default function Dashboard() {
           }}
         >
           Events
+        </StandardButton>
+        <StandardButton
+          onMouseDown={() => {
+            setHelp(true);
+          }}
+          variant="outlined"
+        >
+          ?
+
         </StandardButton>
         <StandardButton
           variant="outlined"
