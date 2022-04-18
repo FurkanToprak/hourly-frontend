@@ -61,7 +61,6 @@ export default function DashboardCalendar(props: {
 }) {
   const { theme } = useTheme();
   const themeFont = theme === 'light' ? black : white;
-  // input
   const [selectedEvent, setSelectedEvent] = useState(null as null | DisplayedEvent);
   const [eventTitle, setEventTitle] = useState('');
   const [startDate, setStartDate] = useState(null as null | Date);
@@ -235,6 +234,7 @@ export default function DashboardCalendar(props: {
             // @ts-ignore
             const isEvent = event.type === 'EVENT';
             const isCram = event.type === 'CRAM';
+            const isCollab = event.type === 'COLLAB';
             const startBlock = new Date(event.start);
             const endBlock = new Date(event.end);
             const nowDate = new Date();
@@ -253,6 +253,9 @@ export default function DashboardCalendar(props: {
               } else {
                 eventColor = purple;
               }
+            } else if (isCollab) {
+              eventColor = 'green';
+              eventBoxShadow = '0 0 10px green';
             } else if (blockIsPast) {
               eventColor = lightRaspberry;
             } else if (blockIsOngoing) {

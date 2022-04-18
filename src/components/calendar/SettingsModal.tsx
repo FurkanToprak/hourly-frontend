@@ -41,7 +41,7 @@ export default function SettingsModal(props: {
     setFetchedTimeAlready(true);
   };
   const deleteEverything = async () => {
-    await FlaskClient.post('users/deleteEverything', { user_id: user.id });
+    await FlaskClient.post('users/deleteForUser', { user_id: user.id });
     navigate('/');
   };
   useEffect(() => {
