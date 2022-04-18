@@ -46,6 +46,7 @@ export default function GroupPage() {
   const [groupStats, setGroupStats] = useState(null as null | StatsSchema);
   const [groupMembers, setGroupMembers] = useState(null as null | GroupSchema);
   const [highlightedMember, setHightlightedMember] = useState(null as null | string);
+  const [copyClipboardText, setCopyClipboardText] = useState('copy invite code');
   const addFriend = async (memberId: string) => {
     if (user === null || !thisGroup) {
       return;
@@ -121,6 +122,18 @@ export default function GroupPage() {
     });
     setGroupMembers(fetchedMembers);
   };
+  const copyGroupIdToClipboard = async () => {
+    //
+    if (!thisGroup) {
+      return;
+    }
+    navigator.clipboard.writeText(thisGroup.id);
+    setCopyClipboardText('copied!');
+    // eslint-disable-next-line no-promise-executor-return
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    await sleep(1000);
+    setCopyClipboardText('copy invite code');
+  };
   useEffect(() => {
     fetchGroup();
   }, [thisGroup]);
@@ -144,6 +157,18 @@ export default function GroupPage() {
       <Panel flex="column" centerY margin>
         <Title>{thisGroup.name}</Title>
         <Title size="s">{thisGroup.description}</Title>
+        <StandardButton
+          style={{
+            width: 200,
+          }}
+          variant="outlined"
+          onMouseDown={() => {
+            copyGroupIdToClipboard();
+          }}
+        >
+          {copyClipboardText}
+
+        </StandardButton>
         {
           groupStats && (
           <>

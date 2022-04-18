@@ -182,7 +182,7 @@ export default function Dashboard() {
     const uploadResponse: {success: true} = await FlaskClient.postFormData('events/uploadICS', bodyFormData);
     if (uploadResponse.success) {
       // call schedule
-
+      await FlaskClient.post('schedule', { user_id: user.id });
     }
   };
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
