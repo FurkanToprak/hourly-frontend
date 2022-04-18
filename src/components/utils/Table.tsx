@@ -26,7 +26,10 @@ export default function Table(props: {
   const thinThemeBorder = theme === 'light' ? thinLightBorder : thinDarkBorder;
   const themeColor = theme === 'light' ? black : white;
   return (
-    <TableContainer>
+    <TableContainer style={{
+      maxHeight: 500,
+    }}
+    >
       <MuiTable>
         <TableHead>
           <TableRow style={{ borderBottom: thickThemeBorder }}>
