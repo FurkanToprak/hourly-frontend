@@ -28,41 +28,11 @@ export interface SnoozeSchema {
   endOfDay: string;
 }
 export type ExpiredTaskSchema = TaskSchema & {hours: number};
-const rowStyle = {
-  margin: 10, width: '50%', display: 'flex',
-};
+const rowStyle = { margin: 10, width: '50%', display: 'flex' };
 
 const titleOptions = ['Working hard or hardly working?', 'A sight for sore eyes!', 'How was your day?', 'What have you been up to?', 'Welcome back!', 'What\'s new?', 'Hey there champ!'];
 
 const titleText = titleOptions[Math.floor(Math.random() * titleOptions.length)];
-
-// const exampleExpired1: ExpiredTaskSchema = {
-//   completed: 0,
-//   name: 'test 1',
-//   description: '',
-//   label: 'MATH',
-//   estimated_time: 2.5,
-//   start_date: new Date(),
-//   due_date: new Date(),
-//   id: 'id1',
-//   user_id: 'meeee',
-//   do_not_schedule: false,
-//   hours: 2.5,
-// };
-
-// const exampleExpired2: ExpiredTaskSchema = {
-//   completed: 0,
-//   name: 'test 2',
-//   description: '',
-//   label: 'MATH',
-//   estimated_time: 3,
-//   start_date: new Date(),
-//   due_date: new Date(),
-//   id: 'id2',
-//   user_id: 'meeee',
-//   do_not_schedule: false,
-//   hours: 3,
-// };
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState(null as null | TaskSchema[]);
@@ -439,6 +409,7 @@ export default function Dashboard() {
           )}
         {tasks !== null && (
         <Table
+          mini
           urlPrefix="task"
           keys={['name', 'description', 'label', 'due_date', 'completed']}
           columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}

@@ -18,6 +18,7 @@ export default function Table(props: {
     onDelete?: (deletedItem: any) => void;
     emptyMessage: string;
     urlPrefix?: string;
+    mini?: true;
 }) {
   const [hoverRow, setHoverRow] = useState(-1);
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ export default function Table(props: {
   const themeColor = theme === 'light' ? black : white;
   return (
     <TableContainer style={{
-      maxHeight: 500,
+      maxHeight: props.mini ? 300 : 500,
     }}
     >
       <MuiTable>
