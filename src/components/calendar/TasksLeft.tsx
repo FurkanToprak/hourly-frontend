@@ -14,11 +14,10 @@ export default function TasksLeft(props: {
   const [updatedTasks, setUpdatedTasks] = useState(new Set<string>());
   const themeBorder = theme === 'light' ? lightBorder : darkBorder;
   const updateTask = async (taskId: string, completedHours: number) => {
-    const updateResponse = await FlaskClient.post('tasks/updateTask', {
+    await FlaskClient.post('tasks/updateTask', {
       task_id: taskId,
       hours: completedHours,
     });
-    // console.log(updateResponse); TODO: check
     const freshUpdatedTasks = new Set(updatedTasks);
     freshUpdatedTasks.add(taskId);
     setUpdatedTasks(freshUpdatedTasks);

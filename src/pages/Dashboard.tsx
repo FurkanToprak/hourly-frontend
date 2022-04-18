@@ -171,16 +171,19 @@ export default function Dashboard() {
     }
     await FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.id });
     await FlaskClient.post('schedule', { user_id: user.id });
-    // TODO: never tested
     setTaskScheduleError(null);
   };
   const uploadIcs = async (file: File) => {
     const sixMonthsAgo = moment().subtract(6, 'months').toISOString();
-    const uploadResponse = await FlaskClient.post('events/uploadICS', {
-      user_id: user.id,
-      start_point: sixMonthsAgo,
-      ics_file: file,
-    });
+    const bodyFormData = new FormData();
+    bodyFormData.append('user_id', user.id);
+    bodyFormData.append('start_point', sixMonthsAgo);
+    bodyFormData.append('ics_file', file);
+    const uploadResponse: {success: true} = await FlaskClient.postFormData('events/uploadICS', bodyFormData);
+    if (uploadResponse.success) {
+      // call schedule
+      await FlaskClient.post('schedule', { user_id: user.id });
+    }
   };
   const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
   return (

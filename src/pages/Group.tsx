@@ -1,8 +1,10 @@
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Histogram from '../components/graphs/Histogram';
 import Pie from '../components/graphs/Pie';
 import { RaspberryButton, StandardButton } from '../components/utils/Buttons';
+import Modal from '../components/utils/Modal';
 import Page from '../components/utils/Page';
 import Panel from '../components/utils/Panel';
 import { Body, Title } from '../components/utils/Texts';
@@ -39,10 +41,12 @@ export default function GroupPage() {
   const { user } = useAuth();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const groupId = groupParams.groupid || '';
+  const [collabMessage, setCollabMessage] = useState('');
   const [thisGroup, setThisGroup] = useState(null as null | false | Group);
   const [groupStats, setGroupStats] = useState(null as null | StatsSchema);
   const [groupMembers, setGroupMembers] = useState(null as null | GroupSchema);
   const [highlightedMember, setHightlightedMember] = useState(null as null | string);
+  const [copyClipboardText, setCopyClipboardText] = useState('copy invite code');
   const addFriend = async (memberId: string) => {
     if (user === null || !thisGroup) {
       return;
@@ -53,6 +57,34 @@ export default function GroupPage() {
       group_id: thisGroup.id,
     });
     setGroupMembers(null);
+  };
+  const collaborateFriend = async (collabWith: MemberSchema) => {
+    if (user === null || !thisGroup || groupMembers === null) {
+      return;
+    }
+    const collaborateResponse: { end_time: string; name: string; start_time: string; success: boolean } = await FlaskClient.post('groups/checkCollaborators', {
+      user_id_1: collabWith[0],
+      name_1: collabWith[1],
+      user_id_2: user.id,
+      name_2: user.name,
+      group_id: thisGroup.id,
+    });
+    if (collaborateResponse.success) {
+      await FlaskClient.post('schedule', {
+        user_id: user.id,
+      });
+      const rawStartTime = new Date(collaborateResponse.start_time);
+      const startTime = moment(rawStartTime);
+      const endTime = moment(new Date(collaborateResponse.end_time));
+      const collabDay = startTime.day();
+      const collabMonth = rawStartTime.toLocaleString('default', { month: 'long' });
+      const collabYear = startTime.year();
+      const startMeetingTime = `${startTime.hour()}:${startTime.minutes()}`;
+      const endMeetingTime = `${endTime.hour()}:${endTime.minutes()}`;
+      setCollabMessage(`Scheduled a meeting with ${collaborateResponse.name} from ${startMeetingTime} to ${endMeetingTime} on ${collabDay} ${collabMonth} ${collabYear}. We sent you and your collaborator an email with more details.`);
+    } else {
+      setCollabMessage('We could not find a meeting time that works for both of you.');
+    }
   };
   const leaveGroup = async () => {
     if (user === null || thisGroup === null || thisGroup === false) {
@@ -90,6 +122,18 @@ export default function GroupPage() {
     });
     setGroupMembers(fetchedMembers);
   };
+  const copyGroupIdToClipboard = async () => {
+    //
+    if (!thisGroup) {
+      return;
+    }
+    navigator.clipboard.writeText(thisGroup.id);
+    setCopyClipboardText('copied!');
+    // eslint-disable-next-line no-promise-executor-return
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    await sleep(1000);
+    setCopyClipboardText('copy invite code');
+  };
   useEffect(() => {
     fetchGroup();
   }, [thisGroup]);
@@ -101,9 +145,30 @@ export default function GroupPage() {
   }
   return (
     <Page centerY fullHeight>
+      <Modal
+        open={collabMessage !== ''}
+        onClose={() => {
+          setCollabMessage('');
+        }}
+      >
+        <Title size="m">Collaboration Details</Title>
+        <Body>{collabMessage}</Body>
+      </Modal>
       <Panel flex="column" centerY margin>
         <Title>{thisGroup.name}</Title>
         <Title size="s">{thisGroup.description}</Title>
+        <StandardButton
+          style={{
+            width: 200,
+          }}
+          variant="outlined"
+          onMouseDown={() => {
+            copyGroupIdToClipboard();
+          }}
+        >
+          {copyClipboardText}
+
+        </StandardButton>
         {
           groupStats && (
           <>
@@ -165,6 +230,7 @@ export default function GroupPage() {
                   width: '100%',
                   display: 'flex',
                   flexDirection: 'row',
+                  justifyContent: thisHighlighted ? 'space-between' : undefined,
                   alignItems: 'center',
                   paddingTop: 4,
                   paddingBottom: 4,
@@ -172,6 +238,16 @@ export default function GroupPage() {
                 }}
               >
                 <Body>{groupMember[1]}</Body>
+                { thisHighlighted && (
+                <StandardButton
+                  variant="outlined"
+                  onMouseDown={() => {
+                    collaborateFriend(groupMember);
+                  }}
+                >
+                  Collaborate
+                </StandardButton>
+                )}
               </div>
             );
           }) : <div style={{ width: '100%', paddingLeft: 10, height: 40 }}><Body>No friends yet :(</Body></div>}
