@@ -28,6 +28,7 @@ export default function Groups() {
   const [groups, setGroups] = useState(null as null | Group[]);
   const validCreateForm = name.length > 0 && description.length > 0;
   const validJoinForm = groupId.length > 0;
+  const [joinError, setJoinError] = useState('');
   const fetchGroups = async () => {
     if (user === null || groups !== null) {
       return;
@@ -63,8 +64,11 @@ export default function Groups() {
       user_id: user.id,
       group_id: groupId,
     });
-    if (!joinGroupResponse.success) {
-      // TODO
+    if (joinGroupResponse.success) {
+      setJoinError('');
+      setJoinModalOpen(false);
+    } else {
+      setJoinError('No such group exists.');
     }
     setGroups(null);
   };
@@ -103,7 +107,7 @@ export default function Groups() {
           disabled={!validJoinForm}
           variant="outlined"
         >
-          Join
+          {joinError || 'Join'}
         </PurpleButton>
       </Modal>
       <Modal

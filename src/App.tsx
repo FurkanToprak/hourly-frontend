@@ -39,7 +39,7 @@ export default function App() {
                   <Route
                     path="/signup"
                     element={
-                      <AuthBannedRoute><SignUp /></AuthBannedRoute>
+                      <AuthBannedRoute to="/"><SignUp /></AuthBannedRoute>
 }
                   />
                   <Route path="/login" element={<AuthBannedRoute><LogIn /></AuthBannedRoute>} />

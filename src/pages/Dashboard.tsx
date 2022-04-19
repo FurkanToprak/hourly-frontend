@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import DownloadIcon from '@mui/icons-material/Download';
+import UploadIcon from '@mui/icons-material/Upload';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Navigate } from 'react-router-dom';
 import moment from 'moment';
@@ -120,6 +120,7 @@ export default function Dashboard() {
     ((taskLabel) => [taskLabel, taskLabel]),
   ))
     : new Map();
+  labelDictionary.set('[No Label]', '');
   const deleteEvent = async (deletedEvent: EventSchema) => {
     await FlaskClient.post('events/deleteEvent', {
       event_id: deletedEvent.id,
@@ -252,7 +253,10 @@ export default function Dashboard() {
       </Modal>
       <SettingsModal
         open={openSettingsModal}
-        onClose={() => { setOpenSettingsModal(false); }}
+        onClose={() => {
+          setOpenSettingsModal(false);
+          setSnooze(null);
+        }}
       />
       <Modal open={openEvents} onClose={() => { setOpenEvents(false); }}>
         <Title size="l">Events</Title>
@@ -483,8 +487,7 @@ export default function Dashboard() {
           }}
           variant="outlined"
         >
-          ?
-
+          Help
         </StandardButton>
         <StandardButton
           variant="outlined"
@@ -495,7 +498,7 @@ export default function Dashboard() {
         >
           Tasks
         </StandardButton>
-        <DownloadIcon
+        <UploadIcon
           fontSize="large"
           style={{ cursor: 'pointer', color: themeFont }}
           onMouseDown={() => {
