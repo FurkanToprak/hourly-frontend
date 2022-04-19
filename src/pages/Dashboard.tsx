@@ -22,6 +22,7 @@ import { TaskSchema } from './Task';
 import FlaskClient from '../connections/Flask';
 import SettingsModal from '../components/calendar/SettingsModal';
 import TasksLeft from '../components/calendar/TasksLeft';
+import Checkbox from '../components/utils/Checkbox';
 
 export interface SnoozeSchema {
   startOfDay: string;
@@ -56,6 +57,7 @@ export default function Dashboard() {
   const [dueDate, setDueDate] = useState(new Date());
   const [help, setHelp] = useState(false);
   const [taskLabels, setTaskLabels] = useState(null as null | string[]);
+  const [completedFiltered, setCompletedFiltered] = useState(true);
   const readyToSchedule = estimatedMinutes !== '' && estimatedHours !== ''
     && name.length > 0 && description.length > 0 && label.length > 0;
   const { user } = useAuth();
@@ -449,13 +451,22 @@ export default function Dashboard() {
               +
             </PurpleButton>
           )}
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'right' }}>
+          <Checkbox
+            label="Filter Completed"
+            isChecked={completedFiltered}
+            onCheck={(newChecked) => {
+              setCompletedFiltered(newChecked);
+            }}
+          />
+        </div>
         {tasks !== null && (
         <Table
           mini
           urlPrefix="task"
           keys={['name', 'description', 'label', 'due_date', 'completed']}
           columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
-          items={tasks}
+          items={completedFiltered ? tasks.filter((task) => !task.completed) : tasks}
           emptyMessage="No scheduled tasks"
         />
         )}
