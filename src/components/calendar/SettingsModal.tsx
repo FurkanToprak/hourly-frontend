@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import WorkOffIcon from '@mui/icons-material/WorkOff';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { Body, Title } from '../utils/Texts';
+import { Title } from '../utils/Texts';
 import Modal from '../utils/Modal';
 import TimeSelect from './TimeSelect';
 import { RaspberryButton, StandardButton } from '../utils/Buttons';
 import { useAuth } from '../../contexts/Auth';
-import { useTheme } from '../../contexts/Theme';
-import { black, white } from '../../styles/Theme';
 import FlaskClient from '../../connections/Flask';
 
 export default function SettingsModal(props: {
@@ -20,8 +17,6 @@ export default function SettingsModal(props: {
     return <div />;
   }
   const navigate = useNavigate();
-  const { theme } = useTheme();
-  const themeFont = theme === 'light' ? black : white;
   const [startTime, setStartTime] = useState(moment().toDate());
   const [endTime, setEndTime] = useState(moment().toDate());
   const experimental = true;
@@ -64,12 +59,7 @@ export default function SettingsModal(props: {
             postTimes();
           }}
         >
-          <WorkOffIcon
-            fontSize="large"
-            style={{
-              cursor: 'pointer', color: themeFont,
-            }}
-          />
+          Save
         </StandardButton>
       </div>
       { experimental && (

@@ -15,11 +15,12 @@ export function AuthOnlyRoute(props: {
 
 export function AuthBannedRoute(props: {
   children: JSX.Element;
+  to?: string;
 }) {
   const { isLoggedIn } = useAuth();
   if (isLoggedIn) {
     const location = useLocation();
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to={props.to || '/dashboard'} state={{ from: location }} replace />;
   }
   return props.children;
 }

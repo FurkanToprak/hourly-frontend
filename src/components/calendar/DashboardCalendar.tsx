@@ -23,9 +23,6 @@ import { Body, Title } from '../utils/Texts';
 import Modal from '../utils/Modal';
 
 const localizer = momentLocalizer(moment);
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const DnDCalendar = withDragAndDrop(Calendar);
 
 const inputStyle: React.CSSProperties = {
   margin: 10,
@@ -147,6 +144,9 @@ export default function DashboardCalendar(props: {
       await FlaskClient.post('tasks/updateTask', { task_id: selectedEvent.task_id, hours: durationHours });
     }
     await FlaskClient.post('schedule', { user_id: user.id });
+    setSelectedEvent(null);
+    setComplete(0);
+    setCompleteAll(0);
     props.setEvents(null);
   };
   useEffect(() => {
@@ -213,7 +213,7 @@ export default function DashboardCalendar(props: {
       <div style={{ width: '95%', flex: 1, marginBottom: 10 }}>
         {/** eslint-disable-next-line @typescript-eslint/ban-ts-comment
        * @ts-ignore */}
-        <DnDCalendar
+        <Calendar
           min={props.snooze ? new Date(props.snooze.startOfDay) : undefined}
           max={props.snooze ? new Date(props.snooze.endOfDay) : undefined}
           defaultDate={moment().toDate()}
@@ -225,7 +225,6 @@ export default function DashboardCalendar(props: {
           events={props.events || []}
           startAccessor="start"
           endAccessor="end"
-          resizable
           onSelectEvent={(event: DisplayedEvent) => {
             setSelectedEvent(event);
           }}
@@ -272,7 +271,7 @@ export default function DashboardCalendar(props: {
             };
           }}
           style={{ color: themeFont, ...calendarStyle }}
-          formats={{ eventTimeRangeFormat: () => null }}
+          formats={{ eventTimeRangeFormat: () => '' }}
         />
       </div>
       <Panel centerY flex="column" margin>
