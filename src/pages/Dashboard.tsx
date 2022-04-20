@@ -35,9 +35,14 @@ const titleOptions = ['Working hard or hardly working?', 'A sight for sore eyes!
 
 const titleText = titleOptions[Math.floor(Math.random() * titleOptions.length)];
 
+export interface ExpiredSchema {
+  expired_tasks: (ExpiredTaskSchema)[];
+  past_due_tasks: (ExpiredTaskSchema)[];
+}
+
 export default function Dashboard() {
   const [tasks, setTasks] = useState(null as null | TaskSchema[]);
-  const [expiredTasks, setExpiredTasks] = useState(null as null | ExpiredTaskSchema[]);
+  const [expiredTasks, setExpiredTasks] = useState(null as null | ExpiredSchema);
   const [events, setEvents] = useState(null as null | EventSchema[]);
   const [calendarEvents, setCalendarEvents] = useState(null as null | DisplayedEvent[]);
   const { theme } = useTheme();
@@ -58,8 +63,9 @@ export default function Dashboard() {
   const [help, setHelp] = useState(false);
   const [taskLabels, setTaskLabels] = useState(null as null | string[]);
   const [completedFiltered, setCompletedFiltered] = useState(true);
+  const [uploadMessage, setUploadMessage] = useState('');
   const readyToSchedule = estimatedMinutes !== '' && estimatedHours !== ''
-    && name.length > 0 && description.length > 0 && label.length > 0;
+    && name.length > 0 && description.length > 0;
   const { user } = useAuth();
   if (!user) {
     return <Navigate to="/" />;
@@ -75,11 +81,11 @@ export default function Dashboard() {
     if (expiredTasks !== null) {
       return;
     }
-    const expiredResponse: { expired_tasks: (ExpiredTaskSchema)[]} = await
+    const expiredResponse: ExpiredSchema = await
     FlaskClient.post('blocks/expiredSubTasks', {
       user_id: userId,
     });
-    setExpiredTasks(expiredResponse.expired_tasks);
+    setExpiredTasks(expiredResponse);
   };
   const fetchTasks = async (userId: string) => {
     if (tasks !== null) {
@@ -122,7 +128,6 @@ export default function Dashboard() {
     ((taskLabel) => [taskLabel, taskLabel]),
   ))
     : new Map();
-  labelDictionary.set('[No Label]', '');
   const deleteEvent = async (deletedEvent: EventSchema) => {
     await FlaskClient.post('events/deleteEvent', {
       event_id: deletedEvent.id,
@@ -154,12 +159,16 @@ export default function Dashboard() {
     bodyFormData.append('start_point', sixMonthsAgo);
     bodyFormData.append('ics_file', file);
     const uploadResponse: {success: true} = await FlaskClient.postFormData('events/uploadICS', bodyFormData);
+    setUploadMessage('Uploading .ics...');
     if (uploadResponse.success) {
-      // call schedule
       await FlaskClient.post('schedule', { user_id: user.id });
+      setUploadMessage('Success!');
+    } else {
+      setUploadMessage('Error uploading .ics.');
     }
   };
-  const expiredExists = expiredTasks !== null && expiredTasks.length > 0;
+  const expiredExists = expiredTasks !== null
+  && (expiredTasks.expired_tasks.length > 0 || expiredTasks.past_due_tasks.length > 0);
   return (
     <Page fullHeight centerY>
       <Modal
@@ -176,7 +185,7 @@ export default function Dashboard() {
           to confirm you sticked to your schedule, or make
           changes if you changed your plans.
         </Body>
-        {expiredExists && <TasksLeft expiredTasks={expiredTasks || []} />}
+        {expiredExists && <TasksLeft expiredTasks={expiredTasks} />}
         <RaspberryButton
           onMouseDown={() => {
             scheduleExpired();
@@ -212,7 +221,7 @@ export default function Dashboard() {
             icsRef.current.click();
           }}
         >
-          Select Calendar File [.ics]
+          {uploadMessage || 'Select Calendar File [.ics]'}
         </StandardButton>
       </Modal>
       <Modal
