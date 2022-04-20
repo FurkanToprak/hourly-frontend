@@ -1,14 +1,28 @@
 import React, { useState } from 'react';
 import FlaskClient from '../../connections/Flask';
 import { useTheme } from '../../contexts/Theme';
-import { ExpiredTaskSchema } from '../../pages/Dashboard';
+import { ExpiredSchema, ExpiredTaskSchema } from '../../pages/Dashboard';
 import { darkBorder, lightBorder } from '../../styles/Theme';
 import Checkbox from '../utils/Checkbox';
 import StandardSelect from '../utils/Select';
-import { Body } from '../utils/Texts';
+import Table from '../utils/Table';
+import { Body, Title } from '../utils/Texts';
 
+const exampleExpired: ExpiredTaskSchema = {
+  completed: 0,
+  name: 'Expired Task',
+  description: 'Oops',
+  label: 'MISSED',
+  estimated_time: 2,
+  start_date: new Date(),
+  due_date: new Date(),
+  id: 'iasdada',
+  user_id: 'asdfadasddas',
+  do_not_schedule: true,
+  hours: 1,
+};
 export default function TasksLeft(props: {
-    expiredTasks: ExpiredTaskSchema[]
+    expiredTasks: ExpiredSchema
 }) {
   const { theme } = useTheme();
   const [updatedTasks, setUpdatedTasks] = useState(new Set<string>());
@@ -22,10 +36,12 @@ export default function TasksLeft(props: {
     freshUpdatedTasks.add(taskId);
     setUpdatedTasks(freshUpdatedTasks);
   };
+  const pastDue: ExpiredTaskSchema[] = [exampleExpired,
+    exampleExpired];// props.expiredTasks.past_due_tasks
   return (
     <div style={{ marginTop: 10, borderTop: themeBorder, width: '100%' }}>
       {
-      props.expiredTasks.map((expiredTask: ExpiredTaskSchema) => {
+      props.expiredTasks.expired_tasks.map((expiredTask: ExpiredTaskSchema) => {
         const hoursLeft = Math.floor(expiredTask.hours);
         const minutesLeft = (expiredTask.hours - hoursLeft) * 60;
         const hoursOptions = new Map(
@@ -100,6 +116,24 @@ export default function TasksLeft(props: {
         );
       })
     }
+      {pastDue.length === 0 ? <div /> : (
+        <div style={{
+          width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center',
+        }}
+        >
+          <Title size="m">Overdue Tasks</Title>
+          <Table
+            mini
+            emptyMessage=""
+            keys={[
+              'name', 'description', 'label', 'due_date',
+            ]}
+            columns={['Name', 'Description', 'label', 'Due Date']}
+            items={pastDue}
+          />
+          <div />
+        </div>
+      )}
     </div>
   );
 }
