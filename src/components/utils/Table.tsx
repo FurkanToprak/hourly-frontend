@@ -8,7 +8,7 @@ import { Body, Title } from './Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
   black,
-  darkBorder, lightBorder, purple, thinDarkBorder, thinLightBorder, white,
+  darkBorder, lightBorder, lightPurple, purple, thinDarkBorder, thinLightBorder, white,
 } from '../../styles/Theme';
 
 export default function Table(props: {
@@ -58,7 +58,7 @@ export default function Table(props: {
                 }
                 navigate(`/${props.urlPrefix}/${item.id}`);
               }}
-              style={{ cursor: 'pointer', backgroundColor: hoverRow === rowNumber ? purple : undefined }}
+              style={{ cursor: 'pointer', backgroundColor: hoverRow === rowNumber ? lightPurple : undefined }}
             >
               {
                             props.keys.map((itemColumn) => {

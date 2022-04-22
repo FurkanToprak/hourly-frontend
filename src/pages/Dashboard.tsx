@@ -18,7 +18,6 @@ import Table from '../components/utils/Table';
 import Panel from '../components/utils/Panel';
 import StandardSelect from '../components/utils/Select';
 import { StandardInput } from '../components/utils/Inputs';
-import { TaskSchema } from './Task';
 import FlaskClient from '../connections/Flask';
 import SettingsModal from '../components/calendar/SettingsModal';
 import TasksLeft from '../components/calendar/TasksLeft';
@@ -27,6 +26,18 @@ import Checkbox from '../components/utils/Checkbox';
 export interface SnoozeSchema {
   startOfDay: string;
   endOfDay: string;
+}
+export interface TaskSchema {
+  completed: 0 | 1;
+  name: string;
+  description: string;
+  label: string;
+  estimated_time: number;
+  start_date: Date;
+  due_date: Date;
+  id: string;
+  user_id: string;
+  do_not_schedule: boolean;
 }
 export type ExpiredTaskSchema = TaskSchema & {hours: number};
 const rowStyle = { margin: 10, width: '50%', display: 'flex' };
@@ -98,10 +109,14 @@ export default function Dashboard() {
     setTaskLabels(fetchedTaskLabels.labels);
     setTasks(fetchedTasks.tasks);
   };
-  const deleteTask = async (taskId: string) => {
+  const deleteTask = async (task: TaskSchema | ExpiredTaskSchema) => {
     await FlaskClient.post('tasks/deleteTask', {
-      task_id: taskId,
+      task_id: task.id,
     });
+    const scheduleResponse = await FlaskClient.post('schedule', { user_id: user.id });
+    setTasks(null);
+    setEvents(null);
+    setCalendarEvents(null);
     setTaskScheduleError(null);
   };
   const fetchSnooze = async (userId: string) => {
@@ -142,6 +157,7 @@ export default function Dashboard() {
     await FlaskClient.post('schedule', { user_id: user.id });
     setCalendarEvents(null);
     setTasks(null);
+    setCalendarEvents(null);
     setExpiredTasks(null);
   };
   const cramTask = async () => {
@@ -151,6 +167,9 @@ export default function Dashboard() {
     await FlaskClient.post('tasks/cramTask', { task_id: taskScheduleError.id });
     await FlaskClient.post('schedule', { user_id: user.id });
     setTaskScheduleError(null);
+    setEvents(null);
+    setCalendarEvents(null);
+    setTasks(null);
   };
   const uploadIcs = async (file: File) => {
     const sixMonthsAgo = moment().subtract(6, 'months').toISOString();
@@ -244,7 +263,7 @@ export default function Dashboard() {
             if (taskScheduleError === null) {
               return;
             }
-            deleteTask(taskScheduleError.id);
+            deleteTask(taskScheduleError);
           }}
         >
           Cancel Task
@@ -472,7 +491,9 @@ export default function Dashboard() {
         {tasks !== null && (
         <Table
           mini
-          urlPrefix="task"
+          onDelete={(deletedTask: TaskSchema) => {
+            deleteTask(deletedTask);
+          }}
           keys={['name', 'description', 'label', 'due_date', 'completed']}
           columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
           items={completedFiltered ? tasks.filter((task) => !task.completed) : tasks}
