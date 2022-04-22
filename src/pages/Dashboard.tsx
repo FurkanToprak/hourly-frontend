@@ -181,6 +181,8 @@ export default function Dashboard() {
     setUploadMessage('Uploading .ics...');
     if (uploadResponse.success) {
       await FlaskClient.post('schedule', { user_id: user.id });
+      setEvents(null);
+      setCalendarEvents(null);
       setUploadMessage('Success!');
     } else {
       setUploadMessage('Error uploading .ics.');
