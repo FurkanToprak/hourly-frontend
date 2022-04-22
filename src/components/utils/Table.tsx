@@ -63,7 +63,7 @@ export default function Table(props: {
               {
                             props.keys.map((itemColumn) => {
                               const cell = item[itemColumn];
-                              const isDateType = itemColumn.includes('date') || itemColumn.includes('time');
+                              const isDateType = itemColumn.includes('date') || itemColumn === 'start_time' || itemColumn === 'end_time';
                               const isBoolean = itemColumn === 'completed';
                               const cellDate = isDateType ? new Date(cell) : null;
                               let cellText = '';

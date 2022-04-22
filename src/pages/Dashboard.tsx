@@ -494,8 +494,8 @@ export default function Dashboard() {
           onDelete={(deletedTask: TaskSchema) => {
             deleteTask(deletedTask);
           }}
-          keys={['name', 'description', 'label', 'due_date', 'completed']}
-          columns={['Name', 'Description', 'Label', 'Due Date', 'Completed']}
+          keys={['name', 'description', 'label', 'estimated_time', 'due_date', 'completed']}
+          columns={['Name', 'Description', 'Label', 'Estimated Time', 'Due Date', 'Completed']}
           items={completedFiltered ? tasks.filter((task) => !task.completed) : tasks}
           emptyMessage="No scheduled tasks"
         />
