@@ -87,11 +87,11 @@ export default function GroupPage() {
       const rawStartTime = new Date(collaborateResponse.start_time);
       const startTime = moment(rawStartTime);
       const endTime = moment(new Date(collaborateResponse.end_time));
-      const collabDay = startTime.day();
+      const collabDay = startTime.date();
       const collabMonth = rawStartTime.toLocaleString('default', { month: 'long' });
       const collabYear = startTime.year();
-      const startMeetingTime = `${startTime.hour()}:${startTime.minutes()}`;
-      const endMeetingTime = `${endTime.hour()}:${endTime.minutes()}`;
+      const startMeetingTime = `${startTime.hour()}:${startTime.minutes() || '00'}`;
+      const endMeetingTime = `${endTime.hour()}:${endTime.minutes() || '00'}`;
       setCollabMessage(`Scheduled a meeting with ${collaborateResponse.name} from ${startMeetingTime} to ${endMeetingTime} on ${collabDay} ${collabMonth} ${collabYear}. We sent you and your collaborator an email with more details.`);
     } else {
       setCollabMessage('We could not find a meeting time that works for both of you.');
@@ -355,6 +355,7 @@ export default function GroupPage() {
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
+                  justifyContent: thisHighlighted ? 'space-between' : undefined,
                   paddingTop: 4,
                   paddingBottom: 4,
                   height: 40,

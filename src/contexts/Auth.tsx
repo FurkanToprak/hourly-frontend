@@ -55,12 +55,15 @@ export function AuthProvider({ children }: any) {
           // start of day, end of day
           const startOfDay = moment('8:00 AM', 'h:mm A').toDate();
           const endOfDay = moment('10:00 PM', 'h:mm A').toDate();
-          const authResponse: { id: string; startOfDay: string; endOfDay: string} = await FlaskClient.post('google_auth', {
-            token,
-            name: user.displayName,
-            startOfDay,
-            endOfDay,
-          });
+          const authResponse: { id: string;
+            startOfDay: string;
+            endOfDay: string;
+            refresh_schedule: boolean} = await FlaskClient.post('google_auth', {
+              token,
+              name: user.displayName,
+              startOfDay,
+              endOfDay,
+            });
           if (authResponse) {
             setHourlyUser({
               email: user.email || '',
@@ -71,6 +74,9 @@ export function AuthProvider({ children }: any) {
               startOfDay: new Date(authResponse.startOfDay),
               endOfDay: new Date(authResponse.endOfDay),
             });
+            if (authResponse.refresh_schedule) {
+              await FlaskClient.post('schedule', { user_id: authResponse.id });
+            }
             onSuccess();
           } else {
             onFailure();
