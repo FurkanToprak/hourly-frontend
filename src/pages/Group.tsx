@@ -58,6 +58,17 @@ export default function GroupPage() {
     });
     setGroupMembers(null);
   };
+  const removeFriend = async (memberId: string) => {
+    if (user === null || !thisGroup) {
+      return;
+    }
+    await FlaskClient.post('groups/removeFriend', {
+      user_id_1: user.id,
+      user_id_2: memberId,
+      group_id: thisGroup.id,
+    });
+    setGroupMembers(null);
+  };
   const collaborateFriend = async (collabWith: MemberSchema) => {
     if (user === null || !thisGroup || groupMembers === null) {
       return;
@@ -239,14 +250,25 @@ export default function GroupPage() {
               >
                 <Body>{groupMember[1]}</Body>
                 { thisHighlighted && (
-                <StandardButton
-                  variant="outlined"
-                  onMouseDown={() => {
-                    collaborateFriend(groupMember);
-                  }}
-                >
-                  Collaborate
-                </StandardButton>
+                <div>
+                  <StandardButton
+                    variant="outlined"
+                    onMouseDown={() => {
+                      removeFriend(groupMember[0]);
+                    }}
+                    style={{ marginRight: 10 }}
+                  >
+                    x
+                  </StandardButton>
+                  <StandardButton
+                    variant="outlined"
+                    onMouseDown={() => {
+                      collaborateFriend(groupMember);
+                    }}
+                  >
+                    Collaborate
+                  </StandardButton>
+                </div>
                 )}
               </div>
             );
@@ -284,14 +306,25 @@ export default function GroupPage() {
               >
                 <Body>{groupMember[1]}</Body>
                 { thisHighlighted && (
-                <StandardButton
-                  variant="outlined"
-                  onMouseDown={() => {
-                    addFriend(groupMember[0]);
-                  }}
-                >
-                  +
-                </StandardButton>
+                  <div>
+                    <StandardButton
+                      variant="outlined"
+                      onMouseDown={() => {
+                        removeFriend(groupMember[0]);
+                      }}
+                      style={{ marginRight: 10 }}
+                    >
+                      x
+                    </StandardButton>
+                    <StandardButton
+                      variant="outlined"
+                      onMouseDown={() => {
+                        addFriend(groupMember[0]);
+                      }}
+                    >
+                      +
+                    </StandardButton>
+                  </div>
                 )}
               </div>
             );
@@ -328,6 +361,17 @@ export default function GroupPage() {
                 }}
               >
                 <Body>{groupMember[1]}</Body>
+                { thisHighlighted && (
+                <StandardButton
+                  variant="outlined"
+                  onMouseDown={() => {
+                    removeFriend(groupMember[0]);
+                  }}
+                  style={{ marginRight: 10 }}
+                >
+                  x
+                </StandardButton>
+                )}
               </div>
             );
           }) : <div style={{ width: '100%', paddingLeft: 10, height: 40 }}><Body>No sent friends.</Body></div>}
