@@ -8,7 +8,7 @@ import { Body, Title } from './Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
   black,
-  darkBorder, lightBorder, purple, thinDarkBorder, thinLightBorder, white,
+  darkBorder, lightBorder, lightPurple, purple, thinDarkBorder, thinLightBorder, white,
 } from '../../styles/Theme';
 
 export default function Table(props: {
@@ -58,12 +58,12 @@ export default function Table(props: {
                 }
                 navigate(`/${props.urlPrefix}/${item.id}`);
               }}
-              style={{ cursor: 'pointer', backgroundColor: hoverRow === rowNumber ? purple : undefined }}
+              style={{ cursor: 'pointer', backgroundColor: hoverRow === rowNumber ? lightPurple : undefined }}
             >
               {
                             props.keys.map((itemColumn) => {
                               const cell = item[itemColumn];
-                              const isDateType = itemColumn.includes('date') || itemColumn.includes('time');
+                              const isDateType = itemColumn.includes('date') || itemColumn === 'start_time' || itemColumn === 'end_time';
                               const isBoolean = itemColumn === 'completed';
                               const cellDate = isDateType ? new Date(cell) : null;
                               let cellText = '';
@@ -74,7 +74,7 @@ export default function Table(props: {
                                   cellText = cell;
                                 }
                               } else {
-                                cellText = `${cellDate.getMonth()}/${cellDate.getDay()}/${cellDate.getFullYear()}`;
+                                cellText = `${cellDate.getMonth()}/${cellDate.getDate()}/${cellDate.getFullYear()}`;
                               }
                               return (
                                 <TableCell

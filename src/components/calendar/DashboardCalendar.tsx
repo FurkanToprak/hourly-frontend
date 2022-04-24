@@ -161,7 +161,7 @@ export default function DashboardCalendar(props: {
   return (
     <Panel centerY flex="column" fill>
       <Modal
-        open={selectedEvent !== null && selectedEvent.type === 'TASK'}
+        open={selectedEvent !== null && (selectedEvent.type === 'TASK' || selectedEvent.type === 'CRAM')}
         onClose={() => {
           setSelectedEvent(null);
           setComplete(0);
