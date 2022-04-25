@@ -463,6 +463,7 @@ export default function Dashboard() {
                   }
                   setTasks(null);
                   setCalendarEvents(null);
+                  setOpenAddTask(false);
                 }}
               >
                 Schedule
