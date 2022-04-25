@@ -73,15 +73,13 @@ export default function GroupPage() {
     if (user === null || !thisGroup || groupMembers === null) {
       return;
     }
-    console.log('oops');
     const collaborateResponse: { end_time: string; name: string; start_time: string; success: boolean } = await FlaskClient.post('groups/checkCollaborators', {
-      user_id_1: collabWith[0],
-      name_1: collabWith[1],
-      user_id_2: user.id,
-      name_2: user.name,
+      user_id_1: user.id,
+      name_1: user.name,
+      user_id_2: collabWith[0],
+      name_2: collabWith[1],
       group_id: thisGroup.id,
     });
-    console.log(collaborateResponse);
     if (collaborateResponse.success) {
       await FlaskClient.post('schedule', {
         user_id: user.id,
@@ -94,7 +92,6 @@ export default function GroupPage() {
       const collabYear = startTime.year();
       const startMeetingTime = `${startTime.hour()}:${startTime.minutes() || '00'}`;
       const endMeetingTime = `${endTime.hour()}:${endTime.minutes() || '00'}`;
-      console.log('hits');
       setCollabMessage(`Scheduled a meeting with ${collaborateResponse.name} from ${startMeetingTime} to ${endMeetingTime} on ${collabDay} ${collabMonth} ${collabYear}. We sent you and your collaborator an email with more details.`);
     } else {
       setCollabMessage('We could not find a meeting time that works for both of you.');
