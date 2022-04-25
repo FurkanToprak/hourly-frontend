@@ -74,7 +74,7 @@ export default function Table(props: {
                                   cellText = cell;
                                 }
                               } else {
-                                cellText = `${cellDate.getMonth()}/${cellDate.getDate()}/${cellDate.getFullYear()}`;
+                                cellText = `${cellDate.getMonth() + 1}/${cellDate.getDate()}/${cellDate.getFullYear()}`;
                               }
                               return (
                                 <TableCell
