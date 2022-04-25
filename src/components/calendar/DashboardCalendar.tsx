@@ -107,6 +107,8 @@ export default function DashboardCalendar(props: {
     } else if (repeats.length > 0) {
       repeatValue = repeatDays;
     }
+    console.log('repeats!!!');
+    console.log(repeatDays);
     const createdEvent = await FlaskClient.post('events/createEvent', {
       id: '',
       user_id: user.id,
@@ -360,6 +362,8 @@ export default function DashboardCalendar(props: {
         <div style={{ marginBottom: 10 }}>
           { repeats === 'weekly' && (
           <WeekSelector onChange={(newDaysOfWeek) => {
+            console.log('newDaysOfWeek');
+            console.log(newDaysOfWeek);
             setRepeatDays(newDaysOfWeek);
           }}
           />

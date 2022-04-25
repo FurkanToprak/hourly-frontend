@@ -50,7 +50,9 @@ export default function WeekSelector(props: { onChange: (newDaysOfWeek: string) 
                     }
                     setSelected(freshSelected);
                     let daysString = '';
-                    Object.keys(freshSelected).forEach(((selectedDay) => {
+                    console.log('freshSelected');
+                    console.log(freshSelected);
+                    freshSelected.forEach(((selectedDay) => {
                       daysString += selectedDay;
                     }));
                     props.onChange(daysString);
