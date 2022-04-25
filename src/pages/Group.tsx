@@ -74,10 +74,10 @@ export default function GroupPage() {
       return;
     }
     const collaborateResponse: { end_time: string; name: string; start_time: string; success: boolean } = await FlaskClient.post('groups/checkCollaborators', {
-      user_id_1: collabWith[0],
-      name_1: collabWith[1],
-      user_id_2: user.id,
-      name_2: user.name,
+      user_id_1: user.id,
+      name_1: user.name,
+      user_id_2: collabWith[0],
+      name_2: collabWith[1],
       group_id: thisGroup.id,
     });
     if (collaborateResponse.success) {
