@@ -8,7 +8,7 @@ import { Body, Title } from './Texts';
 import { useTheme } from '../../contexts/Theme';
 import {
   black,
-  darkBorder, lightBorder, lightPurple, purple, thinDarkBorder, thinLightBorder, white,
+  darkBorder, lightBorder, lightPurple, thinDarkBorder, thinLightBorder, white,
 } from '../../styles/Theme';
 
 export default function Table(props: {
