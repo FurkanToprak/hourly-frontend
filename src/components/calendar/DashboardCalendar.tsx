@@ -81,6 +81,8 @@ export default function DashboardCalendar(props: {
     const getEvents = await FlaskClient.post('blocks/getBlocks', {
       user_id: user.id,
     });
+    console.log('getEvents');
+    console.log(getEvents);
     const fetchedBlocks: EventSchema[] = getEvents.blocks;
     const convertedBlocks = fetchedBlocks.map((fetchedBlock) => ({
       title: fetchedBlock.name,
@@ -182,6 +184,7 @@ export default function DashboardCalendar(props: {
               <Body size="l">
                 {selectedEvent.title}
               </Body>
+              { selectedEvent.type !== 'CRAM' && (
               <Checkbox
                 label="Complete"
                 labelPosition="end"
@@ -190,8 +193,9 @@ export default function DashboardCalendar(props: {
                   setComplete(newChecked ? 1 : 0);
                 }}
               />
+              )}
               <Checkbox
-                label="Complete All"
+                label={selectedEvent.type === 'CRAM' ? 'Complete' : 'Complete All'}
                 labelPosition="end"
                 isChecked={completeAll === 1}
                 onCheck={(newChecked) => {
