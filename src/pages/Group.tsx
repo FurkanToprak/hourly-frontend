@@ -12,7 +12,7 @@ import FlaskClient from '../connections/Flask';
 import { useAuth } from '../contexts/Auth';
 import { useTheme } from '../contexts/Theme';
 import {
-  purple, raspberry, thinDarkBorder, thinLightBorder,
+  purple, raspberry, thinDarkBorder, thinLightBorder, lightPurple,
 } from '../styles/Theme';
 import { Group } from './Groups';
 
@@ -237,7 +237,7 @@ export default function GroupPage() {
                 key={`mutual-member-${groupMember[0]}`}
                 style={{
                   borderBottom: themeBorder,
-                  backgroundColor: thisHighlighted ? purple : undefined,
+                  backgroundColor: thisHighlighted ? lightPurple : undefined,
                   width: '100%',
                   display: 'flex',
                   flexDirection: 'row',
@@ -293,7 +293,7 @@ export default function GroupPage() {
                 key={`pending-member-${groupMember[0]}`}
                 style={{
                   borderBottom: themeBorder,
-                  backgroundColor: thisHighlighted ? purple : undefined,
+                  backgroundColor: thisHighlighted ? lightPurple : undefined,
                   width: '100%',
                   display: 'flex',
                   flexDirection: 'row',
@@ -350,7 +350,7 @@ export default function GroupPage() {
                 key={`sent-member-${groupMember[0]}`}
                 style={{
                   borderBottom: themeBorder,
-                  backgroundColor: thisHighlighted ? purple : undefined,
+                  backgroundColor: thisHighlighted ? lightPurple : undefined,
                   width: '100%',
                   display: 'flex',
                   flexDirection: 'row',
@@ -397,7 +397,7 @@ export default function GroupPage() {
                 key={`other-member-${groupMember[0]}`}
                 style={{
                   borderBottom: themeBorder,
-                  backgroundColor: thisHighlighted ? purple : undefined,
+                  backgroundColor: thisHighlighted ? lightPurple : undefined,
                   width: '100%',
                   display: 'flex',
                   flexDirection: 'row',
